@@ -55,12 +55,10 @@
         ::-webkit-scrollbar-thumb { background: #454ADE; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #5c60f5; }
         
-        /* Ocultar flechas numéricas */
         input[type="number"]::-webkit-inner-spin-button,
         input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
         input[type="number"] { -moz-appearance: textfield; }
 
-        /* Corrección para Date Input en iOS/Safari Móvil */
         input[type="date"] {
             -webkit-appearance: none;
             appearance: none;
@@ -71,16 +69,59 @@
             opacity: 0.8;
             cursor: pointer;
         }
-        /* Alinear placeholder de fecha en iOS */
         input[type="date"]::-webkit-datetime-edit {
             padding-left: 0;
             justify-content: flex-start;
+        }
+
+        /* Animación Zoom In */
+        @keyframes zoomInApp {
+            from {
+                opacity: 0;
+                transform: scale(0.92);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        .animate-zoom-in {
+            animation: zoomInApp 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
     </style>
 </head>
 <body class="min-h-screen p-4 md:p-8 font-sans antialiased relative">
 
-    <div class="max-w-7xl mx-auto">
+    <!-- PANTALLA DE LOGIN -->
+    <div id="login-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#03120e]">
+        <div class="neon-panel p-8 w-full max-w-sm flex flex-col items-center">
+            <img src="Ver 2 w.svg" alt="Bloom Studio" class="h-12 w-auto mb-4 object-contain" 
+                 onerror="this.onerror=null; this.outerHTML='<div class=\'h-10 w-36 mb-4 bg-red-600 border border-red-400 flex items-center justify-center text-white font-bold text-xs rounded-lg\'>FALTA LOGO SVG</div>'">
+            
+            <h2 class="text-xl font-bold text-white mb-1">Acceso Staff</h2>
+            <p class="text-white/60 text-xs mb-6 text-center">Ingresa tus credenciales para desbloquear Price Studio</p>
+
+            <form onsubmit="handleLogin(event)" class="w-full space-y-4">
+                <div>
+                    <label class="block text-xs text-white/70 mb-1">Usuario</label>
+                    <input type="text" id="login-user" required autocomplete="off" class="w-full input-dark rounded-lg px-3 py-2 text-sm" placeholder="Ej. ceo">
+                </div>
+                <div>
+                    <label class="block text-xs text-white/70 mb-1">Código PIN</label>
+                    <input type="password" id="login-pin" maxlength="6" inputmode="numeric" required class="w-full input-dark rounded-lg px-3 py-2 text-center text-lg tracking-[0.3em] font-mono" placeholder="••••••">
+                </div>
+                
+                <p id="login-error" class="text-red-400 text-xs text-center hidden font-medium">Usuario o PIN incorrecto</p>
+
+                <button type="submit" class="w-full bg-neonBlue text-white hover:bg-blue-600 font-bold py-2.5 rounded-xl transition-all shadow-[0_0_15px_rgba(69,74,222,0.5)] active:scale-95 border border-white/20 text-sm mt-2">
+                    Entrar al Sistema
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- CONTENIDO PRINCIPAL DE LA APP -->
+    <div id="app-container" class="max-w-7xl mx-auto hidden">
         <!-- CABECERA -->
         <header class="mb-8 border-b border-neonBlue/30 pb-4 flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div>
@@ -88,12 +129,17 @@
                 <h1 class="text-2xl md:text-3xl font-bold text-white">Price Studio</h1>
                 <p class="text-white/60 text-sm mt-1">Uso exclusivo Staff - Cálculo de Precio N y Distribución</p>
             </div>
-            <div class="text-left md:text-right">
-                <label class="block text-xs text-white/60 mb-1">Margen Global (%)</label>
-                <div class="flex items-center inner-box rounded px-2 w-max md:ml-auto">
-                    <input type="number" id="global-margin" value="48" min="0" class="bg-transparent w-16 text-right outline-none text-white font-mono py-1" oninput="calculateTotal()">
-                    <span class="text-white/60 ml-1">%</span>
+            <div class="flex items-center gap-3 self-start md:self-end">
+                <div class="text-left md:text-right">
+                    <label class="block text-xs text-white/60 mb-1">Margen Global (%)</label>
+                    <div class="flex items-center inner-box rounded px-2 w-max md:ml-auto">
+                        <input type="number" id="global-margin" value="48" min="0" class="bg-transparent w-16 text-right outline-none text-white font-mono py-1" oninput="calculateTotal()">
+                        <span class="text-white/60 ml-1">%</span>
+                    </div>
                 </div>
+                <button onclick="handleLogout()" title="Cerrar sesión" class="bg-red-500/20 hover:bg-red-500/40 border border-red-400/30 text-red-300 text-xs font-semibold px-3 py-2 rounded-lg transition-all self-end">
+                    Bloquear
+                </button>
             </div>
         </header>
 
@@ -107,7 +153,6 @@
                 </div>
                 <div>
                     <label class="block text-xs text-white/70 mb-1">Fecha</label>
-                    <!-- Campo de fecha ajustado con altura fija y text-left -->
                     <input type="date" id="form-fecha" class="w-full input-dark rounded-lg px-3 py-2 h-[42px] text-left block">
                 </div>
                 <div>
@@ -141,7 +186,6 @@
                 <section class="neon-panel p-6">
                     <h2 class="text-xl font-semibold mb-4 text-white">Sistema de Contenido</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <!-- Selects ensanchados (w-[120px]) para que no se corten en móvil -->
                         <div class="inner-box p-4 rounded-xl">
                             <label class="block text-sm font-medium text-white/90 mb-2">Diseño RRSS / Flyer</label>
                             <div class="flex gap-2">
@@ -227,6 +271,51 @@
     </div>
 
     <script>
+        // --- CONTROL DE ACCESO ---
+        const AUTH_USER = 'ceo';
+        const AUTH_PIN = '758595';
+
+        function checkSession() {
+            if (localStorage.getItem('priceStudioAuth') === 'true') {
+                showApp(false);
+            }
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const u = document.getElementById('login-user').value.trim();
+            const p = document.getElementById('login-pin').value.trim();
+            const errorMsg = document.getElementById('login-error');
+
+            if (u === AUTH_USER && p === AUTH_PIN) {
+                localStorage.setItem('priceStudioAuth', 'true');
+                errorMsg.classList.add('hidden');
+                showApp(true);
+            } else {
+                errorMsg.classList.remove('hidden');
+                document.getElementById('login-pin').value = '';
+            }
+        }
+
+        function showApp(animate) {
+            const modal = document.getElementById('login-modal');
+            const app = document.getElementById('app-container');
+            modal.classList.add('hidden');
+            app.classList.remove('hidden');
+
+            if (animate) {
+                app.classList.add('animate-zoom-in');
+            }
+        }
+
+        function handleLogout() {
+            localStorage.removeItem('priceStudioAuth');
+            location.reload();
+        }
+
+        checkSession();
+
+        // --- LÓGICA DEL TABULADOR ---
         let currentItems = [];
         let currentData = {};
         document.getElementById('form-fecha').valueAsDate = new Date();
