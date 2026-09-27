@@ -55,17 +55,26 @@
         ::-webkit-scrollbar-thumb { background: #454ADE; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #5c60f5; }
         
+        /* Ocultar flechas numéricas */
         input[type="number"]::-webkit-inner-spin-button,
         input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
         input[type="number"] { -moz-appearance: textfield; }
 
-        #pdf-export-container {
-            position: absolute;
-            top: 0;
-            left: 0;
-            z-index: -100;
-            opacity: 0.01;
-            pointer-events: none;
+        /* Corrección para Date Input en iOS/Safari Móvil */
+        input[type="date"] {
+            -webkit-appearance: none;
+            appearance: none;
+            text-align: left;
+        }
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+            opacity: 0.8;
+            cursor: pointer;
+        }
+        /* Alinear placeholder de fecha en iOS */
+        input[type="date"]::-webkit-datetime-edit {
+            padding-left: 0;
+            justify-content: flex-start;
         }
     </style>
 </head>
@@ -94,15 +103,16 @@
             <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div>
                     <label class="block text-xs text-white/70 mb-1">Empresa / Cliente</label>
-                    <input type="text" id="form-empresa" class="w-full input-dark rounded-lg px-3 py-2" placeholder="Nombre de la empresa">
+                    <input type="text" id="form-empresa" class="w-full input-dark rounded-lg px-3 py-2 h-[42px]" placeholder="Nombre de la empresa">
                 </div>
                 <div>
                     <label class="block text-xs text-white/70 mb-1">Fecha</label>
-                    <input type="date" id="form-fecha" class="w-full input-dark rounded-lg px-3 py-2">
+                    <!-- Campo de fecha ajustado con altura fija y text-left -->
+                    <input type="date" id="form-fecha" class="w-full input-dark rounded-lg px-3 py-2 h-[42px] text-left block">
                 </div>
                 <div>
                     <label class="block text-xs text-white/70 mb-1">Plan</label>
-                    <select id="form-plan" class="w-full input-dark rounded-lg px-3 py-2">
+                    <select id="form-plan" class="w-full input-dark rounded-lg px-3 py-2 h-[42px]">
                         <option value="Básico">Básico</option>
                         <option value="Standard" selected>Standard</option>
                         <option value="Deluxe">Deluxe</option>
@@ -131,10 +141,11 @@
                 <section class="neon-panel p-6">
                     <h2 class="text-xl font-semibold mb-4 text-white">Sistema de Contenido</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Selects ensanchados (w-[120px]) para que no se corten en móvil -->
                         <div class="inner-box p-4 rounded-xl">
                             <label class="block text-sm font-medium text-white/90 mb-2">Diseño RRSS / Flyer</label>
                             <div class="flex gap-2">
-                                <select id="rrss-type" class="input-dark rounded px-2 py-1 text-sm w-28" onchange="calculateTotal()"><option value="3">Standard ($3)</option><option value="5">VIP ($5)</option></select>
+                                <select id="rrss-type" class="input-dark rounded px-2 py-1 text-sm w-[120px] shrink-0" onchange="calculateTotal()"><option value="3">Standard ($3)</option><option value="5">VIP ($5)</option></select>
                                 <input type="number" id="rrss-qty" min="0" placeholder="Cant." class="input-dark rounded px-2 py-1 w-full text-center" oninput="calculateTotal()">
                             </div>
                         </div>
@@ -145,7 +156,7 @@
                         <div class="inner-box p-4 rounded-xl">
                             <label class="block text-sm font-medium text-white/90 mb-2">Reel</label>
                             <div class="flex gap-2">
-                                <select id="reel-type" class="input-dark rounded px-2 py-1 text-sm w-28" onchange="calculateTotal()"><option value="5">Standard ($5)</option><option value="10">VIP ($10)</option></select>
+                                <select id="reel-type" class="input-dark rounded px-2 py-1 text-sm w-[120px] shrink-0" onchange="calculateTotal()"><option value="5">Standard ($5)</option><option value="10">VIP ($10)</option></select>
                                 <input type="number" id="reel-qty" min="0" placeholder="Cant." class="input-dark rounded px-2 py-1 w-full text-center" oninput="calculateTotal()">
                             </div>
                         </div>
@@ -156,14 +167,14 @@
                         <div class="inner-box p-4 rounded-xl">
                             <label class="block text-sm font-medium text-white/90 mb-2">Edición de Fotos</label>
                             <div class="flex gap-2">
-                                <select id="photo-type" class="input-dark rounded px-2 py-1 text-sm w-28" onchange="calculateTotal()"><option value="10">Standard ($10)</option><option value="15">VIP ($15)</option></select>
+                                <select id="photo-type" class="input-dark rounded px-2 py-1 text-sm w-[120px] shrink-0" onchange="calculateTotal()"><option value="10">Standard ($10)</option><option value="15">VIP ($15)</option></select>
                                 <input type="number" id="photo-qty" min="0" placeholder="Cant." class="input-dark rounded px-2 py-1 w-full text-center" oninput="calculateTotal()">
                             </div>
                         </div>
                         <div class="inner-box p-4 rounded-xl">
                             <label class="block text-sm font-medium text-white/90 mb-2">Pauta</label>
                             <div class="flex gap-2">
-                                <select id="pauta-type" class="input-dark rounded px-2 py-1 text-sm w-28" onchange="calculateTotal()"><option value="10">Standard ($10)</option><option value="15">VIP ($15)</option></select>
+                                <select id="pauta-type" class="input-dark rounded px-2 py-1 text-sm w-[120px] shrink-0" onchange="calculateTotal()"><option value="10">Standard ($10)</option><option value="15">VIP ($15)</option></select>
                                 <input type="number" id="pauta-qty" min="0" placeholder="Cant." class="input-dark rounded px-2 py-1 w-full text-center" oninput="calculateTotal()">
                             </div>
                         </div>
@@ -198,28 +209,22 @@
                         <p class="text-white/40 italic text-center mt-8">Agrega servicios para ver el desglose</p>
                     </div>
                     <div class="border-t border-neonBlue/30 pt-4 mb-6">
-                        <div class="flex justify-between items-center mb-1"><span class="text-white/70">Costo Neto:</span><span class="font-mono text-lg font-bold">$<span id="subtotal-neto">0.00</span></span></div>
+                        <div class="flex justify-between items-center mb-1"><span class="text-white/70">Costo Neto (Subtotal):</span><span class="font-mono text-lg font-bold">$<span id="subtotal-neto">0.00</span></span></div>
                         <div class="flex justify-between items-center text-accent font-bold"><span>Venta Sugerido:</span><span class="font-mono text-2xl">$<span id="total-venta">0.00</span></span></div>
                     </div>
                     <div class="inner-box rounded-xl p-4">
                         <h3 class="text-xs font-bold text-white/50 uppercase tracking-wider mb-3">Distribución (<span id="margin-display">48</span>%)</h3>
-                        <div class="flex justify-between items-center mb-2"><span class="text-sm text-white/90">Ganancia:</span><span class="font-mono font-bold">$<span id="total-ganancia">0.00</span></span></div>
+                        <div class="flex justify-between items-center mb-2"><span class="text-sm text-white/90">Ganancia Total:</span><span class="font-mono font-bold">$<span id="total-ganancia">0.00</span></span></div>
                         <div class="space-y-2 mt-3 pt-3 border-t border-neonBlue/20">
                             <div class="flex justify-between items-center"><span class="text-sm text-white/70 flex items-center gap-1"><div class="w-2 h-2 rounded-full bg-blue-300"></div> CEO (40%)</span><span class="font-mono text-sm">$<span id="dist-ceo">0.00</span></span></div>
                             <div class="flex justify-between items-center"><span class="text-sm text-white/70 flex items-center gap-1"><div class="w-2 h-2 rounded-full bg-yellow-300"></div> Caja Chica (30%)</span><span class="font-mono text-sm">$<span id="dist-caja">0.00</span></span></div>
                             <div class="flex justify-between items-center"><span class="text-sm text-white/70 flex items-center gap-1"><div class="w-2 h-2 rounded-full bg-purple-400"></div> Capital (30%)</span><span class="font-mono text-sm font-bold text-purple-300">$<span id="dist-capital">0.00</span></span></div>
                         </div>
                     </div>
-                    <button class="w-full mt-6 bg-neonBlue text-white hover:bg-blue-600 font-bold py-3 px-4 rounded-xl transition-all shadow-[0_0_15px_rgba(69,74,222,0.5)] active:scale-95 border border-white/20" onclick="exportarPDF()">
-                        Exportar Resumen PDF
-                    </button>
                 </div>
             </div>
         </div>
     </div>
-
-    <!-- ESTRUCTURA PARA EL PDF -->
-    <div id="pdf-export-container"></div>
 
     <script>
         let currentItems = [];
@@ -236,7 +241,6 @@
                 currentItems.push({ name, qty, price, total: totalLine });
             };
 
-            // NUEVA FUNCIÓN: Si el valor es negativo, lo fuerza a 0 y lo corrige en la interfaz
             const getVal = (id) => {
                 let val = parseInt(document.getElementById(id).value) || 0;
                 if (val < 0) {
@@ -275,9 +279,9 @@
             document.getElementById('margin-display').innerText = marginInput;
             
             let totalVenta = 0, gananciaTotal = 0;
-            if (subtotalNeto > 0 && marginInput < 100) {
-                totalVenta = subtotalNeto / (1 - (marginInput / 100));
-                gananciaTotal = totalVenta - subtotalNeto;
+            if (subtotalNeto > 0) {
+                gananciaTotal = subtotalNeto * (marginInput / 100);
+                totalVenta = subtotalNeto + gananciaTotal;
             }
 
             document.getElementById('total-venta').innerText = totalVenta.toFixed(2);
@@ -287,67 +291,6 @@
             document.getElementById('dist-capital').innerText = (gananciaTotal * 0.30).toFixed(2);
 
             currentData = { subtotal: subtotalNeto.toFixed(2), venta: totalVenta.toFixed(2), ganancia: gananciaTotal.toFixed(2), ceo: (gananciaTotal * 0.40).toFixed(2), caja: (gananciaTotal * 0.30).toFixed(2), capital: (gananciaTotal * 0.30).toFixed(2), margen: marginInput };
-        }
-
-        function exportarPDF() {
-            const empresa = document.getElementById('form-empresa').value.trim() || 'Sin_Nombre';
-            const fecha = document.getElementById('form-fecha').value || 'Sin_Fecha';
-            const plan = document.getElementById('form-plan').value;
-            const tasa = document.querySelector('input[name="form-tasa"]:checked').value;
-            const nombreArchivo = `PRESUPUESTO_${plan}_${empresa}_${fecha}`.replace(/\s+/g, '_') + '.pdf';
-
-            let itemsPDFHTML = currentItems.map(item => `
-                <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid rgba(69, 74, 222, 0.3);">
-                    <span>${item.qty}x ${item.name}</span>
-                    <span style="font-family: monospace;">$${item.total.toFixed(2)}</span>
-                </div>
-            `).join('');
-
-            const pdfMolde = `
-                <div id="pdf-content" style="background-color: #232A5B; color: #ffffff; font-family: sans-serif; width: 450px; padding: 25px; border: 2px solid #454ADE; box-sizing: border-box;">
-                    <h2 style="font-size: 20px; font-weight: bold; margin-bottom: 15px; border-bottom: 1px solid rgba(69, 74, 222, 0.5); padding-bottom: 8px;">Resumen Operativo</h2>
-                    <div style="background-color: rgba(0,0,0,0.3); padding: 12px; border-radius: 8px; margin-bottom: 20px; font-size: 13px; border: 1px solid rgba(69, 74, 222, 0.4);">
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 6px;"><span>Cliente: <strong>${empresa}</strong></span><span>Fecha: <strong>${fecha}</strong></span></div>
-                        <div style="display: flex; justify-content: space-between;"><span>Plan: <strong>${plan}</strong></span><span>Tasa: <strong>${tasa}</strong></span></div>
-                    </div>
-                    <div style="margin-bottom: 20px; font-size: 13px; min-height: 50px;">
-                        ${itemsPDFHTML || '<p style="text-align:center; color: rgba(255,255,255,0.5);">No se agregaron servicios.</p>'}
-                    </div>
-                    <div style="border-top: 1px solid rgba(69, 74, 222, 0.5); padding-top: 15px; margin-bottom: 20px;">
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 14px;"><span>Costo Neto:</span><span style="font-family: monospace; font-weight: bold;">$${currentData.subtotal}</span></div>
-                        <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 18px; color: #a7f3d0;"><span>Monto Venta Sugerido:</span><span style="font-family: monospace;">$${currentData.venta}</span></div>
-                    </div>
-                    <div style="background-color: rgba(0,0,0,0.3); border-radius: 8px; padding: 15px; border: 1px solid rgba(69, 74, 222, 0.4);">
-                        <h3 style="font-size: 11px; text-transform: uppercase; margin-bottom: 10px; color: rgba(255,255,255,0.6); font-weight: bold;">Distribución (${currentData.margen}%)</h3>
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px; font-weight: bold; font-size: 14px;"><span>Ganancia Total:</span><span>$${currentData.ganancia}</span></div>
-                        <div style="border-top: 1px solid rgba(69, 74, 222, 0.3); padding-top: 10px; font-size: 13px;">
-                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;"><span>CEO (40%)</span><span style="font-family: monospace;">$${currentData.ceo}</span></div>
-                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;"><span>Caja Chica (30%)</span><span style="font-family: monospace;">$${currentData.caja}</span></div>
-                            <div style="display: flex; justify-content: space-between; font-weight: bold; color: #d8b4fe;"><span>Capital (30%)</span><span style="font-family: monospace;">$${currentData.capital}</span></div>
-                        </div>
-                    </div>
-                    <div style="margin-top: 20px; text-align: center; font-size: 10px; color: rgba(255,255,255,0.4);">Price Studio Internal</div>
-                </div>
-            `;
-
-            const container = document.getElementById('pdf-export-container');
-            container.innerHTML = pdfMolde;
-            
-            window.scrollTo(0, 0);
-            
-            const contentElement = document.getElementById('pdf-content');
-            
-            const opt = {
-                margin:       0,
-                filename:     nombreArchivo,
-                image:        { type: 'jpeg', quality: 1 },
-                html2canvas:  { scale: 2, useCORS: true, backgroundColor: '#03120e', scrollY: 0, scrollX: 0 },
-                jsPDF:        { unit: 'px', format: [contentElement.offsetWidth, contentElement.offsetHeight], orientation: 'portrait' }
-            };
-
-            html2pdf().set(opt).from(contentElement).save().then(() => {
-                container.innerHTML = '';
-            });
         }
     </script>
 </body>
