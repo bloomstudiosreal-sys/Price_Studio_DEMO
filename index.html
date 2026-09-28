@@ -75,17 +75,20 @@
         }
 
         @keyframes zoomInApp {
-            from {
-                opacity: 0;
-                transform: scale(0.92);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
+            from { opacity: 0; transform: scale(0.92); }
+            to { opacity: 1; transform: scale(1); }
         }
         .animate-zoom-in {
             animation: zoomInApp 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        #pdf-export-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: -100;
+            opacity: 0.01;
+            pointer-events: none;
         }
     </style>
 </head>
@@ -103,7 +106,6 @@
             <form onsubmit="handleLogin(event)" class="w-full space-y-4">
                 <div>
                     <label class="block text-xs text-white/70 mb-1">Usuario</label>
-                    <!-- Campo limpio sin placeholder "Ej. ceo" -->
                     <input type="text" id="login-user" required autocomplete="off" class="w-full input-dark rounded-lg px-3 py-2 text-sm" placeholder="Ingresa tu usuario">
                 </div>
                 <div>
@@ -133,11 +135,10 @@
                 <div class="text-left md:text-right">
                     <label class="block text-xs text-white/60 mb-1">Margen Global (%)</label>
                     <div class="flex items-center inner-box rounded px-2 w-max md:ml-auto">
-                        <input type="number" id="global-margin" value="48" min="0" class="bg-transparent w-16 text-right outline-none text-white font-mono py-1" oninput="calculateTotal()">
+                        <input type="number" id="global-margin" value="48" min="0" step="0.5" class="bg-transparent w-16 text-right outline-none text-white font-mono py-1" oninput="calculateTotal()">
                         <span class="text-white/60 ml-1">%</span>
                     </div>
                 </div>
-                <!-- Botón cambiado a "Log Out" -->
                 <button onclick="handleLogout()" title="Cerrar sesión" class="bg-red-500/20 hover:bg-red-500/40 border border-red-400/30 text-red-300 text-xs font-semibold px-3 py-2 rounded-lg transition-all self-end">
                     Log Out
                 </button>
@@ -190,7 +191,12 @@
                         <div class="inner-box p-4 rounded-xl">
                             <label class="block text-sm font-medium text-white/90 mb-2">Diseño RRSS / Flyer</label>
                             <div class="flex gap-2">
-                                <select id="rrss-type" class="input-dark rounded px-2 py-1 text-sm w-[120px] shrink-0" onchange="calculateTotal()"><option value="3">Standard ($3)</option><option value="5">VIP ($5)</option></select>
+                                <select id="rrss-type" class="input-dark rounded px-2 py-1 text-sm w-max shrink-0" onchange="toggleCustom('rrss-type'); calculateTotal()">
+                                    <option value="3">Standard ($3)</option>
+                                    <option value="5">VIP ($5)</option>
+                                    <option value="custom">Personalizado</option>
+                                </select>
+                                <input type="number" id="rrss-type-custom" min="0" step="0.01" placeholder="Precio $" class="input-dark rounded px-1 py-1 w-16 text-center text-sm hidden transition-all" oninput="calculateTotal()">
                                 <input type="number" id="rrss-qty" min="0" placeholder="Cant." class="input-dark rounded px-2 py-1 w-full text-center" oninput="calculateTotal()">
                             </div>
                         </div>
@@ -201,7 +207,12 @@
                         <div class="inner-box p-4 rounded-xl">
                             <label class="block text-sm font-medium text-white/90 mb-2">Reel</label>
                             <div class="flex gap-2">
-                                <select id="reel-type" class="input-dark rounded px-2 py-1 text-sm w-[120px] shrink-0" onchange="calculateTotal()"><option value="5">Standard ($5)</option><option value="10">VIP ($10)</option></select>
+                                <select id="reel-type" class="input-dark rounded px-2 py-1 text-sm w-max shrink-0" onchange="toggleCustom('reel-type'); calculateTotal()">
+                                    <option value="5">Standard ($5)</option>
+                                    <option value="10">VIP ($10)</option>
+                                    <option value="custom">Personalizado</option>
+                                </select>
+                                <input type="number" id="reel-type-custom" min="0" step="0.01" placeholder="Precio $" class="input-dark rounded px-1 py-1 w-16 text-center text-sm hidden transition-all" oninput="calculateTotal()">
                                 <input type="number" id="reel-qty" min="0" placeholder="Cant." class="input-dark rounded px-2 py-1 w-full text-center" oninput="calculateTotal()">
                             </div>
                         </div>
@@ -212,14 +223,24 @@
                         <div class="inner-box p-4 rounded-xl">
                             <label class="block text-sm font-medium text-white/90 mb-2">Edición de Fotos</label>
                             <div class="flex gap-2">
-                                <select id="photo-type" class="input-dark rounded px-2 py-1 text-sm w-[120px] shrink-0" onchange="calculateTotal()"><option value="10">Standard ($10)</option><option value="15">VIP ($15)</option></select>
+                                <select id="photo-type" class="input-dark rounded px-2 py-1 text-sm w-max shrink-0" onchange="toggleCustom('photo-type'); calculateTotal()">
+                                    <option value="10">Standard ($10)</option>
+                                    <option value="15">VIP ($15)</option>
+                                    <option value="custom">Personalizado</option>
+                                </select>
+                                <input type="number" id="photo-type-custom" min="0" step="0.01" placeholder="Precio $" class="input-dark rounded px-1 py-1 w-16 text-center text-sm hidden transition-all" oninput="calculateTotal()">
                                 <input type="number" id="photo-qty" min="0" placeholder="Cant." class="input-dark rounded px-2 py-1 w-full text-center" oninput="calculateTotal()">
                             </div>
                         </div>
                         <div class="inner-box p-4 rounded-xl">
                             <label class="block text-sm font-medium text-white/90 mb-2">Pauta</label>
                             <div class="flex gap-2">
-                                <select id="pauta-type" class="input-dark rounded px-2 py-1 text-sm w-[120px] shrink-0" onchange="calculateTotal()"><option value="10">Standard ($10)</option><option value="15">VIP ($15)</option></select>
+                                <select id="pauta-type" class="input-dark rounded px-2 py-1 text-sm w-max shrink-0" onchange="toggleCustom('pauta-type'); calculateTotal()">
+                                    <option value="10">Standard ($10)</option>
+                                    <option value="15">VIP ($15)</option>
+                                    <option value="custom">Personalizado</option>
+                                </select>
+                                <input type="number" id="pauta-type-custom" min="0" step="0.01" placeholder="Precio $" class="input-dark rounded px-1 py-1 w-16 text-center text-sm hidden transition-all" oninput="calculateTotal()">
                                 <input type="number" id="pauta-qty" min="0" placeholder="Cant." class="input-dark rounded px-2 py-1 w-full text-center" oninput="calculateTotal()">
                             </div>
                         </div>
@@ -237,8 +258,19 @@
                         <label class="flex items-center justify-between p-3 inner-box rounded-xl cursor-pointer"><span class="text-sm">Gestión de cuenta ($30)</span><input type="checkbox" id="est-gestion" class="w-4 h-4 accent-neonBlue" value="30" onchange="calculateTotal()"></label>
                         <label class="flex items-center justify-between p-3 inner-box rounded-xl cursor-pointer"><span class="text-sm">Informe redes VIP ($10)</span><input type="checkbox" id="est-informe" class="w-4 h-4 accent-neonBlue" value="10" onchange="calculateTotal()"></label>
                         <label class="flex items-center justify-between p-3 inner-box rounded-xl cursor-pointer"><span class="text-sm">Planificación ($10)</span><input type="checkbox" id="est-plan" class="w-4 h-4 accent-neonBlue" value="10" onchange="calculateTotal()"></label>
-                        <label class="flex items-center justify-between p-3 inner-box rounded-xl cursor-pointer">
-                            <div class="flex flex-col"><span class="text-sm">Branding</span><select id="est-branding" class="input-dark rounded px-1 text-xs mt-1" onchange="calculateTotal()"><option value="0">No incluir</option><option value="15">Standard ($15)</option><option value="50">VIP ($50)</option></select></div>
+                        <label class="flex items-center justify-between p-3 inner-box rounded-xl cursor-pointer flex-wrap gap-2">
+                            <div class="flex flex-col w-full sm:w-auto">
+                                <span class="text-sm">Branding</span>
+                                <div class="flex gap-2 mt-1">
+                                    <select id="est-branding" class="input-dark rounded px-1 text-xs shrink-0" onchange="toggleCustom('est-branding'); calculateTotal()">
+                                        <option value="0">No incluir</option>
+                                        <option value="15">Standard ($15)</option>
+                                        <option value="50">VIP ($50)</option>
+                                        <option value="custom">Personalizado</option>
+                                    </select>
+                                    <input type="number" id="est-branding-custom" min="0" step="0.01" placeholder="Precio $" class="input-dark rounded px-1 py-1 w-16 text-center text-xs hidden transition-all" oninput="calculateTotal()">
+                                </div>
+                            </div>
                         </label>
                         <label class="flex items-center justify-between p-3 inner-box rounded-xl cursor-pointer"><span class="text-sm">Segmentación VIP ($10)</span><input type="checkbox" id="est-segmentacion" class="w-4 h-4 accent-neonBlue" value="10" onchange="calculateTotal()"></label>
                         <label class="flex items-center justify-between p-3 inner-box rounded-xl cursor-pointer"><span class="text-sm">Campaña META ADS VIP ($10)</span><input type="checkbox" id="est-meta" class="w-4 h-4 accent-neonBlue" value="10" onchange="calculateTotal()"></label>
@@ -266,10 +298,20 @@
                             <div class="flex justify-between items-center"><span class="text-sm text-white/70 flex items-center gap-1"><div class="w-2 h-2 rounded-full bg-purple-400"></div> Capital (30%)</span><span class="font-mono text-sm font-bold text-purple-300">$<span id="dist-capital">0.00</span></span></div>
                         </div>
                     </div>
+                    <button class="w-full mt-6 bg-neonBlue text-white hover:bg-blue-600 font-bold py-3 px-4 rounded-xl transition-all shadow-[0_0_15px_rgba(69,74,222,0.5)] active:scale-95 border border-white/20" onclick="exportarPDF()">
+                        Exportar Resumen PDF
+                    </button>
+                    <!-- NUEVO BOTÓN DE RESTABLECER -->
+                    <button class="w-full mt-3 bg-transparent text-white/50 hover:text-white hover:bg-white/10 font-bold py-2 px-4 rounded-xl transition-all border border-white/10 text-sm active:scale-95" onclick="resetearTabulador()">
+                        Restablecer a Cero
+                    </button>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- ESTRUCTURA PARA EL PDF -->
+    <div id="pdf-export-container"></div>
 
     <script>
         // --- CONTROL DE ACCESO ---
@@ -277,7 +319,7 @@
         const AUTH_PIN = '758595';
 
         function checkSession() {
-            if (localStorage.getItem('priceStudioAuth') === 'true') {
+            if (sessionStorage.getItem('priceStudioAuth') === 'true') {
                 showApp(false);
             }
         }
@@ -289,7 +331,7 @@
             const errorMsg = document.getElementById('login-error');
 
             if (u === AUTH_USER && p === AUTH_PIN) {
-                localStorage.setItem('priceStudioAuth', 'true');
+                sessionStorage.setItem('priceStudioAuth', 'true');
                 errorMsg.classList.add('hidden');
                 showApp(true);
             } else {
@@ -303,18 +345,64 @@
             const app = document.getElementById('app-container');
             modal.classList.add('hidden');
             app.classList.remove('hidden');
-
-            if (animate) {
-                app.classList.add('animate-zoom-in');
-            }
+            if (animate) app.classList.add('animate-zoom-in');
         }
 
         function handleLogout() {
-            localStorage.removeItem('priceStudioAuth');
+            sessionStorage.removeItem('priceStudioAuth');
             location.reload();
         }
 
         checkSession();
+
+        // --- LÓGICA DE INTERFAZ (PRECIO PERSONALIZADO) ---
+        function toggleCustom(idStr) {
+            const select = document.getElementById(idStr);
+            const customInput = document.getElementById(idStr + '-custom');
+            if (select.value === 'custom') {
+                customInput.classList.remove('hidden');
+            } else {
+                customInput.classList.add('hidden');
+                customInput.value = ''; 
+            }
+        }
+
+        // --- LÓGICA DE RESTABLECER (NUEVA) ---
+        function resetearTabulador() {
+            // Textos y Fechas
+            document.getElementById('form-empresa').value = '';
+            document.getElementById('form-fecha').valueAsDate = new Date();
+            document.getElementById('form-plan').value = 'Standard';
+            document.querySelector('input[name="form-tasa"][value="USDT"]').checked = true;
+            document.getElementById('global-margin').value = 48;
+
+            // Cantidades numéricas
+            const inputsCantidad = ['rrss-qty', 'carrusel-qty', 'reel-qty', 'storie-qty', 'photo-qty', 'pauta-qty', 'logo-qty'];
+            inputsCantidad.forEach(id => document.getElementById(id).value = '');
+
+            // Campos personalizados ocultos
+            const inputsPersonalizados = ['rrss-type-custom', 'reel-type-custom', 'photo-type-custom', 'pauta-type-custom', 'est-branding-custom'];
+            inputsPersonalizados.forEach(id => {
+                const el = document.getElementById(id);
+                el.value = '';
+                el.classList.add('hidden');
+            });
+
+            // Restablecer selects
+            document.getElementById('rrss-type').value = '3';
+            document.getElementById('reel-type').value = '5';
+            document.getElementById('photo-type').value = '10';
+            document.getElementById('pauta-type').value = '10';
+            document.getElementById('est-branding').value = '0';
+
+            // Desmarcar Checkboxes
+            ['est-gestion', 'est-informe', 'est-plan', 'est-segmentacion', 'est-meta'].forEach(id => {
+                document.getElementById(id).checked = false;
+            });
+
+            // Actualizar vista a 0
+            calculateTotal();
+        }
 
         // --- LÓGICA DEL TABULADOR ---
         let currentItems = [];
@@ -339,23 +427,70 @@
                 }
                 return val;
             };
-            
-            const getPrice = (id) => parseFloat(document.getElementById(id).value);
 
-            if (getVal('rrss-qty') > 0) addLine(`Diseño RRSS (${getPrice('rrss-type') === 3 ? 'Standard' : 'VIP'})`, getVal('rrss-qty'), getPrice('rrss-type'));
+            if (getVal('rrss-qty') > 0) {
+                const sel = document.getElementById('rrss-type').value;
+                if (sel === 'custom') {
+                    const p = parseFloat(document.getElementById('rrss-type-custom').value) || 0;
+                    addLine('Diseño RRSS (Personalizado)', getVal('rrss-qty'), p);
+                } else {
+                    const p = parseFloat(sel);
+                    addLine(`Diseño RRSS (${p === 3 ? 'Standard' : 'VIP'})`, getVal('rrss-qty'), p);
+                }
+            }
+
             if (getVal('carrusel-qty') > 0) addLine('Carrusel', getVal('carrusel-qty'), 7);
-            if (getVal('reel-qty') > 0) addLine(`Reel (${getPrice('reel-type') === 5 ? 'Standard' : 'VIP'})`, getVal('reel-qty'), getPrice('reel-type'));
+
+            if (getVal('reel-qty') > 0) {
+                const sel = document.getElementById('reel-type').value;
+                if (sel === 'custom') {
+                    const p = parseFloat(document.getElementById('reel-type-custom').value) || 0;
+                    addLine('Reel (Personalizado)', getVal('reel-qty'), p);
+                } else {
+                    const p = parseFloat(sel);
+                    addLine(`Reel (${p === 5 ? 'Standard' : 'VIP'})`, getVal('reel-qty'), p);
+                }
+            }
+
             if (getVal('storie-qty') > 0) addLine('Storie', getVal('storie-qty'), 1);
-            if (getVal('photo-qty') > 0) addLine(`Edición Fotos (${getPrice('photo-type') === 10 ? 'Standard' : 'VIP'})`, getVal('photo-qty'), getPrice('photo-type'));
-            if (getVal('pauta-qty') > 0) addLine(`Pauta (${getPrice('pauta-type') === 10 ? 'Standard' : 'VIP'})`, getVal('pauta-qty'), getPrice('pauta-type'));
+
+            if (getVal('photo-qty') > 0) {
+                const sel = document.getElementById('photo-type').value;
+                if (sel === 'custom') {
+                    const p = parseFloat(document.getElementById('photo-type-custom').value) || 0;
+                    addLine('Edición Fotos (Personalizado)', getVal('photo-qty'), p);
+                } else {
+                    const p = parseFloat(sel);
+                    addLine(`Edición Fotos (${p === 10 ? 'Standard' : 'VIP'})`, getVal('photo-qty'), p);
+                }
+            }
+
+            if (getVal('pauta-qty') > 0) {
+                const sel = document.getElementById('pauta-type').value;
+                if (sel === 'custom') {
+                    const p = parseFloat(document.getElementById('pauta-type-custom').value) || 0;
+                    addLine('Pauta (Personalizado)', getVal('pauta-qty'), p);
+                } else {
+                    const p = parseFloat(sel);
+                    addLine(`Pauta (${p === 10 ? 'Standard' : 'VIP'})`, getVal('pauta-qty'), p);
+                }
+            }
+
             if (getVal('logo-qty') > 0) addLine('Diseño de Logo (VIP)', getVal('logo-qty'), 15);
 
             ['est-gestion', 'est-informe', 'est-plan', 'est-segmentacion', 'est-meta'].forEach(id => {
                 const cb = document.getElementById(id);
                 if (cb.checked) addLine(cb.parentElement.querySelector('span').innerText, 1, parseFloat(cb.value));
             });
-            const brandingVal = getPrice('est-branding');
-            if(brandingVal > 0) addLine(`Branding (${brandingVal === 15 ? 'Standard' : 'VIP'})`, 1, brandingVal);
+
+            const brandSel = document.getElementById('est-branding').value;
+            if (brandSel === 'custom') {
+                const p = parseFloat(document.getElementById('est-branding-custom').value) || 0;
+                if(p > 0) addLine('Branding (Personalizado)', 1, p);
+            } else {
+                const p = parseFloat(brandSel) || 0;
+                if(p > 0) addLine(`Branding (${p === 15 ? 'Standard' : 'VIP'})`, 1, p);
+            }
 
             let uiHTML = currentItems.map(item => `<div class="flex justify-between items-center py-1 border-b border-neonBlue/20 last:border-0"><span>${item.qty}x ${item.name}</span><span class="font-mono">$${item.total.toFixed(2)}</span></div>`).join('');
             document.getElementById('summary-items').innerHTML = uiHTML || '<p class="text-white/40 italic text-center mt-8">Agrega servicios</p>';
@@ -381,6 +516,66 @@
             document.getElementById('dist-capital').innerText = (gananciaTotal * 0.30).toFixed(2);
 
             currentData = { subtotal: subtotalNeto.toFixed(2), venta: totalVenta.toFixed(2), ganancia: gananciaTotal.toFixed(2), ceo: (gananciaTotal * 0.40).toFixed(2), caja: (gananciaTotal * 0.30).toFixed(2), capital: (gananciaTotal * 0.30).toFixed(2), margen: marginInput };
+        }
+
+        // --- FUNCIÓN DE EXPORTACIÓN PDF ---
+        function exportarPDF() {
+            const empresa = document.getElementById('form-empresa').value.trim() || 'Sin_Nombre';
+            const fecha = document.getElementById('form-fecha').value || 'Sin_Fecha';
+            const plan = document.getElementById('form-plan').value;
+            const tasa = document.querySelector('input[name="form-tasa"]:checked').value;
+            const nombreArchivo = `PRESUPUESTO_${plan}_${empresa}_${fecha}`.replace(/\s+/g, '_') + '.pdf';
+
+            let itemsPDFHTML = currentItems.map(item => `
+                <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid rgba(69, 74, 222, 0.3);">
+                    <span>${item.qty}x ${item.name}</span>
+                    <span style="font-family: monospace;">$${item.total.toFixed(2)}</span>
+                </div>
+            `).join('');
+
+            const pdfMolde = `
+                <div id="pdf-content" style="background-color: #232A5B; color: #ffffff; font-family: sans-serif; width: 450px; padding: 25px; border: 2px solid #454ADE; box-sizing: border-box;">
+                    <h2 style="font-size: 20px; font-weight: bold; margin-bottom: 15px; border-bottom: 1px solid rgba(69, 74, 222, 0.5); padding-bottom: 8px;">Resumen Operativo</h2>
+                    <div style="background-color: rgba(0,0,0,0.3); padding: 12px; border-radius: 8px; margin-bottom: 20px; font-size: 13px; border: 1px solid rgba(69, 74, 222, 0.4);">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 6px;"><span>Cliente: <strong>${empresa}</strong></span><span>Fecha: <strong>${fecha}</strong></span></div>
+                        <div style="display: flex; justify-content: space-between;"><span>Plan: <strong>${plan}</strong></span><span>Tasa: <strong>${tasa}</strong></span></div>
+                    </div>
+                    <div style="margin-bottom: 20px; font-size: 13px; min-height: 50px;">
+                        ${itemsPDFHTML || '<p style="text-align:center; color: rgba(255,255,255,0.5);">No se agregaron servicios.</p>'}
+                    </div>
+                    <div style="border-top: 1px solid rgba(69, 74, 222, 0.5); padding-top: 15px; margin-bottom: 20px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 14px;"><span>Costo Neto:</span><span style="font-family: monospace; font-weight: bold;">$${currentData.subtotal}</span></div>
+                        <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 18px; color: #a7f3d0;"><span>Monto Venta Sugerido:</span><span style="font-family: monospace;">$${currentData.venta}</span></div>
+                    </div>
+                    <div style="background-color: rgba(0,0,0,0.3); border-radius: 8px; padding: 15px; border: 1px solid rgba(69, 74, 222, 0.4);">
+                        <h3 style="font-size: 11px; text-transform: uppercase; margin-bottom: 10px; color: rgba(255,255,255,0.6); font-weight: bold;">Distribución (${currentData.margen}%)</h3>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px; font-weight: bold; font-size: 14px;"><span>Ganancia Total:</span><span>$${currentData.ganancia}</span></div>
+                        <div style="border-top: 1px solid rgba(69, 74, 222, 0.3); padding-top: 10px; font-size: 13px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;"><span>CEO (40%)</span><span style="font-family: monospace;">$${currentData.ceo}</span></div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;"><span>Caja Chica (30%)</span><span style="font-family: monospace;">$${currentData.caja}</span></div>
+                            <div style="display: flex; justify-content: space-between; font-weight: bold; color: #d8b4fe;"><span>Capital (30%)</span><span style="font-family: monospace;">$${currentData.capital}</span></div>
+                        </div>
+                    </div>
+                    <div style="margin-top: 20px; text-align: center; font-size: 10px; color: rgba(255,255,255,0.4);">Price Studio Internal</div>
+                </div>
+            `;
+
+            const container = document.getElementById('pdf-export-container');
+            container.innerHTML = pdfMolde;
+            window.scrollTo(0, 0);
+            const contentElement = document.getElementById('pdf-content');
+            
+            const opt = {
+                margin:       0,
+                filename:     nombreArchivo,
+                image:        { type: 'jpeg', quality: 1 },
+                html2canvas:  { scale: 2, useCORS: true, backgroundColor: '#03120e', scrollY: 0, scrollX: 0 },
+                jsPDF:        { unit: 'px', format: [contentElement.offsetWidth, contentElement.offsetHeight], orientation: 'portrait' }
+            };
+
+            html2pdf().set(opt).from(contentElement).save().then(() => {
+                container.innerHTML = '';
+            });
         }
     </script>
 </body>
