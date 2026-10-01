@@ -6,6 +6,8 @@
     <title>Price Studio | Staff</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <!-- Librería OCR para leer los captures automáticamente -->
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
     
     <script>
         tailwind.config = {
@@ -49,6 +51,7 @@
             transition: border-color 0.3s ease;
         }
         .input-dark:focus { border-color: #454ADE; }
+        .input-dark option { background-color: #121633; color: #ffffff; }
         
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: rgba(0,0,0, 0.2); }
@@ -96,6 +99,13 @@
             filter: grayscale(100%);
         }
 
+        .drag-over-active {
+            border-color: #a7f3d0 !important;
+            background-color: rgba(167, 243, 208, 0.12) !important;
+            box-shadow: 0 0 20px rgba(167, 243, 208, 0.4) !important;
+            transform: scale(1.01);
+        }
+
         #pdf-export-container {
             position: absolute;
             top: 0;
@@ -134,12 +144,55 @@
         </div>
     </div>
 
-    <!-- 2. PANTALLA MENÚ PRINCIPAL (HUB) -->
+    <!-- 1.5 PANTALLA: SELECTOR DE MÓDULO PRINCIPAL -->
+    <div id="main-menu-view" class="max-w-4xl mx-auto hidden">
+        <header class="mb-10 border-b border-neonBlue/30 pb-4 flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div>
+                <img src="Ver 2 w.svg" alt="Bloom Studio" class="h-12 w-auto mb-3 object-contain" onerror="this.onerror=null; this.outerHTML='<div class=\'h-12 w-48 mb-3 bg-red-600 border-2 border-red-400 flex items-center justify-center text-white font-bold text-sm rounded-lg shadow-lg\'>FALTA LOGO SVG</div>'">
+                <h1 class="text-2xl md:text-3xl font-bold text-white">Price Studio | Hub Central</h1>
+                <p class="text-white/60 text-sm mt-1">Selecciona la operación que deseas realizar hoy</p>
+            </div>
+            <button onclick="handleLogout()" title="Cerrar sesión" class="bg-red-500/20 hover:bg-red-500/40 border border-red-400/30 text-red-300 text-xs font-semibold px-4 py-2 rounded-lg transition-all self-start md:self-end">
+                Log Out
+            </button>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-6">
+            <div onclick="showHub(true)" class="neon-panel p-8 category-card cursor-pointer flex flex-col items-center text-center group bg-gradient-to-b from-[#232A5B] to-[#121633]">
+                <div class="w-20 h-20 rounded-2xl bg-neonBlue/20 flex items-center justify-center mb-6 group-hover:bg-neonBlue/40 transition-colors border border-neonBlue/40">
+                    <svg class="w-10 h-10 text-neonBlue group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                    </svg>
+                </div>
+                <h2 class="text-2xl font-bold text-white mb-2 group-hover:text-accent transition-colors">Cotizar un Precio</h2>
+                <p class="text-sm text-white/60 max-w-xs">Tabulador de servicios, cálculo de márgenes, costes operativos y exportación de presupuestos.</p>
+            </div>
+
+            <div onclick="showPaymentView(true)" class="neon-panel p-8 category-card cursor-pointer flex flex-col items-center text-center group bg-gradient-to-b from-[#232A5B] to-[#121633]">
+                <div class="w-20 h-20 rounded-2xl bg-accent/15 flex items-center justify-center mb-6 group-hover:bg-accent/30 transition-colors border border-accent/40">
+                    <svg class="w-10 h-10 text-accent group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4m0 0l-1.5-1.5M12 12l1.5-1.5"></path>
+                    </svg>
+                </div>
+                <h2 class="text-2xl font-bold text-white mb-2 group-hover:text-accent transition-colors">Registrar Pago al Staff</h2>
+                <p class="text-sm text-white/60 max-w-xs">Directorio de staff, escaneo inteligente de captures y generación de nota de entrega en PDF.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. PANTALLA MENÚ CATEGORÍAS COTIZADOR (HUB) -->
     <div id="hub-view" class="max-w-5xl mx-auto hidden">
         <header class="mb-8 border-b border-neonBlue/30 pb-4 flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div>
-                <img src="Ver 2 w.svg" alt="Bloom Studio" class="h-12 w-auto mb-3 object-contain" onerror="this.onerror=null; this.outerHTML='<div class=\'h-12 w-48 mb-3 bg-red-600 border-2 border-red-400 flex items-center justify-center text-white font-bold text-sm rounded-lg shadow-lg\'>FALTA LOGO SVG</div>'">
-                <h1 class="text-2xl md:text-3xl font-bold text-white">Price Studio</h1>
+                <div class="flex items-center gap-3 mb-3">
+                    <button onclick="showMainMenu(true)" class="flex items-center gap-1.5 bg-transparent hover:bg-white/10 border border-white/20 text-white px-3 py-1.5 rounded-lg transition-all text-xs font-semibold">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                        Inicio
+                    </button>
+                    <img src="Ver 2 w.svg" alt="Bloom Studio" class="h-10 w-auto object-contain" onerror="this.onerror=null; this.outerHTML='<div class=\'h-10 w-36 bg-red-600 border border-red-400 flex items-center justify-center text-white font-bold text-xs rounded-lg\'>FALTA LOGO SVG</div>'">
+                </div>
+                <h1 class="text-2xl md:text-3xl font-bold text-white">Price Studio | Cotizador</h1>
                 <p class="text-white/60 text-sm mt-1">Paso 1: Configura el proyecto y elige el servicio</p>
             </div>
             <button onclick="handleLogout()" title="Cerrar sesión" class="bg-red-500/20 hover:bg-red-500/40 border border-red-400/30 text-red-300 text-xs font-semibold px-4 py-2 rounded-lg transition-all self-start md:self-end">
@@ -187,7 +240,6 @@
 
         <h2 class="text-xl font-bold text-white mb-4">Selecciona una Categoría</h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            
             <div onclick="openCalculator('social')" class="neon-panel p-6 category-card cursor-pointer flex flex-col items-center text-center group bg-gradient-to-b from-[#232A5B] to-[#121633]">
                 <div class="w-16 h-16 rounded-full bg-neonBlue/20 flex items-center justify-center mb-4 group-hover:bg-neonBlue/40 transition-colors">
                     <svg class="w-8 h-8 text-neonBlue group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 8a2 2 0 100-4 2 2 0 000 4z"></path></svg>
@@ -213,7 +265,6 @@
                 <h3 class="text-lg font-bold text-white/60 mb-2">Web & App</h3>
                 <p class="text-sm text-white/40">Landing pages, e-commerce, UI/UX y sitios corporativos.</p>
             </div>
-
         </div>
     </div>
 
@@ -226,9 +277,8 @@
                     Volver al Menú
                 </button>
                 <div class="h-6 w-px bg-white/20 hidden md:block"></div>
-                <!-- LOGO INCORPORADO AL LADO DEL TÍTULO -->
-                <div class="flex items-center gap-3 hidden md:flex">
-                    <img src="Ver 2 w.svg" alt="Bloom Studio" class="h-8 w-auto object-contain" onerror="this.style.display='none'">
+                <div class="flex items-center gap-3">
+                    <img src="Ver 2 w.svg" alt="Bloom Studio" class="h-8 w-auto object-contain" onerror="this.onerror=null; this.outerHTML='<div class=\'h-8 px-2 bg-red-600 border border-red-400 flex items-center justify-center text-white font-bold text-[10px] rounded\'>FALTA LOGO</div>'">
                     <h1 class="text-xl font-bold text-white">Tabulador: Redes Sociales</h1>
                 </div>
             </div>
@@ -370,7 +420,6 @@
                     <h2 class="text-xl font-semibold mb-1 text-white">Costes Operativos</h2>
                     <p class="text-white/50 text-xs mb-4">Talentos y logística (Se gestionan separados del diseño)</p>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        
                         <label class="flex items-center justify-between p-3 inner-box rounded-xl cursor-pointer flex-wrap gap-2 border-l-2 border-l-neonBlue">
                             <div class="flex flex-col w-full">
                                 <span class="text-sm text-white/90">Modelo</span>
@@ -460,7 +509,6 @@
                     <button class="w-full mt-6 bg-neonBlue text-white hover:bg-blue-600 font-bold py-3 px-4 rounded-xl transition-all shadow-[0_0_15px_rgba(69,74,222,0.5)] active:scale-95 border border-white/20" onclick="exportarPDF()">
                         Exportar Resumen PDF
                     </button>
-                    <!-- BOTÓN DE RESTABLECER Llama a Modal -->
                     <button class="w-full mt-3 bg-transparent text-white/50 hover:text-red-400 hover:bg-red-400/10 font-bold py-2 px-4 rounded-xl transition-all border border-white/10 text-sm active:scale-95 flex items-center justify-center gap-2" onclick="showResetModal()">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                         Restablecer Tabulador
@@ -470,7 +518,262 @@
         </div>
     </div>
 
-    <!-- MODAL DE CONFIRMACIÓN DE RESTABLECER ÚNICO -->
+    <!-- 4. PANTALLA: REGISTRAR PAGO AL STAFF -->
+    <div id="payment-view" class="max-w-6xl mx-auto hidden">
+        <header class="mb-6 border-b border-neonBlue/30 pb-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div class="flex items-center gap-4 flex-wrap">
+                <button onclick="showMainMenu(true)" class="flex items-center gap-2 bg-transparent hover:bg-white/10 border border-white/20 text-white px-3 py-2 rounded-lg transition-all text-sm font-semibold">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                    Volver al Inicio
+                </button>
+                <div class="h-6 w-px bg-white/20 hidden md:block"></div>
+                <div class="flex items-center gap-3">
+                    <img src="Ver 2 w.svg" alt="Bloom Studio" class="h-8 w-auto object-contain" onerror="this.onerror=null; this.outerHTML='<div class=\'h-8 px-2 bg-red-600 border border-red-400 flex items-center justify-center text-white font-bold text-[10px] rounded\'>FALTA LOGO</div>'">
+                    <h1 class="text-xl font-bold text-white">Registro de Pago al Staff</h1>
+                </div>
+            </div>
+            <div class="flex items-center gap-3 self-start md:self-end">
+                <button onclick="toggleAddStaffPanel()" class="bg-neonBlue/20 hover:bg-neonBlue border border-neonBlue text-white text-xs font-bold px-3.5 py-2 rounded-lg transition-all flex items-center gap-1.5 shadow-[0_0_10px_rgba(69,74,222,0.3)]">
+                    <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
+                    Agregar Miembro de Staff
+                </button>
+                <button onclick="handleLogout()" title="Cerrar sesión" class="bg-red-500/20 hover:bg-red-500/40 border border-red-400/30 text-red-300 text-xs font-semibold px-4 py-2 rounded-lg transition-all">
+                    Log Out
+                </button>
+            </div>
+        </header>
+
+        <!-- SECCIÓN DESPLEGABLE: AGREGAR MIEMBRO DE STAFF -->
+        <section id="add-staff-panel" class="neon-panel p-6 mb-8 hidden animate-zoom-in">
+            <div class="flex justify-between items-center mb-4 border-b border-neonBlue/30 pb-2">
+                <div>
+                    <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                        <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                        Directorio: Agregar Miembro del Staff
+                    </h2>
+                    <p class="text-xs text-white/50">Guarda los datos una vez y quedarán disponibles siempre en la lista desplegable</p>
+                </div>
+                <button onclick="toggleAddStaffPanel()" class="text-white/50 hover:text-white text-xs px-2 py-1 rounded border border-white/10">Cerrar ✕</button>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                <div>
+                    <label class="block text-xs text-white/70 mb-1">Nombre Completo</label>
+                    <input type="text" id="new-staff-name" class="w-full input-dark rounded-lg px-3 py-2 text-sm" placeholder="Ej. Carlos Pérez">
+                </div>
+                <div>
+                    <label class="block text-xs text-white/70 mb-1">Cédula</label>
+                    <input type="text" id="new-staff-id" class="w-full input-dark rounded-lg px-3 py-2 text-sm" placeholder="Ej. V-25.123.456">
+                </div>
+                <div>
+                    <label class="block text-xs text-white/70 mb-1">Cargo</label>
+                    <input type="text" id="new-staff-role" class="w-full input-dark rounded-lg px-3 py-2 text-sm" placeholder="Ej. Diseñador / Editor">
+                </div>
+                <div>
+                    <label class="block text-xs text-white/70 mb-1">Dirección</label>
+                    <input type="text" id="new-staff-address" class="w-full input-dark rounded-lg px-3 py-2 text-sm" placeholder="Ej. Barquisimeto, Lara">
+                </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-2 border-t border-neonBlue/20">
+                <div id="staff-saved-msg" class="text-xs text-accent font-medium hidden">✓ Miembro guardado y agregado al desplegable</div>
+                <div class="flex gap-2 ml-auto">
+                    <button type="button" onclick="saveNewStaffMember()" class="bg-neonBlue hover:bg-blue-600 text-white font-bold px-5 py-2 rounded-xl text-xs transition-all shadow-[0_0_12px_rgba(69,74,222,0.5)] border border-white/20">
+                        Guardar en Directorio
+                    </button>
+                </div>
+            </div>
+
+            <div class="mt-4 pt-3 border-t border-neonBlue/20">
+                <span class="block text-[11px] text-white/50 uppercase tracking-wider mb-2 font-semibold">Miembros almacenados en el directorio:</span>
+                <div id="directory-saved-list" class="flex flex-wrap gap-2"></div>
+            </div>
+        </section>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <!-- Columna Izquierda: Subida de Capture -->
+            <div class="lg:col-span-5 space-y-4">
+                <div class="neon-panel p-6 flex flex-col items-center text-center">
+                    <h2 class="text-lg font-semibold text-white mb-1 self-start">1. Comprobante / Capture</h2>
+                    <p class="text-xs text-white/50 mb-4 self-start">Arrastra la imagen desde tu PC, haz clic o pega con Ctrl+V</p>
+
+                    <label id="capture-dropzone" for="capture-upload" class="w-full inner-box border-2 border-dashed border-neonBlue/60 rounded-xl p-6 cursor-pointer hover:bg-neonBlue/10 transition-all flex flex-col items-center justify-center min-h-[240px] relative overflow-hidden">
+                        <input type="file" id="capture-upload" accept="image/*" class="hidden" onchange="handleCaptureUpload(event)">
+                        
+                        <div id="upload-placeholder" class="flex flex-col items-center pointer-events-none">
+                            <svg class="w-12 h-12 text-neonBlue mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                            </svg>
+                            <span class="text-sm font-semibold text-white">Arrastra y suelta tu capture aquí</span>
+                            <span class="text-xs text-white/50 mt-1">o haz clic para explorar / Ctrl + V</span>
+                        </div>
+
+                        <img id="capture-preview" src="" alt="Vista previa" class="hidden max-h-[320px] w-auto object-contain rounded-lg shadow-lg pointer-events-none">
+                    </label>
+
+                    <div id="ocr-status" class="w-full mt-4 hidden">
+                        <div class="inner-box rounded-lg p-3 flex items-center justify-between text-xs">
+                            <span id="ocr-status-text" class="text-accent font-medium flex items-center gap-2">
+                                <svg class="w-4 h-4 animate-spin text-neonBlue" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                                </svg>
+                                Analizando datos del capture...
+                            </span>
+                            <span id="ocr-badge" class="bg-neonBlue/30 text-white px-2 py-0.5 rounded font-mono text-[11px]">OCR</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Columna Derecha: Desplegable de Staff + Formulario -->
+            <div class="lg:col-span-7">
+                <div class="neon-panel p-6">
+                    <div class="flex justify-between items-center mb-4 border-b border-neonBlue/30 pb-3">
+                        <div>
+                            <h2 class="text-lg font-semibold text-white">2. Datos de la Nota de Pago</h2>
+                            <p class="text-xs text-white/50">Selecciona al miembro del Staff en el desplegable</p>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-[11px] text-white/50 block">Tasa Oficial BCV</span>
+                            <div class="flex items-center gap-1.5 mt-0.5">
+                                <span id="bcv-live-badge" class="w-2 h-2 rounded-full bg-accent animate-pulse"></span>
+                                <span id="bcv-header-rate" class="font-mono text-sm font-bold text-accent">Cargando...</span>
+                                <button type="button" onclick="fetchBCVRate()" title="Actualizar tasa BCV" class="text-white/50 hover:text-white ml-1">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- DESPLEGABLE (SELECT) DE MIEMBROS DEL STAFF -->
+                    <div class="mb-5">
+                        <label class="block text-xs text-white/70 mb-2 font-semibold uppercase tracking-wider">Miembro del Staff:</label>
+                        <div class="flex gap-2">
+                            <select id="staff-select-dropdown" onchange="handleStaffDropdownChange(this.value)" class="w-full input-dark rounded-xl px-3.5 py-2.5 h-[44px] text-sm font-semibold text-white cursor-pointer">
+                                <option value="">-- Selecciona un miembro del Staff --</option>
+                            </select>
+                            <button type="button" id="btn-unselect-staff" onclick="unselectStaffMember()" class="hidden inner-box px-3.5 rounded-xl text-xs font-semibold text-white/70 hover:text-white shrink-0" title="Cerrar formulario sin borrar al miembro">
+                                Quitar selección
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="staff-empty-prompt" class="inner-box rounded-xl p-6 text-center text-white/50 text-sm">
+                        Elige un miembro del Staff en el desplegable de arriba (o usa el botón <strong>"Agregar Miembro de Staff"</strong>) para desplegar el formulario autocompletado.
+                    </div>
+
+                    <div id="payment-form-body" class="hidden animate-zoom-in">
+                        <div class="inner-box rounded-xl p-4 mb-4 border-l-2 border-l-neonBlue">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-[11px] font-bold uppercase tracking-wider text-accent">Datos del Beneficiario</span>
+                                <span class="text-[10px] text-white/40">Autocompletado del Directorio</span>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-[11px] text-white/60 mb-0.5">Nombre Completo</label>
+                                    <input type="text" id="pay-staff" class="w-full input-dark rounded-lg px-3 py-1.5 text-sm font-semibold">
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] text-white/60 mb-0.5">Cédula</label>
+                                    <input type="text" id="pay-staff-id" class="w-full input-dark rounded-lg px-3 py-1.5 text-sm font-mono">
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] text-white/60 mb-0.5">Cargo</label>
+                                    <input type="text" id="pay-staff-role" class="w-full input-dark rounded-lg px-3 py-1.5 text-sm">
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] text-white/60 mb-0.5">Dirección</label>
+                                    <input type="text" id="pay-staff-address" class="w-full input-dark rounded-lg px-3 py-1.5 text-sm">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs text-white/70 mb-1">Fecha del Pago</label>
+                                <input type="date" id="pay-date" class="w-full input-dark rounded-lg px-3 py-2 h-[42px] block">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-white/70 mb-1">Proyecto / Cliente Asociado</label>
+                                <input type="text" id="pay-project" class="w-full input-dark rounded-lg px-3 py-2 h-[42px]" placeholder="Ej. Campaña Mensual / Caja Chica">
+                            </div>
+
+                            <div class="md:col-span-2">
+                                <label class="block text-xs text-white/70 mb-1">Concepto / Descripción</label>
+                                <input type="text" id="pay-concept" class="w-full input-dark rounded-lg px-3 py-2 h-[42px]" placeholder="Ej. Edición de Reels / Diseño">
+                            </div>
+
+                            <div>
+                                <label class="block text-xs text-white/70 mb-1">Plataforma / Método Detectado</label>
+                                <select id="pay-method" class="w-full input-dark rounded-lg px-3 py-2 h-[42px]" onchange="handleMethodChange()">
+                                    <option value="Binance Pay (USDT)">Binance Pay (USDT)</option>
+                                    <option value="Pago Móvil">Pago Móvil (Bs)</option>
+                                    <option value="Transferencia Bancaria">Transferencia Bancaria (Bs)</option>
+                                    <option value="Otro">Otro</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs text-white/70 mb-1">ID de Transacción / Referencia</label>
+                                <input type="text" id="pay-ref" class="w-full input-dark rounded-lg px-3 py-2 h-[42px] font-mono" placeholder="Auto-detectado del capture">
+                            </div>
+
+                            <div>
+                                <label class="block text-xs text-white/70 mb-1">Moneda del Capture (Tasa)</label>
+                                <div class="flex inner-box rounded-lg overflow-hidden h-[42px] border-none">
+                                    <label class="flex-1 text-center cursor-pointer relative border border-neonBlue/40 rounded-l-lg">
+                                        <input type="radio" name="pay-tasa" value="USDT" class="peer sr-only" checked onchange="updatePaymentConversion()">
+                                        <div class="w-full h-full flex items-center justify-center text-sm text-white/60 peer-checked:bg-neonBlue peer-checked:text-white transition-colors font-semibold">USDT</div>
+                                    </label>
+                                    <label class="flex-1 text-center cursor-pointer relative border-t border-b border-r border-neonBlue/40 rounded-r-lg">
+                                        <input type="radio" name="pay-tasa" value="Bs" class="peer sr-only" onchange="updatePaymentConversion()">
+                                        <div class="w-full h-full flex items-center justify-center text-sm text-white/60 peer-checked:bg-neonBlue peer-checked:text-white transition-colors font-semibold">BCV (Bs)</div>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div id="pay-amount-wrapper" class="hidden">
+                                <label class="block text-xs text-white/70 mb-1">Monto Extraído (Bs)</label>
+                                <input type="number" id="pay-amount" step="0.01" min="0" class="w-full input-dark rounded-lg px-3 py-2 h-[42px] font-mono text-lg font-bold" placeholder="0.00" oninput="updatePaymentConversion()">
+                            </div>
+                        </div>
+
+                        <div id="bs-conversion-box" class="inner-box rounded-xl p-4 mt-4 border-l-2 border-l-accent bg-[#a7f3d0]/5 hidden">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                                <div>
+                                    <span class="text-xs text-accent font-bold uppercase tracking-wider block">Conversión Automática (Al Cambio BCV)</span>
+                                    <span class="text-xs text-white/60">Calculado según tasa oficial del día</span>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <div>
+                                        <label class="block text-[10px] text-white/60 mb-0.5">Tasa BCV (Bs/$)</label>
+                                        <input type="number" id="pay-bcv-rate" step="0.01" class="input-dark rounded px-2 py-1 w-24 text-right font-mono text-sm" oninput="updatePaymentConversion()">
+                                    </div>
+                                    <div class="text-right">
+                                        <span class="block text-[10px] text-white/60 mb-0.5">Equivalente USD (BCV)</span>
+                                        <span class="font-mono text-xl font-bold text-accent">$<span id="pay-usd-equiv">0.00</span></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col sm:flex-row gap-3 mt-6">
+                            <button type="button" onclick="exportarPagoPDF()" class="flex-1 bg-neonBlue text-white hover:bg-blue-600 font-bold py-3 px-4 rounded-xl transition-all shadow-[0_0_15px_rgba(69,74,222,0.5)] active:scale-95 border border-white/20 flex items-center justify-center gap-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                Descargar Nota de Entrega (PDF)
+                            </button>
+                            <button type="button" onclick="resetPaymentForm()" class="bg-transparent text-white/60 hover:text-white hover:bg-white/10 font-bold py-3 px-4 rounded-xl transition-all border border-white/15 text-sm">
+                                Limpiar Datos del Pago
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE CONFIRMACIÓN DE RESTABLECER -->
     <div id="reset-modal" class="fixed inset-0 z-[100] items-center justify-center p-4 bg-[#03120e]/80 backdrop-blur-sm transition-all" style="display: none;">
         <div class="neon-panel p-6 w-full max-w-sm flex flex-col items-center">
             <div class="w-12 h-12 rounded-full bg-red-500/20 flex items-center justify-center mb-4 text-red-400">
@@ -494,11 +797,162 @@
 
         document.getElementById('hub-fecha').valueAsDate = new Date();
         document.getElementById('form-fecha').valueAsDate = new Date();
+        document.getElementById('pay-date').valueAsDate = new Date();
+
+        let currentCaptureDataUrl = null;
+        let currentBCVRate = 0;
+        let selectedStaffIndex = '';
+        let memoryStaffFallback = [];
+
+        // --- DIRECTORIO DE STAFF PERSISTENTE (CON DESPLEGABLE) ---
+        function getStaffList() {
+            try {
+                const raw = localStorage.getItem('bloomStudioStaffList');
+                if (raw) {
+                    memoryStaffFallback = JSON.parse(raw);
+                    return memoryStaffFallback;
+                }
+            } catch (e) {}
+            return memoryStaffFallback;
+        }
+
+        function saveStaffList(list) {
+            memoryStaffFallback = list;
+            try {
+                localStorage.setItem('bloomStudioStaffList', JSON.stringify(list));
+            } catch (e) {}
+        }
+
+        function toggleAddStaffPanel() {
+            const panel = document.getElementById('add-staff-panel');
+            panel.classList.toggle('hidden');
+            renderStaffDropdownAndDirectory();
+        }
+
+        function saveNewStaffMember() {
+            const name = document.getElementById('new-staff-name').value.trim();
+            const cedula = document.getElementById('new-staff-id').value.trim();
+            const role = document.getElementById('new-staff-role').value.trim();
+            const address = document.getElementById('new-staff-address').value.trim();
+
+            if (!name) {
+                alert('Por favor ingresa al menos el nombre del miembro del Staff.');
+                return;
+            }
+
+            const list = getStaffList();
+            list.push({ name, cedula, role, address });
+            saveStaffList(list);
+
+            document.getElementById('new-staff-name').value = '';
+            document.getElementById('new-staff-id').value = '';
+            document.getElementById('new-staff-role').value = '';
+            document.getElementById('new-staff-address').value = '';
+
+            const msg = document.getElementById('staff-saved-msg');
+            msg.classList.remove('hidden');
+            setTimeout(() => msg.classList.add('hidden'), 2500);
+
+            const newIndex = String(list.length - 1);
+            selectedStaffIndex = newIndex;
+            renderStaffDropdownAndDirectory();
+            handleStaffDropdownChange(newIndex);
+        }
+
+        function deleteStaffFromDirectory(index) {
+            const list = getStaffList();
+            const member = list[index];
+            if (!member) return;
+            if (!confirm(`¿Seguro que deseas eliminar permanentemente a "${member.name}" del directorio?`)) return;
+
+            list.splice(index, 1);
+            saveStaffList(list);
+
+            if (String(selectedStaffIndex) === String(index)) {
+                unselectStaffMember();
+            } else if (selectedStaffIndex !== '' && Number(selectedStaffIndex) > index) {
+                selectedStaffIndex = String(Number(selectedStaffIndex) - 1);
+            }
+            renderStaffDropdownAndDirectory();
+        }
+
+        function renderStaffDropdownAndDirectory() {
+            const dropdown = document.getElementById('staff-select-dropdown');
+            const dirList = document.getElementById('directory-saved-list');
+            const list = getStaffList();
+
+            let optionsHTML = `<option value="">-- Selecciona un miembro del Staff (${list.length} guardados) --</option>`;
+            list.forEach((member, idx) => {
+                const isSelected = String(selectedStaffIndex) === String(idx) ? 'selected' : '';
+                const roleLabel = member.role ? ` — ${member.role}` : '';
+                optionsHTML += `<option value="${idx}" ${isSelected}>${member.name}${roleLabel}</option>`;
+            });
+            dropdown.innerHTML = optionsHTML;
+
+            if (list.length === 0) {
+                dirList.innerHTML = `<span class="text-xs text-white/40 italic">Aún no has guardado miembros en el directorio.</span>`;
+            } else {
+                dirList.innerHTML = list.map((member, idx) => `
+                    <div class="inner-box px-3 py-1.5 rounded-lg text-xs flex items-center gap-2">
+                        <span class="font-semibold text-white">${member.name}</span>
+                        <span class="text-white/50 text-[10px]">${member.role || 'Staff'}</span>
+                        <button type="button" onclick="deleteStaffFromDirectory(${idx})" title="Borrar definitivamente del directorio" class="text-red-400/60 hover:text-red-400 ml-1 font-bold">
+                            Eliminar
+                        </button>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function handleStaffDropdownChange(val) {
+            const unselectBtn = document.getElementById('btn-unselect-staff');
+            if (val === '' || val === null || val === undefined) {
+                selectedStaffIndex = '';
+                document.getElementById('payment-form-body').classList.add('hidden');
+                document.getElementById('staff-empty-prompt').classList.remove('hidden');
+                unselectBtn.classList.add('hidden');
+                return;
+            }
+
+            const list = getStaffList();
+            const member = list[Number(val)];
+            if (!member) return;
+
+            selectedStaffIndex = String(val);
+            document.getElementById('staff-select-dropdown').value = String(val);
+
+            document.getElementById('pay-staff').value = member.name || '';
+            document.getElementById('pay-staff-id').value = member.cedula || '';
+            document.getElementById('pay-staff-role').value = member.role || '';
+            document.getElementById('pay-staff-address').value = member.address || '';
+
+            document.getElementById('staff-empty-prompt').classList.add('hidden');
+            document.getElementById('payment-form-body').classList.remove('hidden');
+            unselectBtn.classList.remove('hidden');
+        }
+
+        function unselectStaffMember() {
+            selectedStaffIndex = '';
+            const dropdown = document.getElementById('staff-select-dropdown');
+            if (dropdown) dropdown.value = '';
+            handleStaffDropdownChange('');
+        }
+
+        // --- NAVEGACIÓN DE VISTAS ---
+        function hideAllViews() {
+            document.getElementById('login-modal').style.display = 'none';
+            document.getElementById('main-menu-view').style.display = 'none';
+            document.getElementById('hub-view').style.display = 'none';
+            document.getElementById('calc-view').style.display = 'none';
+            document.getElementById('payment-view').style.display = 'none';
+        }
 
         function checkSession() {
-            if (sessionStorage.getItem('priceStudioAuth') === 'true') {
-                showHub(false);
-            }
+            try {
+                if (sessionStorage.getItem('priceStudioAuth') === 'true') {
+                    showMainMenu(false);
+                }
+            } catch (e) {}
         }
 
         function handleLogin() {
@@ -509,7 +963,7 @@
             if (u === AUTH_USER && p === AUTH_PIN) {
                 try { sessionStorage.setItem('priceStudioAuth', 'true'); } catch(e) {}
                 errorMsg.style.display = 'none';
-                showHub(true);
+                showMainMenu(true);
             } else {
                 errorMsg.classList.remove('hidden');
                 errorMsg.style.display = 'block';
@@ -517,14 +971,30 @@
             }
         }
 
+        function showMainMenu(animate) {
+            hideAllViews();
+            const mainMenu = document.getElementById('main-menu-view');
+            mainMenu.classList.remove('hidden');
+            mainMenu.style.display = 'block';
+            if (animate) mainMenu.classList.add('animate-zoom-in');
+        }
+
         function showHub(animate) {
-            document.getElementById('login-modal').style.display = 'none';
-            document.getElementById('calc-view').style.display = 'none';
-            
+            hideAllViews();
             const hub = document.getElementById('hub-view');
             hub.classList.remove('hidden');
             hub.style.display = 'block';
             if (animate) hub.classList.add('animate-zoom-in');
+        }
+
+        function showPaymentView(animate) {
+            hideAllViews();
+            const payView = document.getElementById('payment-view');
+            payView.classList.remove('hidden');
+            payView.style.display = 'block';
+            if (animate) payView.classList.add('animate-zoom-in');
+            renderStaffDropdownAndDirectory();
+            if (!currentBCVRate) fetchBCVRate();
         }
 
         function openCalculator(category) {
@@ -535,8 +1005,7 @@
             const hubTasa = document.querySelector('input[name="hub-tasa"]:checked').value;
             document.querySelector(`input[name="form-tasa"][value="${hubTasa}"]`).checked = true;
 
-            document.getElementById('hub-view').style.display = 'none';
-            
+            hideAllViews();
             const calc = document.getElementById('calc-view');
             calc.classList.remove('hidden');
             calc.style.display = 'block'; 
@@ -546,19 +1015,405 @@
         }
 
         function goBackToHub() {
-            document.getElementById('calc-view').style.display = 'none';
+            hideAllViews();
             const hub = document.getElementById('hub-view');
             hub.style.display = 'block';
             hub.classList.add('animate-zoom-in');
         }
 
         function handleLogout() {
-            sessionStorage.removeItem('priceStudioAuth');
+            try { sessionStorage.removeItem('priceStudioAuth'); } catch(e) {}
             location.reload();
         }
 
         checkSession();
 
+        // --- CONEXIÓN AUTOMÁTICA CON TASA OFICIAL BCV ---
+        async function fetchBCVRate() {
+            const rateDisplay = document.getElementById('bcv-header-rate');
+            const rateInput = document.getElementById('pay-bcv-rate');
+            rateDisplay.innerText = 'Consultando...';
+            try {
+                const response = await fetch('https://ve.dolarapi.com/v1/dolares/oficial');
+                const data = await response.json();
+                if (data && data.promedio) {
+                    currentBCVRate = parseFloat(data.promedio);
+                    rateDisplay.innerText = `${currentBCVRate.toFixed(2)} Bs/$`;
+                    rateInput.value = currentBCVRate.toFixed(2);
+                    updatePaymentConversion();
+                    return;
+                }
+            } catch (err) {
+                console.warn('No se pudo conectar con la API de tasa BCV.');
+            }
+            rateDisplay.innerText = 'Manual';
+        }
+        fetchBCVRate();
+
+        // --- DRAG & DROP, CLICK Y PEGAR (CTRL+V) PARA EL CAPTURE ---
+        const dropzone = document.getElementById('capture-dropzone');
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropzone.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                dropzone.classList.add('drag-over-active');
+            }, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropzone.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                dropzone.classList.remove('drag-over-active');
+            }, false);
+        });
+
+        dropzone.addEventListener('drop', (e) => {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            if (files && files.length > 0) {
+                const file = files[0];
+                if (file.type.startsWith('image/')) {
+                    processCaptureFile(file);
+                }
+            }
+        }, false);
+
+        window.addEventListener('paste', (e) => {
+            const payView = document.getElementById('payment-view');
+            if (payView.style.display !== 'block') return;
+            const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+            for (let item of items) {
+                if (item.type.indexOf('image') !== -1) {
+                    const file = item.getAsFile();
+                    processCaptureFile(file);
+                }
+            }
+        });
+
+        function handleCaptureUpload(event) {
+            const file = event.target.files[0];
+            if (file) processCaptureFile(file);
+        }
+
+        function processCaptureFile(file) {
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                currentCaptureDataUrl = evt.target.result;
+                const preview = document.getElementById('capture-preview');
+                const placeholder = document.getElementById('upload-placeholder');
+                preview.src = currentCaptureDataUrl;
+                preview.classList.remove('hidden');
+                placeholder.classList.add('hidden');
+                analyzeCaptureOCR(currentCaptureDataUrl);
+            };
+            reader.readAsDataURL(file);
+        }
+
+        async function analyzeCaptureOCR(imageSrc) {
+            const statusBox = document.getElementById('ocr-status');
+            const statusText = document.getElementById('ocr-status-text');
+            statusBox.classList.remove('hidden');
+            statusText.innerHTML = `
+                <svg class="w-4 h-4 animate-spin text-neonBlue" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                </svg>
+                Escaneando texto del capture...
+            `;
+
+            try {
+                const result = await Tesseract.recognize(imageSrc, 'spa+eng');
+                const rawText = result.data.text || '';
+                parseExtractedReceiptText(rawText);
+                statusText.innerHTML = `<span class="text-accent">✓ Datos extraídos del capture automáticamente</span>`;
+            } catch (error) {
+                statusText.innerHTML = `<span class="text-yellow-300">No se pudo leer con claridad. Verifica los datos manualmente.</span>`;
+            }
+        }
+
+        function getSelectedPayCurrency() {
+            const checked = document.querySelector('input[name="pay-tasa"]:checked');
+            return checked ? checked.value : 'USDT';
+        }
+
+        function setSelectedPayCurrency(val) {
+            const radio = document.querySelector(`input[name="pay-tasa"][value="${val}"]`);
+            if (radio) radio.checked = true;
+        }
+
+        function parseExtractedReceiptText(text) {
+            const cleanText = text.replace(/\r/g, ' ');
+            const lower = cleanText.toLowerCase();
+
+            const isBinance = /binance|usdt|order id|id de orden|id de pago|cripto|pay id|bep20|trc20/.test(lower);
+            const isBolivares = /bs|bolivares|bolívares|pago movil|pago móvil|banesco|mercantil|provincial|venezuela|bdv|bnc|bancamiga/.test(lower);
+
+            const methodSelect = document.getElementById('pay-method');
+
+            if (isBinance && !isBolivares) {
+                setSelectedPayCurrency('USDT');
+                methodSelect.value = 'Binance Pay (USDT)';
+            } else if (isBolivares) {
+                setSelectedPayCurrency('Bs');
+                methodSelect.value = /transferencia/.test(lower) ? 'Transferencia Bancaria' : 'Pago Móvil';
+            }
+
+            let detectedRef = '';
+            const refPatterns = [
+                /(?:referencia|ref|nro|operaci[oó]n|orden|order id|id de orden|transacci[oó]n)[:\s#.-]*([0-9]{6,22})/i,
+                /\b([0-9]{8,20})\b/
+            ];
+            for (let pattern of refPatterns) {
+                const match = cleanText.match(pattern);
+                if (match && match[1]) {
+                    detectedRef = match[1];
+                    break;
+                }
+            }
+            if (detectedRef) {
+                document.getElementById('pay-ref').value = detectedRef;
+            }
+
+            let detectedAmount = 0;
+            const amountPatterns = [
+                /(?:monto|total|cantidad|importe|bs\.?|usdt)[:\s-]*([0-9]{1,3}(?:[.,][0-9]{3})*[.,][0-9]{2})/i,
+                /([0-9]{1,3}(?:[.,][0-9]{3})*[.,][0-9]{2})\s*(?:usdt|bs)/i,
+                /\b([0-9]{1,6}[.,][0-9]{2})\b/
+            ];
+
+            for (let pattern of amountPatterns) {
+                const match = cleanText.match(pattern);
+                if (match && match[1]) {
+                    let numStr = match[1].trim();
+                    if (numStr.includes('.') && numStr.includes(',')) {
+                        if (numStr.lastIndexOf(',') > numStr.lastIndexOf('.')) {
+                            numStr = numStr.replace(/\./g, '').replace(',', '.');
+                        } else {
+                            numStr = numStr.replace(/,/g, '');
+                        }
+                    } else if (numStr.includes(',')) {
+                        numStr = numStr.replace(',', '.');
+                    }
+                    const parsed = parseFloat(numStr);
+                    if (!isNaN(parsed) && parsed > 0) {
+                        detectedAmount = parsed;
+                        break;
+                    }
+                }
+            }
+
+            if (detectedAmount > 0) {
+                document.getElementById('pay-amount').value = detectedAmount.toFixed(2);
+            }
+
+            updatePaymentConversion();
+        }
+
+        function handleMethodChange() {
+            const method = document.getElementById('pay-method').value;
+            if (method.includes('USDT')) {
+                setSelectedPayCurrency('USDT');
+            } else if (method.includes('Pago Móvil') || method.includes('Transferencia')) {
+                setSelectedPayCurrency('Bs');
+            }
+            updatePaymentConversion();
+        }
+
+        function updatePaymentConversion() {
+            const currency = getSelectedPayCurrency();
+            const amount = parseFloat(document.getElementById('pay-amount').value) || 0;
+            const amountWrapper = document.getElementById('pay-amount-wrapper');
+            const bcvBox = document.getElementById('bs-conversion-box');
+            const rateInput = parseFloat(document.getElementById('pay-bcv-rate').value) || currentBCVRate || 1;
+
+            if (currency === 'Bs') {
+                amountWrapper.classList.remove('hidden');
+                bcvBox.classList.remove('hidden');
+                const equiv = rateInput > 0 ? (amount / rateInput) : 0;
+                document.getElementById('pay-usd-equiv').innerText = equiv.toFixed(2);
+            } else {
+                amountWrapper.classList.add('hidden');
+                bcvBox.classList.add('hidden');
+            }
+        }
+
+        function resetPaymentForm() {
+            currentCaptureDataUrl = null;
+            document.getElementById('capture-upload').value = '';
+            document.getElementById('capture-preview').src = '';
+            document.getElementById('capture-preview').classList.add('hidden');
+            document.getElementById('upload-placeholder').classList.remove('hidden');
+            document.getElementById('ocr-status').classList.add('hidden');
+
+            document.getElementById('pay-date').valueAsDate = new Date();
+            document.getElementById('pay-project').value = '';
+            document.getElementById('pay-concept').value = '';
+            document.getElementById('pay-method').value = 'Binance Pay (USDT)';
+            setSelectedPayCurrency('USDT');
+            document.getElementById('pay-ref').value = '';
+            document.getElementById('pay-amount').value = '';
+            updatePaymentConversion();
+        }
+
+        // --- VERIFICADOR DE LOGO PARA PDF (Muestra "FALTA LOGO" si no detecta el archivo) ---
+        function verificarImagenesAntesDePDF(container) {
+            const imgs = Array.from(container.querySelectorAll('img.pdf-brand-logo'));
+            return Promise.all(imgs.map(img => {
+                return new Promise(resolve => {
+                    if (img.complete && img.naturalWidth > 0) {
+                        resolve();
+                    } else {
+                        img.onload = () => resolve();
+                        img.onerror = () => {
+                            const fallback = document.createElement('div');
+                            fallback.style.cssText = 'display:inline-flex; align-items:center; justify-content:center; background:#dc2626; color:#ffffff; font-weight:800; font-size:11px; padding:6px 12px; border-radius:6px; border:1px solid #f87171; letter-spacing:0.05em;';
+                            fallback.innerText = 'FALTA LOGO';
+                            img.replaceWith(fallback);
+                            resolve();
+                        };
+                    }
+                });
+            }));
+        }
+
+        // --- EXPORTACIÓN PDF MINIMALISTA ESTILO NOTA DE ENTREGA ---
+        async function exportarPagoPDF() {
+            const staff = document.getElementById('pay-staff').value.trim() || 'Staff';
+            const staffId = document.getElementById('pay-staff-id').value.trim() || 'N/A';
+            const staffRole = document.getElementById('pay-staff-role').value.trim() || 'N/A';
+            const staffAddress = document.getElementById('pay-staff-address').value.trim() || 'N/A';
+
+            const fecha = document.getElementById('pay-date').value || 'Sin_Fecha';
+            const proyecto = document.getElementById('pay-project').value.trim() || 'General';
+            const concepto = document.getElementById('pay-concept').value.trim() || 'Servicios';
+            const metodo = document.getElementById('pay-method').value;
+            const moneda = getSelectedPayCurrency();
+            const ref = document.getElementById('pay-ref').value.trim() || 'S/R';
+            const monto = parseFloat(document.getElementById('pay-amount').value) || 0;
+            const tasaBCV = parseFloat(document.getElementById('pay-bcv-rate').value) || currentBCVRate || 0;
+            const equivUSD = (moneda === 'Bs' && tasaBCV > 0) ? (monto / tasaBCV).toFixed(2) : monto.toFixed(2);
+
+            const nombreLimpio = `PAGO_${staff}_${concepto}_${fecha}`
+                .replace(/[\/\\?%*:|"<>]/g, '-')
+                .replace(/\s+/g, '_');
+            const nombreArchivo = `${nombreLimpio}.pdf`;
+
+            let filasMontosHTML = '';
+            if (moneda === 'Bs') {
+                filasMontosHTML = `
+                    <tr style="background-color: #f3f4f6;">
+                        <td style="padding: 10px 12px; border-bottom: 1px solid #d1d5db; color: #111827; font-weight: 700;">Monto Pagado (Bs)</td>
+                        <td style="padding: 10px 12px; border-bottom: 1px solid #d1d5db; text-align: right; font-family: monospace; font-size: 16px; font-weight: 800; color: #111827;">
+                            Bs. ${monto.toFixed(2)}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 12px; border-bottom: 1px solid #e5e7eb; color: #4b5563; font-weight: 600;">Tasa BCV Aplicada</td>
+                        <td style="padding: 8px 12px; border-bottom: 1px solid #e5e7eb; text-align: right; font-family: monospace;">${tasaBCV.toFixed(2)} Bs/$</td>
+                    </tr>
+                    <tr style="background-color: #f9fafb;">
+                        <td style="padding: 10px 12px; border-bottom: 2px solid #111827; color: #111827; font-weight: 700;">Equivalente en Divisas ($ BCV)</td>
+                        <td style="padding: 10px 12px; border-bottom: 2px solid #111827; text-align: right; font-family: monospace; font-size: 15px; font-weight: 700; color: #111827;">$${equivUSD} USD</td>
+                    </tr>
+                `;
+            }
+
+            const captureImgHTML = currentCaptureDataUrl ? `
+                <div style="margin-top: 20px;">
+                    <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #4b5563; margin-bottom: 8px; border-bottom: 1px solid #d1d5db; padding-bottom: 4px;">
+                        Anexo: Capture / Comprobante de Operación
+                    </div>
+                    <div style="border: 1px solid #d1d5db; border-radius: 6px; padding: 10px; text-align: center; background-color: #f9fafb;">
+                        <img src="${currentCaptureDataUrl}" style="max-height: 310px; max-width: 100%; object-fit: contain; margin: 0 auto; display: block;" />
+                    </div>
+                </div>
+            ` : '';
+
+            const pdfNotaMolde = `
+                <div id="pdf-payment-content" style="background-color: #ffffff; color: #111827; font-family: 'Segoe UI', Arial, sans-serif; width: 560px; padding: 36px; box-sizing: border-box;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #111827; padding-bottom: 14px; margin-bottom: 20px;">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <img src="Ver 2 w.svg" class="pdf-brand-logo" style="height: 34px; width: auto; object-fit: contain;" />
+                            <div>
+                                <div style="font-size: 18px; font-weight: 800; letter-spacing: -0.02em; color: #111827;">BLOOM STUDIO</div>
+                                <div style="font-size: 11px; color: #4b5563;">Comprobante de Pago / Nota de Entrega</div>
+                            </div>
+                        </div>
+                        <div style="text-align: right; font-size: 12px; color: #374151;">
+                            <div><strong>Fecha:</strong> ${fecha}</div>
+                            <div style="margin-top: 2px;"><strong>Ref:</strong> <span style="font-family: monospace;">#${ref}</span></div>
+                        </div>
+                    </div>
+
+                    <table style="width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 16px;">
+                        <tbody>
+                            <tr>
+                                <td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; color: #4b5563; font-weight: 600; width: 38%;">Beneficiario (Staff)</td>
+                                <td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; font-weight: 700; color: #111827;">${staff}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; color: #4b5563; font-weight: 600;">Cédula de Identidad</td>
+                                <td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; font-family: monospace; color: #111827;">${staffId}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; color: #4b5563; font-weight: 600;">Cargo</td>
+                                <td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; color: #111827;">${staffRole}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; color: #4b5563; font-weight: 600;">Dirección</td>
+                                <td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; color: #111827;">${staffAddress}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; color: #4b5563; font-weight: 600;">Proyecto / Cliente</td>
+                                <td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; color: #111827;">${proyecto}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; color: #4b5563; font-weight: 600;">Concepto</td>
+                                <td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; color: #111827;">${concepto}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; color: #4b5563; font-weight: 600;">Método de Pago</td>
+                                <td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; color: #111827;">${metodo}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; color: #4b5563; font-weight: 600;">ID Transacción / Ref.</td>
+                                <td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; font-family: monospace; color: #111827;">${ref}</td>
+                            </tr>
+                            ${filasMontosHTML}
+                        </tbody>
+                    </table>
+
+                    ${captureImgHTML}
+
+                    <div style="margin-top: 24px; padding-top: 10px; border-top: 1px solid #e5e7eb; display: flex; justify-content: space-between; font-size: 10px; color: #9ca3af;">
+                        <span>Documento administrativo interno - Bloom Studio</span>
+                        <span>Generado por Price Studio</span>
+                    </div>
+                </div>
+            `;
+
+            const container = document.getElementById('pdf-export-container');
+            container.innerHTML = pdfNotaMolde;
+            await verificarImagenesAntesDePDF(container);
+            window.scrollTo(0, 0);
+            const contentElement = document.getElementById('pdf-payment-content');
+
+            const opt = {
+                margin:       0,
+                filename:     nombreArchivo,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true, backgroundColor: '#ffffff', scrollY: 0, scrollX: 0 },
+                jsPDF:        { unit: 'px', format: [contentElement.offsetWidth, contentElement.offsetHeight], orientation: 'portrait' }
+            };
+
+            html2pdf().set(opt).from(contentElement).save().then(() => {
+                container.innerHTML = '';
+            });
+        }
+
+        // --- FUNCIONES DEL COTIZADOR ORIGINAL ---
         function showResetModal() {
             document.getElementById('reset-modal').style.display = 'flex';
         }
@@ -567,7 +1422,6 @@
             document.getElementById('reset-modal').style.display = 'none';
         }
 
-        // Se modificó para borrar solo las cantidades, no los datos del proyecto, y no regresar al Hub.
         function executeReset() {
             hideResetModal();
             
@@ -737,7 +1591,7 @@
             currentData = { subtotal: totalBaseGeneral.toFixed(2), venta: totalVenta.toFixed(2), ganancia: gananciaTotal.toFixed(2), ceo: (gananciaTotal * 0.40).toFixed(2), caja: (gananciaTotal * 0.30).toFixed(2), capital: (gananciaTotal * 0.30).toFixed(2), margen: marginInput };
         }
 
-        function exportarPDF() {
+        async function exportarPDF() {
             const empresa = document.getElementById('form-empresa').value.trim() || 'Sin_Nombre';
             const fecha = document.getElementById('form-fecha').value || 'Sin_Fecha';
             const plan = document.getElementById('form-plan').value;
@@ -753,7 +1607,10 @@
 
             const pdfMolde = `
                 <div id="pdf-content" style="background-color: #232A5B; color: #ffffff; font-family: sans-serif; width: 450px; padding: 25px; border: 2px solid #454ADE; box-sizing: border-box;">
-                    <h2 style="font-size: 20px; font-weight: bold; margin-bottom: 15px; border-bottom: 1px solid rgba(69, 74, 222, 0.5); padding-bottom: 8px;">Resumen Operativo</h2>
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; border-bottom: 1px solid rgba(69, 74, 222, 0.5); padding-bottom: 10px;">
+                        <img src="Ver 2 w.svg" class="pdf-brand-logo" style="height: 32px; width: auto; object-fit: contain;" />
+                        <h2 style="font-size: 18px; font-weight: bold; margin: 0;">Resumen Operativo</h2>
+                    </div>
                     <div style="background-color: rgba(0,0,0,0.3); padding: 12px; border-radius: 8px; margin-bottom: 20px; font-size: 13px; border: 1px solid rgba(69, 74, 222, 0.4);">
                         <div style="display: flex; justify-content: space-between; margin-bottom: 6px;"><span>Cliente: <strong>${empresa}</strong></span><span>Fecha: <strong>${fecha}</strong></span></div>
                         <div style="display: flex; justify-content: space-between;"><span>Plan: <strong>${plan}</strong></span><span>Tasa: <strong>${tasa}</strong></span></div>
@@ -780,6 +1637,7 @@
 
             const container = document.getElementById('pdf-export-container');
             container.innerHTML = pdfMolde;
+            await verificarImagenesAntesDePDF(container);
             window.scrollTo(0, 0);
             const contentElement = document.getElementById('pdf-content');
             
