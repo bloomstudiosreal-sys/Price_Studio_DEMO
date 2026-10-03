@@ -8,7 +8,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
     
-    <!-- SDKs compatibles de Firebase -->
+    <!-- Firebase SDK (Modo Compatible CDN) -->
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
     
@@ -28,30 +28,27 @@
     </script>
     <style>
         body { background-color: #03120e; color: #ffffff; }
-        
         .neon-panel { 
             background-color: #232A5B; 
             border: 2px solid #454ADE;
             border-radius: 1rem;
             box-shadow: 0 0 15px rgba(69, 74, 222, 0.5), inset 0 0 10px rgba(69, 74, 222, 0.3);
         }
-        
         .inner-box { 
             background-color: rgba(0, 0, 0, 0.3); 
             border: 1px solid rgba(69, 74, 222, 0.4); 
-            transition: all 0.3s ease;
+            transition: all 0.25s ease;
         }
         .inner-box:hover, .inner-box:focus-within {
             border-color: #454ADE;
             box-shadow: 0 0 8px rgba(69, 74, 222, 0.6);
         }
-
         .input-dark {
             background-color: rgba(0, 0, 0, 0.4);
             border: 1px solid rgba(69, 74, 222, 0.3);
             color: #ffffff;
             outline: none;
-            transition: border-color 0.3s ease;
+            transition: border-color 0.25s ease;
         }
         .input-dark:focus { border-color: #454ADE; }
         .input-dark option { background-color: #121633; color: #ffffff; }
@@ -59,30 +56,18 @@
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: rgba(0,0,0, 0.2); }
         ::-webkit-scrollbar-thumb { background: #454ADE; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #5c60f5; }
         
         input[type="number"]::-webkit-inner-spin-button,
         input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
         input[type="number"] { -moz-appearance: textfield; }
-
-        input[type="date"] {
-            -webkit-appearance: none;
-            appearance: none;
-            text-align: left;
-        }
-        input[type="date"]::-webkit-calendar-picker-indicator {
-            filter: invert(1);
-            opacity: 0.8;
-            cursor: pointer;
-        }
+        input[type="date"] { -webkit-appearance: none; appearance: none; text-align: left; }
+        input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); opacity: 0.8; cursor: pointer; }
 
         @keyframes zoomInApp {
-            from { opacity: 0; transform: scale(0.92); }
+            from { opacity: 0; transform: scale(0.94); }
             to { opacity: 1; transform: scale(1); }
         }
-        .animate-zoom-in {
-            animation: zoomInApp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
+        .animate-zoom-in { animation: zoomInApp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 
         .category-card { transition: all 0.3s ease; }
         .category-card:hover:not(.disabled-card) {
@@ -90,19 +75,13 @@
             box-shadow: 0 10px 25px rgba(69, 74, 222, 0.4);
             border-color: #a7f3d0;
         }
-        .disabled-card {
-            opacity: 0.5;
-            cursor: not-allowed;
-            filter: grayscale(100%);
-        }
-
+        .disabled-card { opacity: 0.5; cursor: not-allowed; filter: grayscale(100%); }
         .drag-over-active {
             border-color: #a7f3d0 !important;
             background-color: rgba(167, 243, 208, 0.12) !important;
             box-shadow: 0 0 20px rgba(167, 243, 208, 0.4) !important;
             transform: scale(1.01);
         }
-
         #pdf-export-container {
             position: absolute;
             top: 0;
@@ -122,7 +101,7 @@
             <h2 class="text-xl font-bold text-white mb-1">Price Studio</h2>
             <p class="text-white/60 text-xs mb-6 text-center">Ingresa tus credenciales para acceder</p>
 
-            <div class="w-full space-y-4" onkeypress="if(event.key === 'Enter') handleLogin()">
+            <div class="w-full space-y-4" onkeydown="if(event.key === 'Enter') handleLogin()">
                 <div>
                     <label class="block text-xs text-white/70 mb-1">Usuario</label>
                     <input type="text" id="login-user" required autocomplete="off" class="w-full input-dark rounded-lg px-3 py-2 text-sm" placeholder="Ingresa tu usuario">
@@ -278,7 +257,7 @@
     <div id="calc-view" class="max-w-7xl mx-auto hidden">
         <header class="mb-6 border-b border-neonBlue/30 pb-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div class="flex items-center gap-4">
-                <button id="btn-calc-back-to-hub" onclick="goBackToHub()" class="flex items-center gap-2 bg-transparent hover:bg-white/10 border border-white/20 text-white px-3 py-2 rounded-lg transition-all text-sm font-semibold">
+                <button id="btn-calc-back-to-hub" onclick="promptBackToCategories()" class="flex items-center gap-2 bg-transparent hover:bg-white/10 border border-white/20 text-white px-3 py-2 rounded-lg transition-all text-sm font-semibold">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
                     Volver a Categorías
                 </button>
@@ -820,7 +799,7 @@
         </div>
     </div>
 
-    <!-- MODAL DE RESTABLECER -->
+    <!-- MODAL DE RESTABLECER PRESUPUESTO MANUAL -->
     <div id="reset-modal" class="fixed inset-0 z-[100] items-center justify-center p-4 bg-[#03120e]/80 backdrop-blur-sm" style="display: none;">
         <div class="neon-panel p-6 w-full max-w-sm flex flex-col items-center">
             <div class="w-12 h-12 rounded-full bg-red-500/20 flex items-center justify-center mb-4 text-red-400">
@@ -831,6 +810,21 @@
             <div class="flex gap-3 w-full">
                 <button onclick="hideResetModal()" class="flex-1 bg-transparent border border-white/20 text-white hover:bg-white/10 py-2 rounded-xl transition-all text-sm font-bold">Cancelar</button>
                 <button onclick="executeReset()" class="flex-1 bg-red-500/20 border border-red-500/50 text-red-400 hover:bg-red-500/40 py-2 rounded-xl transition-all text-sm font-bold">Sí, Restablecer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE ADVERTENCIA AL SALIR DEL TABULADOR (VOLVER A CATEGORÍAS) -->
+    <div id="abandon-modal" class="fixed inset-0 z-[100] items-center justify-center p-4 bg-[#03120e]/80 backdrop-blur-sm" style="display: none;">
+        <div class="neon-panel p-6 w-full max-w-sm flex flex-col items-center">
+            <div class="w-12 h-12 rounded-full bg-yellow-500/20 flex items-center justify-center mb-4 text-yellow-400">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+            </div>
+            <h3 class="text-lg font-bold text-white mb-2 text-center">¿Abandonar presupuesto?</h3>
+            <p class="text-white/60 text-sm mb-6 text-center">Al volver atrás se limpiarán los servicios cargados para no mezclar clientes. ¿Deseas continuar?</p>
+            <div class="flex gap-3 w-full">
+                <button onclick="hideAbandonModal()" class="flex-1 bg-transparent border border-white/20 text-white hover:bg-white/10 py-2 rounded-xl transition-all text-sm font-bold">Quedarme</button>
+                <button onclick="confirmAbandonBudget()" class="flex-1 bg-yellow-500/20 border border-yellow-500/50 text-yellow-300 hover:bg-yellow-500/40 py-2 rounded-xl transition-all text-sm font-bold">Sí, Salir</button>
             </div>
         </div>
     </div>
@@ -890,7 +884,6 @@
                     if (currentUserRole === 'admin') {
                         showMainMenu(false);
                     } else {
-                        // Usuario común entra a la vista de configuración y categorías
                         showHub(false);
                     }
                 }
@@ -915,7 +908,7 @@
             submitBtn.disabled = true;
             submitBtn.innerText = 'Verificando...';
 
-            // PRIORIDAD 1: CEO MASTER LOGIN (Instantáneo y sin bloqueo)
+            // PRIORIDAD 1: CEO MASTER LOGIN (Instantáneo y síncrono)
             if (u === AUTH_CEO_USER && p === AUTH_CEO_PIN) {
                 currentUserRole = 'admin';
                 try {
@@ -944,7 +937,6 @@
                             sessionStorage.setItem('priceStudioRole', 'user');
                         } catch(e) {}
                         applyRoleRestrictions();
-                        // Al loguear, el usuario común va a la selección de categorías
                         showHub(true);
                         submitBtn.disabled = false;
                         submitBtn.innerText = 'Entrar al Sistema';
@@ -955,7 +947,6 @@
                 console.error("Error consultando usuario:", err);
             }
 
-            // Falló autenticación
             errorMsg.innerText = 'Usuario o PIN incorrecto';
             errorMsg.classList.remove('hidden');
             pInput.value = '';
@@ -976,7 +967,6 @@
                 distBox.classList.add('hidden');
                 globalMarginInput.value = 50;
 
-                // El usuario no tiene Hub Central, así que ocultamos volver al Hub de CEO
                 if (backToMainBtn) backToMainBtn.classList.add('hidden');
             } else {
                 marginContainer.classList.remove('hidden');
@@ -1035,7 +1025,23 @@
             calculateTotal();
         }
 
-        function goBackToHub() {
+        // --- MANEJO DE ADVERTENCIA AL SALIR DEL TABULADOR ---
+        function promptBackToCategories() {
+            // Si hay ítems presupuestados, preguntar al usuario
+            if (currentItems && currentItems.length > 0) {
+                document.getElementById('abandon-modal').style.display = 'flex';
+            } else {
+                showHub(true);
+            }
+        }
+
+        function hideAbandonModal() {
+            document.getElementById('abandon-modal').style.display = 'none';
+        }
+
+        function confirmAbandonBudget() {
+            hideAbandonModal();
+            executeReset(); // Limpia los servicios y resetea el presupuesto
             showHub(true);
         }
 
@@ -1171,7 +1177,7 @@
         }
 
         async function deleteStaffFromDirectory(docId) {
-            if (!confirm('¿Seguro que deseas eliminar este miembro?')) return;
+            if (!confirm('¿Seguro que deseas eliminar permanentemente a este miembro?')) return;
             try {
                 if (db) {
                     await db.collection('staff').doc(docId).delete();
@@ -1512,17 +1518,26 @@
         function hideResetModal() { document.getElementById('reset-modal').style.display = 'none'; }
         function executeReset() {
             hideResetModal();
-            ['rrss-qty', 'carrusel-qty', 'reel-qty', 'storie-qty', 'photo-qty', 'pauta-qty'].forEach(id => document.getElementById(id).value = '');
+            ['rrss-qty', 'carrusel-qty', 'reel-qty', 'storie-qty', 'photo-qty', 'pauta-qty'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.value = '';
+            });
             ['rrss-type-custom', 'reel-type-custom', 'photo-type-custom', 'pauta-type-custom', 'op-modelo-custom', 'op-locucion-custom', 'op-produccion-custom', 'op-traslados-custom', 'op-utileria-custom'].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) { el.value = ''; el.classList.add('hidden'); }
             });
-            ['op-modelo', 'op-locucion', 'op-produccion', 'op-traslados', 'op-utileria'].forEach(id => document.getElementById(id).value = '0');
-            ['est-gestion', 'est-informe', 'est-plan', 'est-segmentacion', 'est-meta'].forEach(id => document.getElementById(id).checked = false);
+            ['op-modelo', 'op-locucion', 'op-produccion', 'op-traslados', 'op-utileria'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.value = '0';
+            });
+            ['est-gestion', 'est-informe', 'est-plan', 'est-segmentacion', 'est-meta'].forEach(id => {
+                const cb = document.getElementById(id);
+                if (cb) cb.checked = false;
+            });
             calculateTotal();
         }
 
-        // --- 8. EXPORTACIONES A PDF (AJUSTE DINÁMICO CONTRA CORTES) ---
+        // --- 8. EXPORTACIONES A PDF CON VERIFICACIÓN DE LOGOS ---
         function verificarImagenesAntesDePDF(container) {
             const imgs = Array.from(container.querySelectorAll('img.pdf-brand-logo'));
             return Promise.all(imgs.map(img => {
@@ -1556,7 +1571,6 @@
                 </div>
             `).join('');
 
-            // Ocultar subtotal y desglose para usuarios comunes
             const seccionSubtotalPDF = currentUserRole === 'admin' ? `
                 <div style="display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 14px;">
                     <span>Costo Neto (Subtotal):</span><span style="font-family: monospace; font-weight: bold;">$${currentData.subtotal}</span>
@@ -1576,7 +1590,6 @@
                 </div>
             ` : '';
 
-            // Contenedor dinámico autofit para evitar cortes en modo usuario
             const pdfMolde = `
                 <div id="pdf-content" style="background-color: #232A5B; color: #ffffff; font-family: sans-serif; width: 450px; padding: 28px 25px 35px 25px; border: 2px solid #454ADE; box-sizing: border-box; overflow: hidden;">
                     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; border-bottom: 1px solid rgba(69, 74, 222, 0.5); padding-bottom: 10px;">
@@ -1605,7 +1618,6 @@
             window.scrollTo(0, 0);
             const contentElement = document.getElementById('pdf-content');
             
-            // Altura exacta calculada dinámicamente + margen de seguridad
             const calcHeight = contentElement.scrollHeight + 5;
 
             const opt = {
@@ -1665,11 +1677,12 @@
                 </div>
             ` : '';
 
+            // LOGO DESIGNADO: logo-b.svg
             const pdfNotaMolde = `
                 <div id="pdf-payment-content" style="background-color: #ffffff; color: #111827; font-family: 'Segoe UI', Arial, sans-serif; width: 560px; padding: 36px; box-sizing: border-box;">
                     <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #111827; padding-bottom: 14px; margin-bottom: 20px;">
                         <div style="display: flex; align-items: center; gap: 12px;">
-                            <img src="Ver 2 w.svg" class="pdf-brand-logo" style="height: 34px; width: auto; object-fit: contain;" />
+                            <img src="logo-b.svg" class="pdf-brand-logo" style="height: 34px; width: auto; object-fit: contain;" />
                             <div>
                                 <div style="font-size: 18px; font-weight: 800; letter-spacing: -0.02em; color: #111827;">BLOOM STUDIO</div>
                                 <div style="font-size: 11px; color: #4b5563;">Comprobante de Pago / Nota de Entrega</div>
