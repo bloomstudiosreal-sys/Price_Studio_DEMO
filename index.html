@@ -11,11 +11,20 @@
     <!-- Firebase SDK (Modo Compatible CDN) -->
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
+    <!-- Google Fonts: Inter & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <script>
         tailwind.config = {
             theme: {
                 extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
                     colors: {
                         appBg: '#03120e',
                         panelBg: '#232A5B',
@@ -27,59 +36,110 @@
         }
     </script>
     <style>
-        body { background-color: #03120e; color: #ffffff; }
-        .neon-panel { 
-            background-color: #232A5B; 
-            border: 2px solid #454ADE;
-            border-radius: 1rem;
-            box-shadow: 0 0 15px rgba(69, 74, 222, 0.5), inset 0 0 10px rgba(69, 74, 222, 0.3);
+        body { 
+            background-color: #03120e; 
+            background-image: 
+                radial-gradient(circle at 15% 0%, rgba(69, 74, 222, 0.18), transparent 45%),
+                radial-gradient(circle at 85% 10%, rgba(167, 243, 208, 0.08), transparent 40%);
+            background-attachment: fixed;
+            color: #ffffff; 
+            font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+            transition: background-color 0.25s ease, color 0.25s ease;
         }
+        /* Estilo Glassmorphism con luz cenital */
+        .neon-panel { 
+            background: linear-gradient(165deg, rgba(35, 42, 91, 0.5) 0%, rgba(12, 16, 38, 0.75) 100%);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            border-top: 1px solid rgba(167, 243, 208, 0.22);
+            border-radius: 1.25rem;
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.65), 0 0 1px 1px rgba(69, 74, 222, 0.15);
+        }
+        /* Corrección del bug en esquinas al hacer hover */
         .inner-box { 
-            background-color: rgba(0, 0, 0, 0.3); 
-            border: 1px solid rgba(69, 74, 222, 0.4); 
-            transition: all 0.25s ease;
+            background-color: rgba(5, 10, 24, 0.45); 
+            border: 1px solid rgba(255, 255, 255, 0.06); 
+            overflow: hidden;
+            background-clip: padding-box;
+            transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
         }
         .inner-box:hover, .inner-box:focus-within {
-            border-color: #454ADE;
-            box-shadow: 0 0 8px rgba(69, 74, 222, 0.6);
+            border-color: rgba(69, 74, 222, 0.5);
+            background-color: rgba(10, 16, 36, 0.65);
+        }
+        /* Estado activo cuando un servicio tiene cantidad > 0 */
+        .service-card-active {
+            border-color: rgba(167, 243, 208, 0.45) !important;
+            background: linear-gradient(145deg, rgba(69, 74, 222, 0.22) 0%, rgba(167, 243, 208, 0.06) 100%) !important;
+            box-shadow: 0 8px 20px -6px rgba(69, 74, 222, 0.3);
         }
         .input-dark {
-            background-color: rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(69, 74, 222, 0.3);
+            background-color: rgba(0, 0, 0, 0.35);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             color: #ffffff;
             outline: none;
-            transition: border-color 0.25s ease;
+            transition: border-color 0.2s ease, background-color 0.2s ease;
         }
-        .input-dark:focus { border-color: #454ADE; }
-        .input-dark option { background-color: #121633; color: #ffffff; }
+        .input-dark:focus { 
+            border-color: #a7f3d0; 
+            background-color: rgba(0, 0, 0, 0.55);
+        }
+        .input-dark option { background-color: #0f142e; color: #ffffff; }
         
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: rgba(0,0,0, 0.2); }
-        ::-webkit-scrollbar-thumb { background: #454ADE; border-radius: 4px; }
+        /* Botones Stepper (- / +) */
+        .stepper-btn {
+            width: 28px;
+            height: 28px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0.5rem;
+            background-color: rgba(255, 255, 255, 0.06);
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 600;
+            transition: background-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
+            user-select: none;
+        }
+        .stepper-btn:hover { background-color: #454ADE; color: #ffffff; }
+        .stepper-btn:active { transform: scale(0.92); }
+
+        /* Estética de Ticket Financiero */
+        .receipt-ticket {
+            background: linear-gradient(180deg, rgba(19, 24, 54, 0.85) 0%, rgba(9, 13, 30, 0.95) 100%);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-top: 2px solid #a7f3d0;
+            border-radius: 1.25rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.75);
+        }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(69, 74, 222, 0.5); border-radius: 9999px; }
         
         input[type="number"]::-webkit-inner-spin-button,
         input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
         input[type="number"] { -moz-appearance: textfield; }
         input[type="date"] { -webkit-appearance: none; appearance: none; text-align: left; }
-        input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); opacity: 0.8; cursor: pointer; }
+        input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); opacity: 0.7; cursor: pointer; }
 
         @keyframes zoomInApp {
-            from { opacity: 0; transform: scale(0.94); }
-            to { opacity: 1; transform: scale(1); }
+            from { opacity: 0; transform: translateY(6px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
         }
-        .animate-zoom-in { animation: zoomInApp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .animate-zoom-in { animation: zoomInApp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 
-        .category-card { transition: all 0.3s ease; }
+        .category-card { transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease, border-color 0.3s ease; }
         .category-card:hover:not(.disabled-card) {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(69, 74, 222, 0.4);
-            border-color: #a7f3d0;
+            transform: translateY(-4px);
+            box-shadow: 0 15px 30px -10px rgba(69, 74, 222, 0.4);
+            border-color: rgba(167, 243, 208, 0.5);
         }
-        .disabled-card { opacity: 0.5; cursor: not-allowed; filter: grayscale(100%); }
+        .disabled-card { opacity: 0.45; cursor: not-allowed; filter: grayscale(100%); }
         .drag-over-active {
             border-color: #a7f3d0 !important;
-            background-color: rgba(167, 243, 208, 0.12) !important;
-            box-shadow: 0 0 20px rgba(167, 243, 208, 0.4) !important;
+            background-color: rgba(167, 243, 208, 0.1) !important;
             transform: scale(1.01);
         }
         #pdf-export-container {
@@ -90,9 +150,96 @@
             opacity: 0.01;
             pointer-events: none;
         }
+
+        /* ==========================================
+           TEMA LIGHT: BLANCO CREMA & ROJO EDITORIAL
+           ========================================== */
+        body.light-theme {
+            background-color: #F7F4EF;
+            background-image: 
+                radial-gradient(circle at 15% 0%, rgba(220, 38, 38, 0.07), transparent 45%),
+                radial-gradient(circle at 85% 10%, rgba(185, 28, 28, 0.04), transparent 40%);
+            color: #18181B;
+        }
+        body.light-theme .neon-panel {
+            background: linear-gradient(165deg, rgba(255, 255, 255, 0.92) 0%, rgba(247, 244, 239, 0.96) 100%);
+            border: 1px solid rgba(24, 24, 27, 0.08);
+            border-top: 2px solid #DC2626;
+            box-shadow: 0 15px 35px -10px rgba(24, 24, 27, 0.08), 0 0 1px 1px rgba(220, 38, 38, 0.08);
+        }
+        body.light-theme .inner-box {
+            background-color: #EFECE6;
+            border: 1px solid rgba(24, 24, 27, 0.08);
+        }
+        body.light-theme .inner-box:hover, 
+        body.light-theme .inner-box:focus-within {
+            border-color: rgba(220, 38, 38, 0.55);
+            background-color: #EAE5DC;
+            box-shadow: 0 6px 15px -4px rgba(220, 38, 38, 0.12);
+        }
+        body.light-theme .service-card-active {
+            border-color: #DC2626 !important;
+            background: linear-gradient(145deg, rgba(220, 38, 38, 0.1) 0%, rgba(220, 38, 38, 0.02) 100%) !important;
+            box-shadow: 0 8px 20px -6px rgba(220, 38, 38, 0.2);
+        }
+        body.light-theme .receipt-ticket {
+            background: linear-gradient(180deg, #FFFFFF 0%, #FAF8F5 100%);
+            border: 1px solid rgba(24, 24, 27, 0.1);
+            border-top: 3px solid #DC2626;
+            box-shadow: 0 20px 40px -15px rgba(24, 24, 27, 0.12);
+        }
+        body.light-theme .input-dark {
+            background-color: #FFFFFF;
+            border: 1px solid rgba(24, 24, 27, 0.15);
+            color: #18181B;
+        }
+        body.light-theme .input-dark:focus {
+            border-color: #DC2626;
+            background-color: #FFFFFF;
+        }
+        body.light-theme .input-dark option { background-color: #FFFFFF; color: #18181B; }
+        body.light-theme input[type="date"]::-webkit-calendar-picker-indicator { filter: none; opacity: 0.6; }
+
+        body.light-theme .stepper-btn {
+            background-color: #FFFFFF;
+            color: #18181B;
+            border: 1px solid rgba(24, 24, 27, 0.12);
+        }
+        body.light-theme .stepper-btn:hover { background-color: #DC2626; color: #FFFFFF; border-color: #DC2626; }
+
+        body.light-theme .category-card:hover:not(.disabled-card) {
+            box-shadow: 0 15px 30px -10px rgba(220, 38, 38, 0.2);
+            border-color: rgba(220, 38, 38, 0.5);
+        }
+
+        /* Adaptación de textos, fondos y acentos al rojo en Tema Light */
+        body.light-theme .text-white { color: #18181B !important; }
+        body.light-theme .text-white\/90, body.light-theme .text-white\/85, body.light-theme .text-white\/80 { color: #27272A !important; }
+        body.light-theme .text-white\/70, body.light-theme .text-white\/60 { color: #52525B !important; }
+        body.light-theme .text-white\/50, body.light-theme .text-white\/45, body.light-theme .text-white\/40, body.light-theme .text-white\/30 { color: #71717A !important; }
+        
+        body.light-theme .text-accent, body.light-theme .text-neonBlue { color: #DC2626 !important; }
+        body.light-theme .bg-neonBlue { background-color: #DC2626 !important; color: #FFFFFF !important; }
+        body.light-theme .bg-neonBlue:hover { background-color: #B91C1C !important; }
+        body.light-theme .bg-neonBlue span, body.light-theme .bg-neonBlue svg { color: #FFFFFF !important; }
+        
+        body.light-theme .border-white\/10, body.light-theme .border-white\/15, body.light-theme .border-white\/5, body.light-theme .border-white\/20 { border-color: rgba(24, 24, 27, 0.12) !important; }
+        body.light-theme .bg-black\/30, body.light-theme .bg-black\/35, body.light-theme .bg-black\/40, body.light-theme .bg-white\/5, body.light-theme .bg-white\/10 { background-color: rgba(24, 24, 27, 0.05) !important; }
+        body.light-theme .text-emerald-300 { color: #059669 !important; }
+        body.light-theme .text-yellow-300 { color: #D97706 !important; }
+        body.light-theme .text-purple-300 { color: #7C3AED !important; }
+        body.light-theme .text-red-300, body.light-theme .text-red-400 { color: #DC2626 !important; }
+        body.light-theme #login-modal, body.light-theme #users-modal, body.light-theme #reset-modal, body.light-theme #abandon-modal { background-color: rgba(247, 244, 239, 0.92) !important; }
+        body.light-theme ::-webkit-scrollbar-thumb { background: rgba(220, 38, 38, 0.45); }
     </style>
 </head>
 <body class="min-h-screen p-4 md:p-8 font-sans antialiased relative">
+
+    <!-- TOGGLE DE TEMA (DARK / LIGHT CREMA & ROJO) -->
+    <button id="theme-toggle-btn" onclick="toggleTheme()" title="Cambiar tema Dark / Light" class="fixed bottom-5 right-5 z-[120] neon-panel px-3.5 py-2.5 rounded-full flex items-center gap-2 cursor-pointer hover:scale-105 active:scale-95 transition-all shadow-lg">
+        <span id="theme-toggle-dot" class="w-2.5 h-2.5 rounded-full bg-accent"></span>
+        <span id="theme-toggle-label" class="text-xs font-mono font-bold text-white">CREAM / RED</span>
+    </button>
 
     <!-- 1. PANTALLA DE LOGIN -->
     <div id="login-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#03120e]">
@@ -113,7 +260,7 @@
                 
                 <p id="login-error" class="text-red-400 text-xs text-center hidden font-medium">Usuario o PIN incorrecto</p>
 
-                <button type="button" id="btn-login-submit" onclick="handleLogin()" class="w-full bg-neonBlue text-white hover:bg-blue-600 font-bold py-2.5 rounded-xl transition-all shadow-[0_0_15px_rgba(69,74,222,0.5)] active:scale-95 border border-white/20 text-sm mt-2 flex items-center justify-center gap-2">
+                <button type="button" id="btn-login-submit" onclick="handleLogin()" class="w-full bg-neonBlue text-white hover:bg-indigo-500 font-bold py-2.5 rounded-xl transition-all shadow-[0_10px_20px_-5px_rgba(69,74,222,0.5)] active:scale-95 border border-white/20 text-sm mt-2 flex items-center justify-center gap-2">
                     <span>Entrar al Sistema</span>
                 </button>
             </div>
@@ -122,11 +269,11 @@
 
     <!-- 1.5 HUB CENTRAL (SOLO CEO / ADMIN) -->
     <div id="main-menu-view" class="max-w-4xl mx-auto hidden">
-        <header class="mb-8 border-b border-neonBlue/30 pb-4 flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <header class="mb-8 border-b border-white/10 pb-4 flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div>
                 <img src="Ver 2 w.svg" alt="Bloom Studio" class="h-12 w-auto mb-3 object-contain" onerror="this.onerror=null; this.outerHTML='<div class=\'h-12 w-48 mb-3 bg-red-600 border-2 border-red-400 flex items-center justify-center text-white font-bold text-sm rounded-lg shadow-lg\'>FALTA LOGO SVG</div>'">
                 <div class="flex items-center gap-2">
-                    <h1 class="text-2xl md:text-3xl font-bold text-white">Hub Central</h1>
+                    <h1 class="text-2xl md:text-3xl font-bold text-white tracking-tight">Hub Central</h1>
                     <span class="bg-neonBlue/30 text-accent border border-neonBlue text-[11px] font-bold px-2 py-0.5 rounded-md">CEO / ADMIN</span>
                 </div>
                 <p class="text-white/60 text-sm mt-1">Gestión integral de precios, staff y equipo</p>
@@ -143,7 +290,7 @@
         </header>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-6">
-            <div onclick="showHub(true)" class="neon-panel p-8 category-card cursor-pointer flex flex-col items-center text-center group bg-gradient-to-b from-[#232A5B] to-[#121633]">
+            <div onclick="showHub(true)" class="neon-panel p-8 category-card cursor-pointer flex flex-col items-center text-center group">
                 <div class="w-20 h-20 rounded-2xl bg-neonBlue/20 flex items-center justify-center mb-6 group-hover:bg-neonBlue/40 transition-colors border border-neonBlue/40">
                     <svg class="w-10 h-10 text-neonBlue group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
@@ -153,7 +300,7 @@
                 <p class="text-sm text-white/60 max-w-xs">Tabulador de servicios, cálculo de márgenes, costes operativos y exportación de presupuestos.</p>
             </div>
 
-            <div onclick="showPaymentView(true)" class="neon-panel p-8 category-card cursor-pointer flex flex-col items-center text-center group bg-gradient-to-b from-[#232A5B] to-[#121633]">
+            <div onclick="showPaymentView(true)" class="neon-panel p-8 category-card cursor-pointer flex flex-col items-center text-center group">
                 <div class="w-20 h-20 rounded-2xl bg-accent/15 flex items-center justify-center mb-6 group-hover:bg-accent/30 transition-colors border border-accent/40">
                     <svg class="w-10 h-10 text-accent group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
@@ -168,7 +315,7 @@
 
     <!-- 2. PANTALLA MENÚ CATEGORÍAS (VISIBLE PARA CEO Y USUARIOS COMUNES) -->
     <div id="hub-view" class="max-w-5xl mx-auto hidden">
-        <header class="mb-8 border-b border-neonBlue/30 pb-4 flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <header class="mb-8 border-b border-white/10 pb-4 flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div>
                 <div class="flex items-center gap-3 mb-3">
                     <button id="btn-back-to-main" onclick="showMainMenu(true)" class="flex items-center gap-1.5 bg-transparent hover:bg-white/10 border border-white/20 text-white px-3 py-1.5 rounded-lg transition-all text-xs font-semibold">
@@ -177,7 +324,7 @@
                     </button>
                     <img src="Ver 2 w.svg" alt="Bloom Studio" class="h-10 w-auto object-contain" onerror="this.onerror=null; this.outerHTML='<div class=\'h-10 w-36 bg-red-600 border border-red-400 flex items-center justify-center text-white font-bold text-xs rounded-lg\'>FALTA LOGO SVG</div>'">
                 </div>
-                <h1 class="text-2xl md:text-3xl font-bold text-white">Price Studio | Cotizador</h1>
+                <h1 class="text-2xl md:text-3xl font-bold text-white tracking-tight">Price Studio | Cotizador</h1>
                 <p class="text-white/60 text-sm mt-1">Configura el proyecto y elige el servicio</p>
             </div>
             <button onclick="handleLogout()" title="Cerrar sesión" class="bg-red-500/20 hover:bg-red-500/40 border border-red-400/30 text-red-300 text-xs font-semibold px-4 py-2 rounded-lg transition-all self-start md:self-end">
@@ -187,7 +334,7 @@
 
         <section class="neon-panel p-6 mb-10">
             <h2 class="text-lg font-semibold mb-4 text-white flex items-center gap-2">
-                <svg class="w-5 h-5 text-neonBlue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                 Datos del Proyecto
             </h2>
             <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -210,22 +357,22 @@
                 <div>
                     <label class="block text-xs text-white/70 mb-1">Moneda Referencial (Tasa)</label>
                     <div class="flex inner-box rounded-lg overflow-hidden h-[42px] border-none">
-                        <label class="flex-1 text-center cursor-pointer relative border border-neonBlue/40 rounded-l-lg">
+                        <label class="flex-1 text-center cursor-pointer relative border border-white/10 rounded-l-lg">
                             <input type="radio" name="hub-tasa" value="USDT" class="peer sr-only" checked>
-                            <div class="w-full h-full flex items-center justify-center text-sm text-white/60 peer-checked:bg-neonBlue peer-checked:text-white transition-colors">USDT</div>
+                            <div class="w-full h-full flex items-center justify-center text-sm text-white/60 peer-checked:bg-neonBlue peer-checked:text-white transition-colors font-mono">USDT</div>
                         </label>
-                        <label class="flex-1 text-center cursor-pointer relative border-t border-b border-r border-neonBlue/40 rounded-r-lg">
+                        <label class="flex-1 text-center cursor-pointer relative border-t border-b border-r border-white/10 rounded-r-lg">
                             <input type="radio" name="hub-tasa" value="BCV" class="peer sr-only">
-                            <div class="w-full h-full flex items-center justify-center text-sm text-white/60 peer-checked:bg-neonBlue peer-checked:text-white transition-colors">BCV</div>
+                            <div class="w-full h-full flex items-center justify-center text-sm text-white/60 peer-checked:bg-neonBlue peer-checked:text-white transition-colors font-mono">BCV</div>
                         </label>
                     </div>
                 </div>
             </div>
         </section>
 
-        <h2 class="text-xl font-bold text-white mb-4">Selecciona una Categoría</h2>
+        <h2 class="text-xl font-bold text-white mb-4 tracking-tight">Selecciona una Categoría</h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div onclick="openCalculator('social')" class="neon-panel p-6 category-card cursor-pointer flex flex-col items-center text-center group bg-gradient-to-b from-[#232A5B] to-[#121633]">
+            <div onclick="openCalculator('social')" class="neon-panel p-6 category-card cursor-pointer flex flex-col items-center text-center group">
                 <div class="w-16 h-16 rounded-full bg-neonBlue/20 flex items-center justify-center mb-4 group-hover:bg-neonBlue/40 transition-colors">
                     <svg class="w-8 h-8 text-neonBlue group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 8a2 2 0 100-4 2 2 0 000 4z"></path></svg>
                 </div>
@@ -255,261 +402,446 @@
 
     <!-- 3. PANTALLA CALCULADORA -->
     <div id="calc-view" class="max-w-7xl mx-auto hidden">
-        <header class="mb-6 border-b border-neonBlue/30 pb-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div class="flex items-center gap-4">
-                <button id="btn-calc-back-to-hub" onclick="promptBackToCategories()" class="flex items-center gap-2 bg-transparent hover:bg-white/10 border border-white/20 text-white px-3 py-2 rounded-lg transition-all text-sm font-semibold">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                    Volver a Categorías
+        <!-- HEADER COMPACTO -->
+        <header class="mb-6 pb-4 border-b border-white/10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <button id="btn-calc-back-to-hub" onclick="promptBackToCategories()" class="flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 text-white/80 hover:text-white px-3.5 py-2 rounded-xl transition-all text-xs font-medium">
+                    <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                    Categorías
                 </button>
-                <div class="h-6 w-px bg-white/20 hidden md:block"></div>
+                <div class="h-5 w-px bg-white/10 hidden md:block"></div>
                 <div class="flex items-center gap-3">
-                    <img src="Ver 2 w.svg" alt="Bloom Studio" class="h-8 w-auto object-contain" onerror="this.onerror=null; this.outerHTML='<div class=\'h-8 px-2 bg-red-600 border border-red-400 flex items-center justify-center text-white font-bold text-[10px] rounded\'>FALTA LOGO</div>'">
-                    <h1 class="text-xl font-bold text-white">Tabulador: Redes Sociales</h1>
+                    <img src="Ver 2 w.svg" alt="Bloom Studio" class="h-7 w-auto object-contain" onerror="this.onerror=null; this.outerHTML='<div class=\'h-7 px-2 bg-red-600 text-white font-bold text-[10px] rounded flex items-center\'>FALTA LOGO</div>'">
+                    <div>
+                        <span class="text-[10px] uppercase tracking-widest text-accent font-semibold block leading-none mb-0.5">Cotizador Activo</span>
+                        <h1 class="text-lg font-bold text-white tracking-tight leading-none">Redes Sociales</h1>
+                    </div>
                 </div>
             </div>
             
             <div class="flex items-center gap-3 self-start md:self-end">
-                <div id="admin-margin-container" class="text-left md:text-right">
-                    <label class="block text-xs text-white/60 mb-1">Margen Global (%)</label>
-                    <div class="flex items-center inner-box rounded px-2 w-max md:ml-auto">
-                        <input type="number" id="global-margin" value="48" min="0" step="0.5" class="bg-transparent w-16 text-right outline-none text-white font-mono py-1" oninput="calculateTotal()">
-                        <span class="text-white/60 ml-1">%</span>
+                <div id="admin-margin-container" class="flex items-center gap-2 bg-white/5 border border-white/10 rounded-xl px-3 py-1.5">
+                    <label class="text-[11px] text-white/60 font-medium">Margen</label>
+                    <div class="flex items-center">
+                        <input type="number" id="global-margin" value="48" min="0" step="0.5" class="bg-transparent w-12 text-right outline-none text-accent font-mono font-bold text-sm" oninput="calculateTotal()">
+                        <span class="text-accent/70 font-mono text-xs ml-0.5">%</span>
                     </div>
                 </div>
-                <button onclick="handleLogout()" title="Cerrar sesión" class="bg-red-500/20 hover:bg-red-500/40 border border-red-400/30 text-red-300 text-xs font-semibold px-3 py-2 rounded-lg transition-all">
-                    Log Out
+                <button onclick="handleLogout()" title="Cerrar sesión" class="bg-red-500/10 hover:bg-red-500/25 border border-red-500/20 text-red-300 text-xs font-medium px-3.5 py-2 rounded-xl transition-all">
+                    Salir
                 </button>
             </div>
         </header>
 
-        <section class="neon-panel p-6 mb-8 relative overflow-hidden">
-            <div class="absolute inset-0 bg-[#03120e]/40 z-10 pointer-events-none"></div>
-            
-            <div class="flex justify-between items-center mb-4 relative z-20">
-                <h2 class="text-lg font-semibold text-white/80">Datos del Proyecto (Solo Lectura)</h2>
-                <span class="bg-white/10 text-white/60 text-xs px-2 py-1 rounded">Vuelve a categorías para editar</span>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 relative z-0 opacity-70 pointer-events-none">
-                <div>
-                    <label class="block text-xs text-white/70 mb-1">Empresa / Cliente</label>
-                    <input type="text" id="form-empresa" class="w-full input-dark rounded-lg px-3 py-2 h-[42px]" readonly>
+        <!-- BARRA DE METADATOS DEL PROYECTO (SOLO LECTURA) -->
+        <section class="neon-panel px-5 py-3.5 mb-8">
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                <div class="flex items-center gap-2 shrink-0">
+                    <span class="w-2 h-2 rounded-full bg-neonBlue"></span>
+                    <span class="text-xs font-semibold uppercase tracking-wider text-white/50">Ficha del Cliente</span>
                 </div>
-                <div>
-                    <label class="block text-xs text-white/70 mb-1">Fecha</label>
-                    <input type="date" id="form-fecha" class="w-full input-dark rounded-lg px-3 py-2 h-[42px] text-left block" readonly>
-                </div>
-                <div>
-                    <label class="block text-xs text-white/70 mb-1">Plan</label>
-                    <select id="form-plan" class="w-full input-dark rounded-lg px-3 py-2 h-[42px]" disabled>
-                        <option value="Básico">Básico</option>
-                        <option value="Standard">Standard</option>
-                        <option value="Deluxe">Deluxe</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-xs text-white/70 mb-1">Moneda Referencial (Tasa)</label>
-                    <div class="flex inner-box rounded-lg overflow-hidden h-[42px] border-none">
-                        <label class="flex-1 text-center relative border border-neonBlue/40 rounded-l-lg">
-                            <input type="radio" name="form-tasa" value="USDT" class="peer sr-only" disabled>
-                            <div class="w-full h-full flex items-center justify-center text-sm text-white/60 peer-checked:bg-neonBlue peer-checked:text-white">USDT</div>
-                        </label>
-                        <label class="flex-1 text-center relative border-t border-b border-r border-neonBlue/40 rounded-r-lg">
-                            <input type="radio" name="form-tasa" value="BCV" class="peer sr-only" disabled>
-                            <div class="w-full h-full flex items-center justify-center text-sm text-white/60 peer-checked:bg-neonBlue peer-checked:text-white">BCV</div>
-                        </label>
+                
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 flex-1 max-w-4xl opacity-85 pointer-events-none">
+                    <div class="bg-black/30 border border-white/5 rounded-lg px-3 py-1.5">
+                        <label class="block text-[10px] text-white/40 uppercase">Empresa / Cliente</label>
+                        <input type="text" id="form-empresa" class="w-full bg-transparent text-xs font-semibold text-white outline-none truncate" readonly>
+                    </div>
+                    <div class="bg-black/30 border border-white/5 rounded-lg px-3 py-1.5">
+                        <label class="block text-[10px] text-white/40 uppercase">Fecha</label>
+                        <input type="date" id="form-fecha" class="w-full bg-transparent text-xs font-mono text-white outline-none block" readonly>
+                    </div>
+                    <div class="bg-black/30 border border-white/5 rounded-lg px-3 py-1.5">
+                        <label class="block text-[10px] text-white/40 uppercase">Plan Seleccionado</label>
+                        <select id="form-plan" class="w-full bg-transparent text-xs font-semibold text-accent outline-none appearance-none" disabled>
+                            <option value="Básico">Básico</option>
+                            <option value="Standard">Standard</option>
+                            <option value="Deluxe">Deluxe</option>
+                        </select>
+                    </div>
+                    <div class="bg-black/30 border border-white/5 rounded-lg px-3 py-1.5 flex flex-col justify-center">
+                        <label class="block text-[10px] text-white/40 uppercase mb-0.5">Moneda / Tasa</label>
+                        <div class="flex gap-1.5">
+                            <label class="flex-1 text-center">
+                                <input type="radio" name="form-tasa" value="USDT" class="peer sr-only" disabled>
+                                <div class="text-[11px] font-mono rounded py-0.5 text-white/40 peer-checked:bg-neonBlue/40 peer-checked:text-white peer-checked:font-bold">USDT</div>
+                            </label>
+                            <label class="flex-1 text-center">
+                                <input type="radio" name="form-tasa" value="BCV" class="peer sr-only" disabled>
+                                <div class="text-[11px] font-mono rounded py-0.5 text-white/40 peer-checked:bg-neonBlue/40 peer-checked:text-white peer-checked:font-bold">BCV</div>
+                            </label>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <div class="flex flex-col lg:flex-row gap-8">
-            <div class="w-full lg:w-2/3 space-y-8">
-                <!-- CONTENIDO -->
+        <div class="flex flex-col lg:flex-row gap-8 items-start">
+            <!-- COLUMNA IZQUIERDA: CONFIGURADOR -->
+            <div class="w-full lg:w-[64%] space-y-6">
+                
+                <!-- 1. SISTEMA DE CONTENIDO (CON STEPPERS) -->
                 <section class="neon-panel p-6">
-                    <h2 class="text-xl font-semibold mb-4 text-white">Sistema de Contenido</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="inner-box p-4 rounded-xl">
-                            <label class="block text-sm font-medium text-white/90 mb-2">Diseño RRSS / Flyer</label>
-                            <div class="flex gap-2">
-                                <select id="rrss-type" class="input-dark rounded px-2 py-1 text-sm w-max shrink-0" onchange="toggleCustom('rrss-type'); calculateTotal()">
+                    <div class="flex items-center justify-between mb-5">
+                        <div>
+                            <h2 class="text-base font-bold text-white tracking-tight">Sistema de Contenido</h2>
+                            <p class="text-xs text-white/45">Ajusta las cantidades y niveles de producción mensual</p>
+                        </div>
+                        <span class="text-[11px] font-mono text-white/40 bg-white/5 px-2.5 py-1 rounded-md border border-white/5">01 / PRODUCCIÓN</span>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                        <!-- Diseño RRSS -->
+                        <div id="card-rrss" class="inner-box p-4 rounded-xl flex flex-col justify-between gap-3">
+                            <div class="flex justify-between items-start gap-2">
+                                <div>
+                                    <label class="block text-sm font-semibold text-white">Diseño RRSS / Flyer</label>
+                                    <span class="text-[11px] text-white/40">Gráficas estáticas para feed</span>
+                                </div>
+                                <select id="rrss-type" class="input-dark rounded-lg px-2 py-1 text-xs font-medium text-white/90" onchange="toggleCustom('rrss-type'); calculateTotal()">
                                     <option value="3">Standard ($3)</option>
                                     <option value="5">VIP ($5)</option>
                                     <option value="custom">Personalizado</option>
                                 </select>
-                                <input type="number" id="rrss-type-custom" min="0" step="0.01" placeholder="Precio $" class="input-dark rounded px-1 py-1 w-16 text-center text-sm hidden transition-all" oninput="calculateTotal()">
-                                <input type="number" id="rrss-qty" min="0" placeholder="Cant." class="input-dark rounded px-2 py-1 w-full text-center" oninput="calculateTotal()">
+                            </div>
+                            <div class="flex items-center justify-between pt-2 border-t border-white/5">
+                                <input type="number" id="rrss-type-custom" min="0" step="0.01" placeholder="Precio $" class="input-dark rounded-lg px-2 py-1 w-24 text-xs font-mono hidden" oninput="calculateTotal()">
+                                <div class="flex items-center gap-1.5 ml-auto bg-black/40 p-1 rounded-xl border border-white/5">
+                                    <button type="button" class="stepper-btn" onclick="stepQty('rrss-qty', -1)">−</button>
+                                    <input type="number" id="rrss-qty" min="0" placeholder="0" class="bg-transparent w-10 text-center font-mono text-sm font-bold text-white outline-none" oninput="calculateTotal()">
+                                    <button type="button" class="stepper-btn" onclick="stepQty('rrss-qty', 1)">+</button>
+                                </div>
                             </div>
                         </div>
-                        <div class="inner-box p-4 rounded-xl">
-                            <label class="block text-sm font-medium text-white/90 mb-2">Carrusel RRSS ($7)</label>
-                            <input type="number" id="carrusel-qty" min="0" placeholder="Cant." class="input-dark rounded px-3 py-1 w-full text-center" oninput="calculateTotal()">
+
+                        <!-- Carrusel RRSS -->
+                        <div id="card-carrusel" class="inner-box p-4 rounded-xl flex flex-col justify-between gap-3">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <label class="block text-sm font-semibold text-white">Carrusel RRSS</label>
+                                    <span class="text-[11px] text-white/40">Secuencia deslizable multi-slide</span>
+                                </div>
+                                <span class="font-mono text-xs font-semibold text-accent bg-accent/10 border border-accent/20 px-2 py-0.5 rounded-md">$7 c/u</span>
+                            </div>
+                            <div class="flex items-center justify-end pt-2 border-t border-white/5">
+                                <div class="flex items-center gap-1.5 bg-black/40 p-1 rounded-xl border border-white/5">
+                                    <button type="button" class="stepper-btn" onclick="stepQty('carrusel-qty', -1)">−</button>
+                                    <input type="number" id="carrusel-qty" min="0" placeholder="0" class="bg-transparent w-10 text-center font-mono text-sm font-bold text-white outline-none" oninput="calculateTotal()">
+                                    <button type="button" class="stepper-btn" onclick="stepQty('carrusel-qty', 1)">+</button>
+                                </div>
+                            </div>
                         </div>
-                        <div class="inner-box p-4 rounded-xl">
-                            <label class="block text-sm font-medium text-white/90 mb-2">Reel</label>
-                            <div class="flex gap-2">
-                                <select id="reel-type" class="input-dark rounded px-2 py-1 text-sm w-max shrink-0" onchange="toggleCustom('reel-type'); calculateTotal()">
+
+                        <!-- Reel -->
+                        <div id="card-reel" class="inner-box p-4 rounded-xl flex flex-col justify-between gap-3">
+                            <div class="flex justify-between items-start gap-2">
+                                <div>
+                                    <label class="block text-sm font-semibold text-white">Video Reel</label>
+                                    <span class="text-[11px] text-white/40">Edición dinámica formato vertical</span>
+                                </div>
+                                <select id="reel-type" class="input-dark rounded-lg px-2 py-1 text-xs font-medium text-white/90" onchange="toggleCustom('reel-type'); calculateTotal()">
                                     <option value="5">Standard ($5)</option>
                                     <option value="10">VIP ($10)</option>
                                     <option value="custom">Personalizado</option>
                                 </select>
-                                <input type="number" id="reel-type-custom" min="0" step="0.01" placeholder="Precio $" class="input-dark rounded px-1 py-1 w-16 text-center text-sm hidden transition-all" oninput="calculateTotal()">
-                                <input type="number" id="reel-qty" min="0" placeholder="Cant." class="input-dark rounded px-2 py-1 w-full text-center" oninput="calculateTotal()">
+                            </div>
+                            <div class="flex items-center justify-between pt-2 border-t border-white/5">
+                                <input type="number" id="reel-type-custom" min="0" step="0.01" placeholder="Precio $" class="input-dark rounded-lg px-2 py-1 w-24 text-xs font-mono hidden" oninput="calculateTotal()">
+                                <div class="flex items-center gap-1.5 ml-auto bg-black/40 p-1 rounded-xl border border-white/5">
+                                    <button type="button" class="stepper-btn" onclick="stepQty('reel-qty', -1)">−</button>
+                                    <input type="number" id="reel-qty" min="0" placeholder="0" class="bg-transparent w-10 text-center font-mono text-sm font-bold text-white outline-none" oninput="calculateTotal()">
+                                    <button type="button" class="stepper-btn" onclick="stepQty('reel-qty', 1)">+</button>
+                                </div>
                             </div>
                         </div>
-                        <div class="inner-box p-4 rounded-xl">
-                            <label class="block text-sm font-medium text-white/90 mb-2">Storie ($1)</label>
-                            <input type="number" id="storie-qty" min="0" placeholder="Cant." class="input-dark rounded px-3 py-1 w-full text-center" oninput="calculateTotal()">
+
+                        <!-- Storie -->
+                        <div id="card-storie" class="inner-box p-4 rounded-xl flex flex-col justify-between gap-3">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <label class="block text-sm font-semibold text-white">Historias (Stories)</label>
+                                    <span class="text-[11px] text-white/40">Adaptación o diseño vertical 9:16</span>
+                                </div>
+                                <span class="font-mono text-xs font-semibold text-accent bg-accent/10 border border-accent/20 px-2 py-0.5 rounded-md">$1 c/u</span>
+                            </div>
+                            <div class="flex items-center justify-end pt-2 border-t border-white/5">
+                                <div class="flex items-center gap-1.5 bg-black/40 p-1 rounded-xl border border-white/5">
+                                    <button type="button" class="stepper-btn" onclick="stepQty('storie-qty', -1)">−</button>
+                                    <input type="number" id="storie-qty" min="0" placeholder="0" class="bg-transparent w-10 text-center font-mono text-sm font-bold text-white outline-none" oninput="calculateTotal()">
+                                    <button type="button" class="stepper-btn" onclick="stepQty('storie-qty', 1)">+</button>
+                                </div>
+                            </div>
                         </div>
-                        <div class="inner-box p-4 rounded-xl">
-                            <label class="block text-sm font-medium text-white/90 mb-2">Edición de Fotos</label>
-                            <div class="flex gap-2">
-                                <select id="photo-type" class="input-dark rounded px-2 py-1 text-sm w-max shrink-0" onchange="toggleCustom('photo-type'); calculateTotal()">
+
+                        <!-- Edición de Fotos -->
+                        <div id="card-photo" class="inner-box p-4 rounded-xl flex flex-col justify-between gap-3">
+                            <div class="flex justify-between items-start gap-2">
+                                <div>
+                                    <label class="block text-sm font-semibold text-white">Edición de Fotos</label>
+                                    <span class="text-[11px] text-white/40">Retoque y colorización profesional</span>
+                                </div>
+                                <select id="photo-type" class="input-dark rounded-lg px-2 py-1 text-xs font-medium text-white/90" onchange="toggleCustom('photo-type'); calculateTotal()">
                                     <option value="10">Standard ($10)</option>
                                     <option value="15">VIP ($15)</option>
                                     <option value="custom">Personalizado</option>
                                 </select>
-                                <input type="number" id="photo-type-custom" min="0" step="0.01" placeholder="Precio $" class="input-dark rounded px-1 py-1 w-16 text-center text-sm hidden transition-all" oninput="calculateTotal()">
-                                <input type="number" id="photo-qty" min="0" placeholder="Cant." class="input-dark rounded px-2 py-1 w-full text-center" oninput="calculateTotal()">
+                            </div>
+                            <div class="flex items-center justify-between pt-2 border-t border-white/5">
+                                <input type="number" id="photo-type-custom" min="0" step="0.01" placeholder="Precio $" class="input-dark rounded-lg px-2 py-1 w-24 text-xs font-mono hidden" oninput="calculateTotal()">
+                                <div class="flex items-center gap-1.5 ml-auto bg-black/40 p-1 rounded-xl border border-white/5">
+                                    <button type="button" class="stepper-btn" onclick="stepQty('photo-qty', -1)">−</button>
+                                    <input type="number" id="photo-qty" min="0" placeholder="0" class="bg-transparent w-10 text-center font-mono text-sm font-bold text-white outline-none" oninput="calculateTotal()">
+                                    <button type="button" class="stepper-btn" onclick="stepQty('photo-qty', 1)">+</button>
+                                </div>
                             </div>
                         </div>
-                        <div class="inner-box p-4 rounded-xl">
-                            <label class="block text-sm font-medium text-white/90 mb-2">Pauta</label>
-                            <div class="flex gap-2">
-                                <select id="pauta-type" class="input-dark rounded px-2 py-1 text-sm w-max shrink-0" onchange="toggleCustom('pauta-type'); calculateTotal()">
+
+                        <!-- Pauta -->
+                        <div id="card-pauta" class="inner-box p-4 rounded-xl flex flex-col justify-between gap-3">
+                            <div class="flex justify-between items-start gap-2">
+                                <div>
+                                    <label class="block text-sm font-semibold text-white">Pauta Comercial</label>
+                                    <span class="text-[11px] text-white/40">Cobertura y grabación en sitio</span>
+                                </div>
+                                <select id="pauta-type" class="input-dark rounded-lg px-2 py-1 text-xs font-medium text-white/90" onchange="toggleCustom('pauta-type'); calculateTotal()">
                                     <option value="10">Standard ($10)</option>
                                     <option value="15">VIP ($15)</option>
                                     <option value="custom">Personalizado</option>
                                 </select>
-                                <input type="number" id="pauta-type-custom" min="0" step="0.01" placeholder="Precio $" class="input-dark rounded px-1 py-1 w-16 text-center text-sm hidden transition-all" oninput="calculateTotal()">
-                                <input type="number" id="pauta-qty" min="0" placeholder="Cant." class="input-dark rounded px-2 py-1 w-full text-center" oninput="calculateTotal()">
+                            </div>
+                            <div class="flex items-center justify-between pt-2 border-t border-white/5">
+                                <input type="number" id="pauta-type-custom" min="0" step="0.01" placeholder="Precio $" class="input-dark rounded-lg px-2 py-1 w-24 text-xs font-mono hidden" oninput="calculateTotal()">
+                                <div class="flex items-center gap-1.5 ml-auto bg-black/40 p-1 rounded-xl border border-white/5">
+                                    <button type="button" class="stepper-btn" onclick="stepQty('pauta-qty', -1)">−</button>
+                                    <input type="number" id="pauta-qty" min="0" placeholder="0" class="bg-transparent w-10 text-center font-mono text-sm font-bold text-white outline-none" oninput="calculateTotal()">
+                                    <button type="button" class="stepper-btn" onclick="stepQty('pauta-qty', 1)">+</button>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </section>
 
-                <!-- ESTRATEGIA -->
+                <!-- 2. SISTEMA DE ESTRATEGIA (TARJETAS INTERACTIVAS) -->
                 <section class="neon-panel p-6">
-                    <h2 class="text-xl font-semibold mb-4 text-white">Sistema de Estrategia</h2>
+                    <div class="flex items-center justify-between mb-5">
+                        <div>
+                            <h2 class="text-base font-bold text-white tracking-tight">Sistema de Estrategia</h2>
+                            <p class="text-xs text-white/45">Haz clic sobre los módulos estratégicos para incluirlos en el plan</p>
+                        </div>
+                        <span class="text-[11px] font-mono text-white/40 bg-white/5 px-2.5 py-1 rounded-md border border-white/5">02 / GESTIÓN</span>
+                    </div>
+
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <label class="flex items-center justify-between p-3 inner-box rounded-xl cursor-pointer"><span class="text-sm">Gestión de cuenta ($30)</span><input type="checkbox" id="est-gestion" class="w-4 h-4 accent-neonBlue" value="30" onchange="calculateTotal()"></label>
-                        <label class="flex items-center justify-between p-3 inner-box rounded-xl cursor-pointer"><span class="text-sm">Informe redes VIP ($10)</span><input type="checkbox" id="est-informe" class="w-4 h-4 accent-neonBlue" value="10" onchange="calculateTotal()"></label>
-                        <label class="flex items-center justify-between p-3 inner-box rounded-xl cursor-pointer"><span class="text-sm">Planificación ($10)</span><input type="checkbox" id="est-plan" class="w-4 h-4 accent-neonBlue" value="10" onchange="calculateTotal()"></label>
-                        <label class="flex items-center justify-between p-3 inner-box rounded-xl cursor-pointer"><span class="text-sm">Segmentación VIP ($10)</span><input type="checkbox" id="est-segmentacion" class="w-4 h-4 accent-neonBlue" value="10" onchange="calculateTotal()"></label>
-                        <label class="flex items-center justify-between p-3 inner-box rounded-xl cursor-pointer"><span class="text-sm">Campaña META ADS VIP ($10)</span><input type="checkbox" id="est-meta" class="w-4 h-4 accent-neonBlue" value="10" onchange="calculateTotal()"></label>
+                        <label class="group flex items-center justify-between p-3.5 inner-box rounded-xl cursor-pointer select-none has-[:checked]:border-accent/60 has-[:checked]:bg-accent/10 transition-all">
+                            <input type="checkbox" id="est-gestion" class="sr-only peer" value="30" onchange="calculateTotal()">
+                            <div class="flex items-center gap-3">
+                                <div class="w-5 h-5 rounded-md border border-white/20 bg-black/40 flex items-center justify-center text-transparent peer-checked:bg-accent peer-checked:border-accent peer-checked:text-[#03120e] transition-all">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                </div>
+                                <span class="text-sm font-medium text-white/85 group-hover:text-white">Gestión de cuenta ($30)</span>
+                            </div>
+                            <div class="text-xs font-mono text-white/40 peer-checked:text-accent font-semibold">$30</div>
+                        </label>
+
+                        <label class="group flex items-center justify-between p-3.5 inner-box rounded-xl cursor-pointer select-none has-[:checked]:border-accent/60 has-[:checked]:bg-accent/10 transition-all">
+                            <input type="checkbox" id="est-informe" class="sr-only peer" value="10" onchange="calculateTotal()">
+                            <div class="flex items-center gap-3">
+                                <div class="w-5 h-5 rounded-md border border-white/20 bg-black/40 flex items-center justify-center text-transparent peer-checked:bg-accent peer-checked:border-accent peer-checked:text-[#03120e] transition-all">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                </div>
+                                <span class="text-sm font-medium text-white/85 group-hover:text-white">Informe redes VIP ($10)</span>
+                            </div>
+                            <div class="text-xs font-mono text-white/40 peer-checked:text-accent font-semibold">$10</div>
+                        </label>
+
+                        <label class="group flex items-center justify-between p-3.5 inner-box rounded-xl cursor-pointer select-none has-[:checked]:border-accent/60 has-[:checked]:bg-accent/10 transition-all">
+                            <input type="checkbox" id="est-plan" class="sr-only peer" value="10" onchange="calculateTotal()">
+                            <div class="flex items-center gap-3">
+                                <div class="w-5 h-5 rounded-md border border-white/20 bg-black/40 flex items-center justify-center text-transparent peer-checked:bg-accent peer-checked:border-accent peer-checked:text-[#03120e] transition-all">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                </div>
+                                <span class="text-sm font-medium text-white/85 group-hover:text-white">Planificación ($10)</span>
+                            </div>
+                            <div class="text-xs font-mono text-white/40 peer-checked:text-accent font-semibold">$10</div>
+                        </label>
+
+                        <label class="group flex items-center justify-between p-3.5 inner-box rounded-xl cursor-pointer select-none has-[:checked]:border-accent/60 has-[:checked]:bg-accent/10 transition-all">
+                            <input type="checkbox" id="est-segmentacion" class="sr-only peer" value="10" onchange="calculateTotal()">
+                            <div class="flex items-center gap-3">
+                                <div class="w-5 h-5 rounded-md border border-white/20 bg-black/40 flex items-center justify-center text-transparent peer-checked:bg-accent peer-checked:border-accent peer-checked:text-[#03120e] transition-all">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                </div>
+                                <span class="text-sm font-medium text-white/85 group-hover:text-white">Segmentación VIP ($10)</span>
+                            </div>
+                            <div class="text-xs font-mono text-white/40 peer-checked:text-accent font-semibold">$10</div>
+                        </label>
+
+                        <label class="group flex items-center justify-between p-3.5 inner-box rounded-xl cursor-pointer select-none has-[:checked]:border-accent/60 has-[:checked]:bg-accent/10 transition-all sm:col-span-2">
+                            <input type="checkbox" id="est-meta" class="sr-only peer" value="10" onchange="calculateTotal()">
+                            <div class="flex items-center gap-3">
+                                <div class="w-5 h-5 rounded-md border border-white/20 bg-black/40 flex items-center justify-center text-transparent peer-checked:bg-accent peer-checked:border-accent peer-checked:text-[#03120e] transition-all">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                </div>
+                                <span class="text-sm font-medium text-white/85 group-hover:text-white">Campaña META ADS VIP ($10)</span>
+                            </div>
+                            <div class="text-xs font-mono text-white/40 peer-checked:text-accent font-semibold">$10</div>
+                        </label>
                     </div>
                 </section>
 
-                <!-- COSTES OPERATIVOS -->
+                <!-- 3. COSTES OPERATIVOS -->
                 <section class="neon-panel p-6">
-                    <h2 class="text-xl font-semibold mb-1 text-white">Costes Operativos</h2>
-                    <p class="text-white/50 text-xs mb-4">Talentos y logística (Se gestionan separados del diseño)</p>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <label class="flex items-center justify-between p-3 inner-box rounded-xl cursor-pointer flex-wrap gap-2 border-l-2 border-l-neonBlue">
-                            <div class="flex flex-col w-full">
-                                <span class="text-sm text-white/90">Modelo</span>
-                                <div class="flex gap-2 mt-1">
-                                    <select id="op-modelo" class="input-dark rounded px-1 py-1 text-xs shrink-0" onchange="toggleCustom('op-modelo'); calculateTotal()">
-                                        <option value="0">No incluir</option>
-                                        <option value="15">Base ($15)</option>
-                                        <option value="custom">Personalizado</option>
-                                    </select>
-                                    <input type="number" id="op-modelo-custom" min="0" step="0.01" placeholder="Precio $" class="input-dark rounded px-1 py-1 w-20 text-center text-xs hidden transition-all" oninput="calculateTotal()">
-                                </div>
-                            </div>
-                        </label>
-                        <label class="flex items-center justify-between p-3 inner-box rounded-xl cursor-pointer flex-wrap gap-2 border-l-2 border-l-neonBlue">
-                            <div class="flex flex-col w-full">
-                                <span class="text-sm text-white/90">Locución / Voz</span>
-                                <div class="flex gap-2 mt-1">
-                                    <select id="op-locucion" class="input-dark rounded px-1 py-1 text-xs shrink-0" onchange="toggleCustom('op-locucion'); calculateTotal()">
-                                        <option value="0">No incluir</option>
-                                        <option value="custom">Personalizado</option>
-                                    </select>
-                                    <input type="number" id="op-locucion-custom" min="0" step="0.01" placeholder="Precio $" class="input-dark rounded px-1 py-1 w-20 text-center text-xs hidden transition-all" oninput="calculateTotal()">
-                                </div>
-                            </div>
-                        </label>
-                        <label class="flex items-center justify-between p-3 inner-box rounded-xl cursor-pointer flex-wrap gap-2 border-l-2 border-l-neonBlue">
-                            <div class="flex flex-col w-full">
-                                <span class="text-sm text-white/90">Material POP / Físico</span>
-                                <div class="flex gap-2 mt-1">
-                                    <select id="op-produccion" class="input-dark rounded px-1 py-1 text-xs shrink-0" onchange="toggleCustom('op-produccion'); calculateTotal()">
-                                        <option value="0">No incluir</option>
-                                        <option value="custom">Personalizado</option>
-                                    </select>
-                                    <input type="number" id="op-produccion-custom" min="0" step="0.01" placeholder="Precio $" class="input-dark rounded px-1 py-1 w-20 text-center text-xs hidden transition-all" oninput="calculateTotal()">
-                                </div>
-                            </div>
-                        </label>
+                    <div class="flex items-center justify-between mb-5">
+                        <div>
+                            <h2 class="text-base font-bold text-white tracking-tight">Costes Operativos & Logística</h2>
+                            <p class="text-xs text-white/45">Talentos (con margen) y gastos directos reembolsables</p>
+                        </div>
+                        <span class="text-[11px] font-mono text-white/40 bg-white/5 px-2.5 py-1 rounded-md border border-white/5">03 / LOGÍSTICA</span>
+                    </div>
 
-                        <label class="flex items-center justify-between p-3 inner-box rounded-xl cursor-pointer flex-wrap gap-2 border-l-2 border-l-accent bg-[#a7f3d0]/5">
-                            <div class="flex flex-col w-full">
-                                <span class="text-sm text-accent">Traslados</span>
-                                <div class="flex gap-2 mt-1">
-                                    <select id="op-traslados" class="input-dark rounded px-1 py-1 text-xs shrink-0 border-accent/30" onchange="toggleCustom('op-traslados'); calculateTotal()">
-                                        <option value="0">No incluir</option>
-                                        <option value="custom">Personalizado</option>
-                                    </select>
-                                    <input type="number" id="op-traslados-custom" min="0" step="0.01" placeholder="Precio $" class="input-dark rounded px-1 py-1 w-20 text-center text-xs hidden transition-all border-accent/30" oninput="calculateTotal()">
-                                </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div class="p-3.5 inner-box rounded-xl border-l-2 border-l-neonBlue">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-sm font-medium text-white/90">Modelo</span>
+                                <span class="text-[10px] text-white/40 uppercase">Talento</span>
                             </div>
-                        </label>
-                        <label class="flex items-center justify-between p-3 inner-box rounded-xl cursor-pointer flex-wrap gap-2 border-l-2 border-l-accent bg-[#a7f3d0]/5">
-                            <div class="flex flex-col w-full">
-                                <span class="text-sm text-accent">Utilería / Locación</span>
-                                <div class="flex gap-2 mt-1">
-                                    <select id="op-utileria" class="input-dark rounded px-1 py-1 text-xs shrink-0 border-accent/30" onchange="toggleCustom('op-utileria'); calculateTotal()">
-                                        <option value="0">No incluir</option>
-                                        <option value="custom">Personalizado</option>
-                                    </select>
-                                    <input type="number" id="op-utileria-custom" min="0" step="0.01" placeholder="Precio $" class="input-dark rounded px-1 py-1 w-20 text-center text-xs hidden transition-all border-accent/30" oninput="calculateTotal()">
-                                </div>
+                            <div class="flex gap-2">
+                                <select id="op-modelo" class="input-dark rounded-lg px-2.5 py-1.5 text-xs w-full" onchange="toggleCustom('op-modelo'); calculateTotal()">
+                                    <option value="0">No incluir</option>
+                                    <option value="15">Tarifa Base ($15)</option>
+                                    <option value="custom">Monto Personalizado</option>
+                                </select>
+                                <input type="number" id="op-modelo-custom" min="0" step="0.01" placeholder="$" class="input-dark rounded-lg px-2 py-1.5 w-24 text-center font-mono text-xs hidden" oninput="calculateTotal()">
                             </div>
-                        </label>
+                        </div>
+
+                        <div class="p-3.5 inner-box rounded-xl border-l-2 border-l-neonBlue">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-sm font-medium text-white/90">Locución / Voz</span>
+                                <span class="text-[10px] text-white/40 uppercase">Talento</span>
+                            </div>
+                            <div class="flex gap-2">
+                                <select id="op-locucion" class="input-dark rounded-lg px-2.5 py-1.5 text-xs w-full" onchange="toggleCustom('op-locucion'); calculateTotal()">
+                                    <option value="0">No incluir</option>
+                                    <option value="custom">Monto Personalizado</option>
+                                </select>
+                                <input type="number" id="op-locucion-custom" min="0" step="0.01" placeholder="$" class="input-dark rounded-lg px-2 py-1.5 w-24 text-center font-mono text-xs hidden" oninput="calculateTotal()">
+                            </div>
+                        </div>
+
+                        <div class="p-3.5 inner-box rounded-xl border-l-2 border-l-neonBlue">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-sm font-medium text-white/90">Material POP / Físico</span>
+                                <span class="text-[10px] text-white/40 uppercase">Producción</span>
+                            </div>
+                            <div class="flex gap-2">
+                                <select id="op-produccion" class="input-dark rounded-lg px-2.5 py-1.5 text-xs w-full" onchange="toggleCustom('op-produccion'); calculateTotal()">
+                                    <option value="0">No incluir</option>
+                                    <option value="custom">Monto Personalizado</option>
+                                </select>
+                                <input type="number" id="op-produccion-custom" min="0" step="0.01" placeholder="$" class="input-dark rounded-lg px-2 py-1.5 w-24 text-center font-mono text-xs hidden" oninput="calculateTotal()">
+                            </div>
+                        </div>
+
+                        <div class="p-3.5 inner-box rounded-xl border-l-2 border-l-accent bg-accent/[0.03]">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-sm font-medium text-accent">Traslados</span>
+                                <span class="text-[10px] text-accent/60 uppercase font-mono">Pass-Through</span>
+                            </div>
+                            <div class="flex gap-2">
+                                <select id="op-traslados" class="input-dark rounded-lg px-2.5 py-1.5 text-xs w-full border-accent/20" onchange="toggleCustom('op-traslados'); calculateTotal()">
+                                    <option value="0">No incluir</option>
+                                    <option value="custom">Monto Personalizado</option>
+                                </select>
+                                <input type="number" id="op-traslados-custom" min="0" step="0.01" placeholder="$" class="input-dark rounded-lg px-2 py-1.5 w-24 text-center font-mono text-xs hidden border-accent/30" oninput="calculateTotal()">
+                            </div>
+                        </div>
+
+                        <div class="p-3.5 inner-box rounded-xl border-l-2 border-l-accent bg-accent/[0.03] sm:col-span-2">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-sm font-medium text-accent">Utilería / Locación</span>
+                                <span class="text-[10px] text-accent/60 uppercase font-mono">Pass-Through (Sin recargo de margen)</span>
+                            </div>
+                            <div class="flex gap-2">
+                                <select id="op-utileria" class="input-dark rounded-lg px-2.5 py-1.5 text-xs w-full border-accent/20" onchange="toggleCustom('op-utileria'); calculateTotal()">
+                                    <option value="0">No incluir</option>
+                                    <option value="custom">Monto Personalizado</option>
+                                </select>
+                                <input type="number" id="op-utileria-custom" min="0" step="0.01" placeholder="$" class="input-dark rounded-lg px-2 py-1.5 w-24 text-center font-mono text-xs hidden border-accent/30" oninput="calculateTotal()">
+                            </div>
+                        </div>
                     </div>
                 </section>
             </div>
 
-            <!-- RESUMEN DERECHA -->
-            <div class="w-full lg:w-1/3">
-                <div class="neon-panel p-6 sticky top-8">
-                    <h2 class="text-xl font-bold mb-4 border-b border-neonBlue/30 pb-2 text-white">Resumen Operativo</h2>
-                    <div id="summary-items" class="space-y-2 mb-6 text-sm text-white/80 min-h-[100px] max-h-[200px] overflow-y-auto pr-2">
-                        <p class="text-white/40 italic text-center mt-8">Agrega servicios para ver el desglose</p>
-                    </div>
-
-                    <div class="border-t border-neonBlue/30 pt-4 mb-6">
-                        <div id="admin-subtotal-row" class="flex justify-between items-center mb-1">
-                            <span class="text-white/70">Costo Neto (Subtotal):</span>
-                            <span class="font-mono text-lg font-bold">$<span id="subtotal-neto">0.00</span></span>
+            <!-- COLUMNA DERECHA: TICKET FINANCIERO EN VIVO -->
+            <div class="w-full lg:w-[36%] lg:sticky lg:top-8">
+                <div class="receipt-ticket p-6">
+                    <!-- Cabecera del Ticket -->
+                    <div class="flex items-center justify-between pb-4 mb-4 border-b border-dashed border-white/15">
+                        <div>
+                            <span class="text-[10px] font-mono uppercase tracking-widest text-accent block">Live Quote</span>
+                            <h2 class="text-lg font-bold text-white tracking-tight">Resumen Operativo</h2>
                         </div>
-                        <div class="flex justify-between items-center text-accent font-bold">
-                            <span>Venta Sugerido:</span>
-                            <span class="font-mono text-2xl">$<span id="total-venta">0.00</span></span>
+                        <div class="flex items-center gap-1.5 bg-accent/10 border border-accent/20 px-2.5 py-1 rounded-full">
+                            <span class="w-1.5 h-1.5 rounded-full bg-accent animate-pulse"></span>
+                            <span class="text-[10px] font-mono font-semibold text-accent">USD</span>
                         </div>
                     </div>
 
-                    <div id="admin-distribution-box" class="inner-box rounded-xl p-4">
-                        <h3 class="text-xs font-bold text-white/50 uppercase tracking-wider mb-3">Distribución (<span id="margin-display">48</span>%)</h3>
-                        <div class="flex justify-between items-center mb-2">
-                            <span class="text-sm text-white/90">Ganancia Total:</span>
-                            <span class="font-mono font-bold text-neonBlue">$<span id="total-ganancia">0.00</span></span>
+                    <!-- Lista de Ítems -->
+                    <div id="summary-items" class="space-y-2 mb-5 text-xs text-white/80 min-h-[120px] max-h-[240px] overflow-y-auto pr-1">
+                        <p class="text-white/30 italic text-center py-10">Selecciona servicios a la izquierda para armar la cotización</p>
+                    </div>
+
+                    <!-- Bloque de Totales -->
+                    <div class="border-t border-dashed border-white/15 pt-4 mb-5 space-y-3">
+                        <div id="admin-subtotal-row" class="flex justify-between items-center text-xs">
+                            <span class="text-white/50">Costo Neto (Base Operativa)</span>
+                            <span class="font-mono font-semibold text-white/80">$<span id="subtotal-neto">0.00</span></span>
                         </div>
-                        <div class="space-y-2 mt-3 pt-3 border-t border-neonBlue/20">
-                            <div class="flex justify-between items-center"><span class="text-sm text-white/70 flex items-center gap-1.5"><div class="w-2 h-2 rounded-full bg-blue-400"></div> CEO (40%)</span><span class="font-mono text-sm">$<span id="dist-ceo">0.00</span></span></div>
-                            <div class="flex justify-between items-center"><span class="text-sm text-white/70 flex items-center gap-1.5"><div class="w-2 h-2 rounded-full bg-emerald-400"></div> Ahorro (20%)</span><span class="font-mono text-sm text-emerald-300">$<span id="dist-ahorro">0.00</span></span></div>
-                            <div class="flex justify-between items-center"><span class="text-sm text-white/70 flex items-center gap-1.5"><div class="w-2 h-2 rounded-full bg-yellow-400"></div> Reinversión (20%)</span><span class="font-mono text-sm text-yellow-300">$<span id="dist-reinv">0.00</span></span></div>
-                            <div class="flex justify-between items-center"><span class="text-sm text-white/70 flex items-center gap-1.5"><div class="w-2 h-2 rounded-full bg-purple-400"></div> Capital (20%)</span><span class="font-mono text-sm font-bold text-purple-300">$<span id="dist-capital">0.00</span></span></div>
+
+                        <div class="bg-gradient-to-r from-neonBlue/25 to-accent/10 border border-accent/30 rounded-xl p-3.5 flex justify-between items-center">
+                            <div>
+                                <span class="text-[10px] font-mono uppercase tracking-wider text-accent block">Precio al Cliente</span>
+                                <span class="text-sm font-bold text-white">Venta Sugerido</span>
+                            </div>
+                            <span class="font-mono text-2xl font-extrabold text-accent tracking-tight">$<span id="total-venta">0.00</span></span>
                         </div>
                     </div>
 
-                    <button class="w-full mt-6 bg-neonBlue text-white hover:bg-blue-600 font-bold py-3 px-4 rounded-xl transition-all shadow-[0_0_15px_rgba(69,74,222,0.5)] active:scale-95 border border-white/20" onclick="exportarPDF()">
-                        Exportar Resumen PDF
+                    <!-- Distribución Interna (Solo Admin) -->
+                    <div id="admin-distribution-box" class="bg-black/35 border border-white/5 rounded-xl p-4 mb-5">
+                        <div class="flex justify-between items-center mb-3 pb-2 border-b border-white/5">
+                            <span class="text-[10px] font-mono uppercase tracking-wider text-white/45">Utilidad Bruta (<span id="margin-display">48</span>%)</span>
+                            <span class="font-mono text-sm font-bold text-neonBlue">$<span id="total-ganancia">0.00</span></span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2.5 text-xs">
+                            <div class="bg-white/[0.02] p-2 rounded-lg border border-white/5">
+                                <span class="text-[10px] text-white/45 flex items-center gap-1.5 mb-0.5"><span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span>CEO (40%)</span>
+                                <span class="font-mono font-semibold text-white">$<span id="dist-ceo">0.00</span></span>
+                            </div>
+                            <div class="bg-white/[0.02] p-2 rounded-lg border border-white/5">
+                                <span class="text-[10px] text-white/45 flex items-center gap-1.5 mb-0.5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>Ahorro (20%)</span>
+                                <span class="font-mono font-semibold text-emerald-300">$<span id="dist-ahorro">0.00</span></span>
+                            </div>
+                            <div class="bg-white/[0.02] p-2 rounded-lg border border-white/5">
+                                <span class="text-[10px] text-white/45 flex items-center gap-1.5 mb-0.5"><span class="w-1.5 h-1.5 rounded-full bg-yellow-400"></span>Reinversión (20%)</span>
+                                <span class="font-mono font-semibold text-yellow-300">$<span id="dist-reinv">0.00</span></span>
+                            </div>
+                            <div class="bg-white/[0.02] p-2 rounded-lg border border-white/5">
+                                <span class="text-[10px] text-white/45 flex items-center gap-1.5 mb-0.5"><span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span>Capital (20%)</span>
+                                <span class="font-mono font-semibold text-purple-300">$<span id="dist-capital">0.00</span></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Botones de Acción -->
+                    <button class="w-full bg-neonBlue hover:bg-indigo-500 text-white font-semibold py-3 px-4 rounded-xl transition-all shadow-[0_10px_20px_-5px_rgba(69,74,222,0.5)] active:scale-[0.98] border border-white/15 text-sm flex items-center justify-center gap-2" onclick="exportarPDF()">
+                        <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        Exportar Cotización PDF
                     </button>
-                    <button class="w-full mt-3 bg-transparent text-white/50 hover:text-red-400 hover:bg-red-400/10 font-bold py-2 px-4 rounded-xl transition-all border border-white/10 text-sm active:scale-95 flex items-center justify-center gap-2" onclick="showResetModal()">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                        Restablecer Tabulador
+                    <button class="w-full mt-2.5 bg-transparent text-white/40 hover:text-red-300 hover:bg-red-500/10 font-medium py-2 px-4 rounded-xl transition-all text-xs flex items-center justify-center gap-1.5" onclick="showResetModal()">
+                        Limpiar tabulador
                     </button>
                 </div>
             </div>
@@ -518,7 +850,7 @@
 
     <!-- 4. PANTALLA: REGISTRAR PAGO AL STAFF (SOLO CEO) -->
     <div id="payment-view" class="max-w-6xl mx-auto hidden">
-        <header class="mb-6 border-b border-neonBlue/30 pb-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <header class="mb-6 border-b border-white/10 pb-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div class="flex items-center gap-4 flex-wrap">
                 <button onclick="showMainMenu(true)" class="flex items-center gap-2 bg-transparent hover:bg-white/10 border border-white/20 text-white px-3 py-2 rounded-lg transition-all text-sm font-semibold">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
@@ -527,7 +859,7 @@
                 <div class="h-6 w-px bg-white/20 hidden md:block"></div>
                 <div class="flex items-center gap-3">
                     <img src="Ver 2 w.svg" alt="Bloom Studio" class="h-8 w-auto object-contain" onerror="this.onerror=null; this.outerHTML='<div class=\'h-8 px-2 bg-red-600 border border-red-400 flex items-center justify-center text-white font-bold text-[10px] rounded\'>FALTA LOGO</div>'">
-                    <h1 class="text-xl font-bold text-white">Registro de Pago al Staff</h1>
+                    <h1 class="text-xl font-bold text-white tracking-tight">Registro de Pago al Staff</h1>
                 </div>
             </div>
             <div class="flex items-center gap-3 self-start md:self-end">
@@ -542,7 +874,7 @@
         </header>
 
         <section id="add-staff-panel" class="neon-panel p-6 mb-8 hidden animate-zoom-in">
-            <div class="flex justify-between items-center mb-4 border-b border-neonBlue/30 pb-2">
+            <div class="flex justify-between items-center mb-4 border-b border-white/10 pb-2">
                 <div>
                     <h2 class="text-lg font-bold text-white flex items-center gap-2">
                         <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
@@ -572,16 +904,16 @@
                 </div>
             </div>
 
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-2 border-t border-neonBlue/20">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-2 border-t border-white/10">
                 <div id="staff-saved-msg" class="text-xs text-accent font-medium hidden">✓ Guardado en la nube con éxito</div>
                 <div class="flex gap-2 ml-auto">
-                    <button type="button" onclick="saveNewStaffMember()" class="bg-neonBlue hover:bg-blue-600 text-white font-bold px-5 py-2 rounded-xl text-xs transition-all shadow-[0_0_12px_rgba(69,74,222,0.5)] border border-white/20">
+                    <button type="button" onclick="saveNewStaffMember()" class="bg-neonBlue hover:bg-indigo-500 text-white font-bold px-5 py-2 rounded-xl text-xs transition-all shadow-[0_0_12px_rgba(69,74,222,0.5)] border border-white/20">
                         Guardar Miembro
                     </button>
                 </div>
             </div>
 
-            <div class="mt-4 pt-3 border-t border-neonBlue/20">
+            <div class="mt-4 pt-3 border-t border-white/10">
                 <span class="block text-[11px] text-white/50 uppercase tracking-wider mb-2 font-semibold">Miembros guardados en Firestore:</span>
                 <div id="directory-saved-list" class="flex flex-wrap gap-2"></div>
             </div>
@@ -624,7 +956,7 @@
 
             <div class="lg:col-span-7">
                 <div class="neon-panel p-6">
-                    <div class="flex justify-between items-center mb-4 border-b border-neonBlue/30 pb-3">
+                    <div class="flex justify-between items-center mb-4 border-b border-white/10 pb-3">
                         <div>
                             <h2 class="text-lg font-semibold text-white">2. Datos de la Nota de Pago</h2>
                             <p class="text-xs text-white/50">Selecciona al miembro del Staff en el desplegable</p>
@@ -716,13 +1048,13 @@
                             <div>
                                 <label class="block text-xs text-white/70 mb-1">Moneda del Capture (Tasa)</label>
                                 <div class="flex inner-box rounded-lg overflow-hidden h-[42px] border-none">
-                                    <label class="flex-1 text-center cursor-pointer relative border border-neonBlue/40 rounded-l-lg">
+                                    <label class="flex-1 text-center cursor-pointer relative border border-white/10 rounded-l-lg">
                                         <input type="radio" name="pay-tasa" value="USDT" class="peer sr-only" checked onchange="updatePaymentConversion()">
-                                        <div class="w-full h-full flex items-center justify-center text-sm text-white/60 peer-checked:bg-neonBlue peer-checked:text-white transition-colors font-semibold">USDT</div>
+                                        <div class="w-full h-full flex items-center justify-center text-sm text-white/60 peer-checked:bg-neonBlue peer-checked:text-white transition-colors font-semibold font-mono">USDT</div>
                                     </label>
-                                    <label class="flex-1 text-center cursor-pointer relative border-t border-b border-r border-neonBlue/40 rounded-r-lg">
+                                    <label class="flex-1 text-center cursor-pointer relative border-t border-b border-r border-white/10 rounded-r-lg">
                                         <input type="radio" name="pay-tasa" value="Bs" class="peer sr-only" onchange="updatePaymentConversion()">
-                                        <div class="w-full h-full flex items-center justify-center text-sm text-white/60 peer-checked:bg-neonBlue peer-checked:text-white transition-colors font-semibold">BCV (Bs)</div>
+                                        <div class="w-full h-full flex items-center justify-center text-sm text-white/60 peer-checked:bg-neonBlue peer-checked:text-white transition-colors font-semibold font-mono">BCV (Bs)</div>
                                     </label>
                                 </div>
                             </div>
@@ -753,7 +1085,7 @@
                         </div>
 
                         <div class="flex flex-col sm:flex-row gap-3 mt-6">
-                            <button type="button" onclick="exportarPagoPDF()" class="flex-1 bg-neonBlue text-white hover:bg-blue-600 font-bold py-3 px-4 rounded-xl transition-all shadow-[0_0_15px_rgba(69,74,222,0.5)] active:scale-95 border border-white/20 flex items-center justify-center gap-2">
+                            <button type="button" onclick="exportarPagoPDF()" class="flex-1 bg-neonBlue text-white hover:bg-indigo-500 font-bold py-3 px-4 rounded-xl transition-all shadow-[0_10px_20px_-5px_rgba(69,74,222,0.5)] active:scale-95 border border-white/20 flex items-center justify-center gap-2">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                                 Descargar Nota de Entrega (PDF)
                             </button>
@@ -770,7 +1102,7 @@
     <!-- MODAL DE GESTIÓN DE USUARIOS (SOLO CEO) -->
     <div id="users-modal" class="fixed inset-0 z-[100] items-center justify-center p-4 bg-[#03120e]/80 backdrop-blur-sm" style="display: none;">
         <div class="neon-panel p-6 w-full max-w-md flex flex-col">
-            <div class="flex justify-between items-center mb-4 border-b border-neonBlue/30 pb-3">
+            <div class="flex justify-between items-center mb-4 border-b border-white/10 pb-3">
                 <h3 class="text-lg font-bold text-white flex items-center gap-2">
                     <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                     Gestión de Usuarios (Firebase)
@@ -787,7 +1119,7 @@
                     <label class="block text-xs text-white/70 mb-1">PIN de Acceso (4 a 6 dígitos)</label>
                     <input type="password" id="new-user-pin" maxlength="6" class="w-full input-dark rounded-lg px-3 py-2 text-sm text-center font-mono tracking-widest" placeholder="1234">
                 </div>
-                <button type="button" onclick="createNewUserInFirebase()" class="w-full bg-neonBlue hover:bg-blue-600 text-white font-bold py-2 rounded-xl text-xs transition-all shadow-[0_0_10px_rgba(69,74,222,0.4)] border border-white/20">
+                <button type="button" onclick="createNewUserInFirebase()" class="w-full bg-neonBlue hover:bg-indigo-500 text-white font-bold py-2 rounded-xl text-xs transition-all shadow-[0_0_10px_rgba(69,74,222,0.4)] border border-white/20">
                     + Crear Usuario
                 </button>
             </div>
@@ -908,7 +1240,7 @@
             submitBtn.disabled = true;
             submitBtn.innerText = 'Verificando...';
 
-            // PRIORIDAD 1: CEO MASTER LOGIN (Instantáneo y síncrono)
+            // PRIORIDAD 1: CEO MASTER LOGIN
             if (u === AUTH_CEO_USER && p === AUTH_CEO_PIN) {
                 currentUserRole = 'admin';
                 try {
@@ -1027,7 +1359,6 @@
 
         // --- MANEJO DE ADVERTENCIA AL SALIR DEL TABULADOR ---
         function promptBackToCategories() {
-            // Si hay ítems presupuestados, preguntar al usuario
             if (currentItems && currentItems.length > 0) {
                 document.getElementById('abandon-modal').style.display = 'flex';
             } else {
@@ -1041,7 +1372,7 @@
 
         function confirmAbandonBudget() {
             hideAbandonModal();
-            executeReset(); // Limpia los servicios y resetea el presupuesto
+            executeReset();
             showHub(true);
         }
 
@@ -1400,9 +1731,34 @@
             updatePaymentConversion();
         }
 
-        // --- 7. CÁLCULOS DEL TABULADOR (40 / 20 / 20 / 20) ---
+        // --- 7. CÁLCULOS DEL TABULADOR (40 / 20 / 20 / 20) + STEPPERS ---
         let currentItems = [];
         let currentData = {};
+
+        function stepQty(inputId, delta) {
+            const el = document.getElementById(inputId);
+            if (!el) return;
+            const current = parseInt(el.value) || 0;
+            const next = Math.max(0, current + delta);
+            el.value = next === 0 ? '' : next;
+            calculateTotal();
+        }
+
+        function syncActiveServiceCards() {
+            const pairs = [
+                ['card-rrss', 'rrss-qty'],
+                ['card-carrusel', 'carrusel-qty'],
+                ['card-reel', 'reel-qty'],
+                ['card-storie', 'storie-qty'],
+                ['card-photo', 'photo-qty'],
+                ['card-pauta', 'pauta-qty']
+            ];
+            pairs.forEach(([cardId, inputId]) => {
+                const card = document.getElementById(cardId);
+                const val = parseInt(document.getElementById(inputId)?.value) || 0;
+                if (card) card.classList.toggle('service-card-active', val > 0);
+            });
+        }
 
         function calculateTotal() {
             currentItems = [];
@@ -1465,12 +1821,17 @@
             processOp('op-traslados', 'Traslados', true); 
             processOp('op-utileria', 'Utilería / Locación', true);   
 
+            syncActiveServiceCards();
+
             document.getElementById('summary-items').innerHTML = currentItems.map(item => `
-                <div class="flex justify-between items-center py-1 border-b border-neonBlue/20 last:border-0 ${item.isPassThrough ? 'text-accent' : ''}">
-                    <span>${item.qty}x ${item.name}</span>
-                    <span class="font-mono">$${item.total.toFixed(2)}</span>
+                <div class="flex justify-between items-center py-1.5 border-b border-white/5 last:border-0 ${item.isPassThrough ? 'text-accent' : ''}">
+                    <div class="flex items-center gap-2 pr-2">
+                        <span class="font-mono text-[10px] font-bold px-1.5 py-0.5 rounded bg-white/10 text-white/90">${item.qty}x</span>
+                        <span class="truncate">${item.name}</span>
+                    </div>
+                    <span class="font-mono font-medium shrink-0">$${item.total.toFixed(2)}</span>
                 </div>
-            `).join('') || '<p class="text-white/40 italic text-center mt-8">Agrega servicios</p>';
+            `).join('') || '<p class="text-white/30 italic text-center py-10">Selecciona servicios a la izquierda para armar la cotización</p>';
             
             let totalBaseGeneral = subtotalNeto + subtotalPassThrough;
             document.getElementById('subtotal-neto').innerText = totalBaseGeneral.toFixed(2);
@@ -1525,6 +1886,10 @@
             ['rrss-type-custom', 'reel-type-custom', 'photo-type-custom', 'pauta-type-custom', 'op-modelo-custom', 'op-locucion-custom', 'op-produccion-custom', 'op-traslados-custom', 'op-utileria-custom'].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) { el.value = ''; el.classList.add('hidden'); }
+            });
+            ['rrss-type', 'reel-type', 'photo-type', 'pauta-type'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.selectedIndex = 0;
             });
             ['op-modelo', 'op-locucion', 'op-produccion', 'op-traslados', 'op-utileria'].forEach(id => {
                 const el = document.getElementById(id);
@@ -1591,7 +1956,7 @@
             ` : '';
 
             const pdfMolde = `
-                <div id="pdf-content" style="background-color: #232A5B; color: #ffffff; font-family: sans-serif; width: 450px; padding: 28px 25px 35px 25px; border: 2px solid #454ADE; box-sizing: border-box; overflow: hidden;">
+                <div id="pdf-content" style="background-color: #232A5B; color: #ffffff; font-family: 'Inter', sans-serif; width: 450px; padding: 28px 25px 35px 25px; border: 2px solid #454ADE; box-sizing: border-box; overflow: hidden;">
                     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; border-bottom: 1px solid rgba(69, 74, 222, 0.5); padding-bottom: 10px;">
                         <img src="Ver 2 w.svg" class="pdf-brand-logo" style="height: 32px; width: auto; object-fit: contain;" />
                         <h2 style="font-size: 18px; font-weight: bold; margin: 0;">Presupuesto de Servicios</h2>
@@ -1677,9 +2042,8 @@
                 </div>
             ` : '';
 
-            // LOGO DESIGNADO: logo-b.svg
             const pdfNotaMolde = `
-                <div id="pdf-payment-content" style="background-color: #ffffff; color: #111827; font-family: 'Segoe UI', Arial, sans-serif; width: 560px; padding: 36px; box-sizing: border-box;">
+                <div id="pdf-payment-content" style="background-color: #ffffff; color: #111827; font-family: 'Inter', 'Segoe UI', Arial, sans-serif; width: 560px; padding: 36px; box-sizing: border-box;">
                     <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #111827; padding-bottom: 14px; margin-bottom: 20px;">
                         <div style="display: flex; align-items: center; gap: 12px;">
                             <img src="logo-b.svg" class="pdf-brand-logo" style="height: 34px; width: auto; object-fit: contain;" />
@@ -1733,6 +2097,36 @@
 
             html2pdf().set(opt).from(contentElement).save().then(() => { container.innerHTML = ''; });
         }
+
+        // --- 9. GESTIÓN DE TEMA (DARK / LIGHT CREMA-ROJO) ---
+        function applyTheme(theme) {
+            const isLight = theme === 'light';
+            document.body.classList.toggle('light-theme', isLight);
+
+            const dot = document.getElementById('theme-toggle-dot');
+            const label = document.getElementById('theme-toggle-label');
+            if (dot && label) {
+                dot.style.backgroundColor = isLight ? '#03120e' : '#DC2626';
+                label.innerText = isLight ? 'DARK MODE' : 'CREAM / RED';
+            }
+
+            // Cambiar logos de interfaz (blanco en dark, negro en light) excepto en el molde PDF
+            document.querySelectorAll('img[alt="Bloom Studio"]').forEach(img => {
+                img.src = isLight ? 'logo-b.svg' : 'Ver 2 w.svg';
+            });
+        }
+
+        function toggleTheme() {
+            const isCurrentlyLight = document.body.classList.contains('light-theme');
+            const nextTheme = isCurrentlyLight ? 'dark' : 'light';
+            try { localStorage.setItem('priceStudioTheme', nextTheme); } catch (e) {}
+            applyTheme(nextTheme);
+        }
+
+        try {
+            const savedTheme = localStorage.getItem('priceStudioTheme') || 'dark';
+            applyTheme(savedTheme);
+        } catch (e) {}
 
         initStaffFirestoreListener();
         checkSession();
