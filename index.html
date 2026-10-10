@@ -142,12 +142,14 @@
             background-color: rgba(167, 243, 208, 0.1) !important;
             transform: scale(1.01);
         }
+        /* Contenedor PDF invisible pero renderizable */
         #pdf-export-container {
             position: absolute;
             top: 0;
             left: 0;
-            z-index: -100;
-            opacity: 0.01;
+            width: 800px; /* Ancho fijo clave */
+            z-index: -9999;
+            opacity: 0.001; 
             pointer-events: none;
         }
 
@@ -212,7 +214,6 @@
             border-color: rgba(220, 38, 38, 0.5);
         }
 
-        /* Adaptación de textos, fondos y acentos al rojo en Tema Light */
         body.light-theme .text-white { color: #18181B !important; }
         body.light-theme .text-white\/90, body.light-theme .text-white\/85, body.light-theme .text-white\/80 { color: #27272A !important; }
         body.light-theme .text-white\/70, body.light-theme .text-white\/60 { color: #52525B !important; }
@@ -1059,9 +1060,10 @@
                                 </div>
                             </div>
 
-                            <div id="pay-amount-wrapper" class="hidden">
-                                <label class="block text-xs text-white/70 mb-1">Monto Extraído (Bs)</label>
-                                <input type="number" id="pay-amount" step="0.01" min="0" class="w-full input-dark rounded-lg px-3 py-2 h-[42px] font-mono text-lg font-bold" placeholder="0.00" oninput="updatePaymentConversion()">
+                            <!-- Wrapper del monto (AQUÍ APLIQUÉ EL CAMBIO DE VISIBILIDAD Y CENTRADO) -->
+                            <div id="pay-amount-wrapper">
+                                <label id="pay-amount-label" class="block text-xs text-white/70 mb-1">Monto Extraído (Bs)</label>
+                                <input type="number" id="pay-amount" step="0.01" min="0" class="w-full input-dark rounded-lg px-3 py-2 h-[42px] font-mono text-lg font-bold text-center" placeholder="0.00" oninput="updatePaymentConversion()">
                             </div>
                         </div>
 
@@ -1240,7 +1242,6 @@
             submitBtn.disabled = true;
             submitBtn.innerText = 'Verificando...';
 
-            // PRIORIDAD 1: CEO MASTER LOGIN
             if (u === AUTH_CEO_USER && p === AUTH_CEO_PIN) {
                 currentUserRole = 'admin';
                 try {
@@ -1254,7 +1255,6 @@
                 return;
             }
 
-            // PRIORIDAD 2: USUARIOS DE FIRESTORE
             try {
                 if (db) {
                     const snap = await db.collection('users')
@@ -1357,7 +1357,6 @@
             calculateTotal();
         }
 
-        // --- MANEJO DE ADVERTENCIA AL SALIR DEL TABULADOR ---
         function promptBackToCategories() {
             if (currentItems && currentItems.length > 0) {
                 document.getElementById('abandon-modal').style.display = 'flex';
@@ -1366,10 +1365,7 @@
             }
         }
 
-        function hideAbandonModal() {
-            document.getElementById('abandon-modal').style.display = 'none';
-        }
-
+        function hideAbandonModal() { document.getElementById('abandon-modal').style.display = 'none'; }
         function confirmAbandonBudget() {
             hideAbandonModal();
             executeReset();
@@ -1703,15 +1699,19 @@
             const currency = getSelectedPayCurrency();
             const amount = parseFloat(document.getElementById('pay-amount').value) || 0;
             const amountWrapper = document.getElementById('pay-amount-wrapper');
+            const amountLabel = document.getElementById('pay-amount-label');
             const bcvBox = document.getElementById('bs-conversion-box');
             const rateInput = parseFloat(document.getElementById('pay-bcv-rate').value) || currentBCVRate || 1;
 
+            // Ahora el monto extraído SIEMPRE estará visible
+            amountWrapper.classList.remove('hidden');
+
             if (currency === 'Bs') {
-                amountWrapper.classList.remove('hidden');
+                if (amountLabel) amountLabel.innerText = "Monto Extraído (Bs)";
                 bcvBox.classList.remove('hidden');
                 document.getElementById('pay-usd-equiv').innerText = (rateInput > 0 ? (amount / rateInput) : 0).toFixed(2);
             } else {
-                amountWrapper.classList.add('hidden');
+                if (amountLabel) amountLabel.innerText = "Monto Extraído (USDT)";
                 bcvBox.classList.add('hidden');
             }
         }
@@ -1731,7 +1731,7 @@
             updatePaymentConversion();
         }
 
-        // --- 7. CÁLCULOS DEL TABULADOR (40 / 20 / 20 / 20) + STEPPERS ---
+        // --- 7. CÁLCULOS DEL TABULADOR ---
         let currentItems = [];
         let currentData = {};
 
@@ -1902,7 +1902,7 @@
             calculateTotal();
         }
 
-        // --- 8. EXPORTACIONES A PDF CON VERIFICACIÓN DE LOGOS ---
+        // --- 8. EXPORTACIONES A PDF CON FIX PARA MÓVILES ---
         function verificarImagenesAntesDePDF(container) {
             const imgs = Array.from(container.querySelectorAll('img.pdf-brand-logo'));
             return Promise.all(imgs.map(img => {
@@ -1955,8 +1955,9 @@
                 </div>
             ` : '';
 
+            // Se fija en 800px para que encaje en el jsPDF
             const pdfMolde = `
-                <div id="pdf-content" style="background-color: #232A5B; color: #ffffff; font-family: 'Inter', sans-serif; width: 450px; padding: 28px 25px 35px 25px; border: 2px solid #454ADE; box-sizing: border-box; overflow: hidden;">
+                <div id="pdf-content" style="background-color: #232A5B; color: #ffffff; font-family: 'Inter', sans-serif; width: 800px; padding: 40px; box-sizing: border-box; overflow: hidden; position: relative;">
                     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; border-bottom: 1px solid rgba(69, 74, 222, 0.5); padding-bottom: 10px;">
                         <img src="Ver 2 w.svg" class="pdf-brand-logo" style="height: 32px; width: auto; object-fit: contain;" />
                         <h2 style="font-size: 18px; font-weight: bold; margin: 0;">Presupuesto de Servicios</h2>
@@ -1983,14 +1984,13 @@
             window.scrollTo(0, 0);
             const contentElement = document.getElementById('pdf-content');
             
-            const calcHeight = contentElement.scrollHeight + 5;
-
+            // Fix estandarizado para móvil: Tamaño fijo de captura (800) escalado al margen (0.5 in) en formato 'letter'
             const opt = {
-                margin: 0,
+                margin: 0.5,
                 filename: nombreArchivo,
                 image: { type: 'jpeg', quality: 1 },
-                html2canvas: { scale: 2, useCORS: true, backgroundColor: '#03120e', scrollY: 0, scrollX: 0 },
-                jsPDF: { unit: 'px', format: [contentElement.offsetWidth, calcHeight], orientation: 'portrait' }
+                html2canvas: { scale: 2, useCORS: true, backgroundColor: '#03120e', windowWidth: 800, width: 800, x: 0, y: 0, scrollX: 0, scrollY: 0 },
+                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
             };
 
             html2pdf().set(opt).from(contentElement).save().then(() => { container.innerHTML = ''; });
@@ -2042,27 +2042,22 @@
                 </div>
             ` : '';
 
-            // Ajuste de anchos fijos para que no se rompa en móvil (800px para simular escritorio)
+            // Se fija en 800px para que encaje en el jsPDF
             const pdfNotaMolde = `
-                <div id="pdf-payment-content" style="background-color: #ffffff; color: #111827; font-family: 'Inter', 'Segoe UI', Arial, sans-serif; width: 750px; padding: 40px; box-sizing: border-box;">
-                    <!-- CABECERA ACTUALIZADA -->
+                <div id="pdf-payment-content" style="background-color: #ffffff; color: #111827; font-family: 'Inter', 'Segoe UI', Arial, sans-serif; width: 800px; padding: 40px; box-sizing: border-box; position: relative;">
+                    <!-- CABECERA ACTUALIZADA (Sin texto Bloom Studio, Logo restringido, word-break para Binance) -->
                     <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #111827; padding-bottom: 15px; margin-bottom: 20px;">
-                        <!-- LADO IZQUIERDO: Logo estricto -->
                         <div style="width: 40%;">
-                            <!-- Se fuerza un ancho máximo y alto máximo explícito para evitar distorsión en móvil -->
                             <img src="logo-b.svg" class="pdf-brand-logo" style="width: 130px; height: auto; max-height: 40px; display: block;" />
                             <div style="font-size: 10px; color: #4b5563; margin-top: 6px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700;">Comprobante de Pago</div>
                         </div>
                         
-                        <!-- LADO DERECHO: Fecha y Referencia con protección para strings largos (Binance) -->
                         <div style="width: 55%; text-align: right; font-size: 12px; color: #374151;">
                             <div style="margin-bottom: 4px;"><strong>Fecha:</strong> ${fecha}</div>
-                            <!-- word-break: break-all evita que hashes largos empujen el contenido -->
                             <div style="word-break: break-all; overflow-wrap: break-word;"><strong>Ref:</strong> <span style="font-family: monospace;">#${ref}</span></div>
                         </div>
                     </div>
 
-                    <!-- TABLA DE DATOS -->
                     <table style="width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 16px;">
                         <tbody>
                             <tr><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; color: #4b5563; font-weight: 600; width: 38%;">Beneficiario (Staff)</td><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; font-weight: 700; color: #111827;">${staff}</td></tr>
@@ -2092,24 +2087,25 @@
             window.scrollTo(0, 0);
             const contentElement = document.getElementById('pdf-payment-content');
 
-            // Cambios clave aquí: 
-            // 1. windowWidth de html2canvas engaña al teléfono haciéndole creer que es escritorio.
-            // 2. jsPDF format: 'letter' fuerza el tamaño físico de la hoja.
+            // Fix estandarizado para móvil: Tamaño fijo de captura (800) escalado al margen (0.5 in) en formato 'letter'
             const opt = {
-                margin: [15, 0, 15, 0], // Margen arriba y abajo
+                margin: 0.5,
                 filename: nombreArchivo,
                 image: { type: 'jpeg', quality: 0.98 },
                 html2canvas: { 
                     scale: 2, 
                     useCORS: true, 
                     backgroundColor: '#ffffff', 
-                    scrollY: 0, 
-                    scrollX: 0,
-                    windowWidth: 800 // ESTO CORRIGE EL ESCALADO EN MÓVILES
+                    windowWidth: 800, 
+                    width: 800, 
+                    x: 0, 
+                    y: 0, 
+                    scrollX: 0, 
+                    scrollY: 0 
                 },
                 jsPDF: { 
-                    unit: 'pt', 
-                    format: 'letter', // ESTO FUERZA EL TAMAÑO CARTA
+                    unit: 'in', 
+                    format: 'letter', 
                     orientation: 'portrait' 
                 }
             };
