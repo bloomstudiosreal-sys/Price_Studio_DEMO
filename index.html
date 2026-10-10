@@ -2042,24 +2042,25 @@ async function exportarPagoPDF() {
         </div>
     ` : '';
 
-    const pdfNotaMolde = `
+const pdfNotaMolde = `
         <div id="pdf-payment-content" style="background-color: #ffffff; color: #111827; font-family: 'Inter', 'Segoe UI', Arial, sans-serif; width: 800px; padding: 40px; box-sizing: border-box; position: relative;">
-            <!-- CABECERA ACTUALIZADA CON CAJA FUERTE PARA EL SVG -->
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #111827; padding-bottom: 15px; margin-bottom: 20px;">
+            
+            <!-- CABECERA ACTUALIZADA (Alineación vertical perfecta) -->
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #111827; padding-bottom: 15px; margin-bottom: 20px;">
                 
-                <!-- Contenedor estricto con overflow: hidden -->
-                <div style="width: 150px; height: 50px; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-start;">
-                    <!-- Atributo width directo en HTML, sin height: auto para evitar el bug de html2canvas -->
-                    <img src="logo-b.png" class="pdf-brand-logo" width="140" style="width: 140px; display: block;" />
-                    <div style="font-size: 10px; color: #4b5563; margin-top: 6px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; width: 200px;">Comprobante de Pago</div>
+                <!-- LADO IZQUIERDO: Logo PNG (Centrado verticalmente con la info derecha) -->
+                <div style="width: 40%;">
+                    <img src="logo-b.png" class="pdf-brand-logo" style="width: 150px; height: auto; max-width: 100%; display: block;" />
                 </div>
                 
-                <div style="width: 55%; text-align: right; font-size: 12px; color: #374151;">
+                <!-- LADO DERECHO: Fecha y Referencia -->
+                <div style="width: 55%; text-align: right; font-size: 13px; color: #374151; display: flex; flex-direction: column; justify-content: center;">
                     <div style="margin-bottom: 4px;"><strong>Fecha:</strong> ${fecha}</div>
                     <div style="word-break: break-all; overflow-wrap: break-word;"><strong>Ref:</strong> <span style="font-family: monospace;">#${ref}</span></div>
                 </div>
             </div>
 
+            <!-- TABLA DE DATOS -->
             <table style="width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 16px;">
                 <tbody>
                     <tr><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; color: #4b5563; font-weight: 600; width: 38%;">Beneficiario (Staff)</td><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; font-weight: 700; color: #111827;">${staff}</td></tr>
@@ -2069,8 +2070,7 @@ async function exportarPagoPDF() {
                     <tr><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; color: #4b5563; font-weight: 600;">Proyecto / Cliente</td><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; color: #111827;">${proyecto}</td></tr>
                     <tr><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; color: #4b5563; font-weight: 600;">Concepto</td><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; color: #111827;">${concepto}</td></tr>
                     <tr><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; color: #4b5563; font-weight: 600;">Método de Pago</td><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; color: #111827;">${metodo}</td></tr>
-                    <tr><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; color: #4b5563; font-weight: 600;">ID Transacción / Ref.</td><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; font-family: monospace; color: #111827; word-break: break-all;">${ref}</td></tr>
-                    ${filasMontosHTML}
+                    <tr><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; color: #4b5563; font-weight: 600;">ID Transacción / Ref.</td><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; font-family: monospace; color: #111827; word-break: break-all;">${ref}</td></tr>${filasMontosHTML}
                 </tbody>
             </table>
 
