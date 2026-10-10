@@ -1996,122 +1996,120 @@
             html2pdf().set(opt).from(contentElement).save().then(() => { container.innerHTML = ''; });
         }
 
-        async function exportarPagoPDF() {
-            const staff = document.getElementById('pay-staff').value.trim() || 'Staff';
-            const staffId = document.getElementById('pay-staff-id').value.trim() || 'N/A';
-            const staffRole = document.getElementById('pay-staff-role').value.trim() || 'N/A';
-            const staffAddress = document.getElementById('pay-staff-address').value.trim() || 'N/A';
-            const fecha = document.getElementById('pay-date').value || 'Sin_Fecha';
-            const proyecto = document.getElementById('pay-project').value.trim() || 'General';
-            const concepto = document.getElementById('pay-concept').value.trim() || 'Servicios';
-            const metodo = document.getElementById('pay-method').value;
-            const moneda = getSelectedPayCurrency();
-            const ref = document.getElementById('pay-ref').value.trim() || 'S/R';
-            const monto = parseFloat(document.getElementById('pay-amount').value) || 0;
-            const tasaBCV = parseFloat(document.getElementById('pay-bcv-rate').value) || currentBCVRate || 0;
-            const equivUSD = (moneda === 'Bs' && tasaBCV > 0) ? (monto / tasaBCV).toFixed(2) : monto.toFixed(2);
+async function exportarPagoPDF() {
+    const staff = document.getElementById('pay-staff').value.trim() || 'Staff';
+    const staffId = document.getElementById('pay-staff-id').value.trim() || 'N/A';
+    const staffRole = document.getElementById('pay-staff-role').value.trim() || 'N/A';
+    const staffAddress = document.getElementById('pay-staff-address').value.trim() || 'N/A';
+    const fecha = document.getElementById('pay-date').value || 'Sin_Fecha';
+    const proyecto = document.getElementById('pay-project').value.trim() || 'General';
+    const concepto = document.getElementById('pay-concept').value.trim() || 'Servicios';
+    const metodo = document.getElementById('pay-method').value;
+    const moneda = getSelectedPayCurrency();
+    const ref = document.getElementById('pay-ref').value.trim() || 'S/R';
+    const monto = parseFloat(document.getElementById('pay-amount').value) || 0;
+    const tasaBCV = parseFloat(document.getElementById('pay-bcv-rate').value) || currentBCVRate || 0;
+    const equivUSD = (moneda === 'Bs' && tasaBCV > 0) ? (monto / tasaBCV).toFixed(2) : monto.toFixed(2);
 
-            const nombreArchivo = `PAGO_${staff}_${concepto}_${fecha}`.replace(/[\/\\?%*:|"<>]/g, '-').replace(/\s+/g, '_') + '.pdf';
+    const nombreArchivo = `PAGO_${staff}_${concepto}_${fecha}`.replace(/[\/\\?%*:|"<>]/g, '-').replace(/\s+/g, '_') + '.pdf';
 
-            let filasMontosHTML = moneda === 'Bs' ? `
-                <tr style="background-color: #f3f4f6;">
-                    <td style="padding: 10px 12px; border-bottom: 1px solid #d1d5db; color: #111827; font-weight: 700;">Monto Pagado (Bs)</td>
-                    <td style="padding: 10px 12px; border-bottom: 1px solid #d1d5db; text-align: right; font-family: monospace; font-size: 16px; font-weight: 800; color: #111827;">Bs. ${monto.toFixed(2)}</td>
-                </tr>
-                <tr>
-                    <td style="padding: 8px 12px; border-bottom: 1px solid #e5e7eb; color: #4b5563; font-weight: 600;">Tasa BCV Aplicada</td>
-                    <td style="padding: 8px 12px; border-bottom: 1px solid #e5e7eb; text-align: right; font-family: monospace;">${tasaBCV.toFixed(2)} Bs/$</td>
-                </tr>
-                <tr style="background-color: #f9fafb;">
-                    <td style="padding: 10px 12px; border-bottom: 2px solid #111827; color: #111827; font-weight: 700;">Equivalente en Divisas ($ BCV)</td>
-                    <td style="padding: 10px 12px; border-bottom: 2px solid #111827; text-align: right; font-family: monospace; font-size: 15px; font-weight: 700; color: #111827;">$${equivUSD} USD</td>
-                </tr>
-            ` : (monto > 0 ? `
-                <tr style="background-color: #f3f4f6;">
-                    <td style="padding: 10px 12px; border-bottom: 2px solid #111827; color: #111827; font-weight: 700;">Monto Pagado (USDT)</td>
-                    <td style="padding: 10px 12px; border-bottom: 2px solid #111827; text-align: right; font-family: monospace; font-size: 16px; font-weight: 800; color: #111827;">$${monto.toFixed(2)} USDT</td>
-                </tr>
-            ` : '');
+    let filasMontosHTML = moneda === 'Bs' ? `
+        <tr style="background-color: #f3f4f6;">
+            <td style="padding: 10px 12px; border-bottom: 1px solid #d1d5db; color: #111827; font-weight: 700;">Monto Pagado (Bs)</td>
+            <td style="padding: 10px 12px; border-bottom: 1px solid #d1d5db; text-align: right; font-family: monospace; font-size: 16px; font-weight: 800; color: #111827;">Bs. ${monto.toFixed(2)}</td>
+        </tr>
+        <tr>
+            <td style="padding: 8px 12px; border-bottom: 1px solid #e5e7eb; color: #4b5563; font-weight: 600;">Tasa BCV Aplicada</td>
+            <td style="padding: 8px 12px; border-bottom: 1px solid #e5e7eb; text-align: right; font-family: monospace;">${tasaBCV.toFixed(2)} Bs/$</td>
+        </tr>
+        <tr style="background-color: #f9fafb;">
+            <td style="padding: 10px 12px; border-bottom: 2px solid #111827; color: #111827; font-weight: 700;">Equivalente en Divisas ($ BCV)</td>
+            <td style="padding: 10px 12px; border-bottom: 2px solid #111827; text-align: right; font-family: monospace; font-size: 15px; font-weight: 700; color: #111827;">$${equivUSD} USD</td>
+        </tr>
+    ` : (monto > 0 ? `
+        <tr style="background-color: #f3f4f6;">
+            <td style="padding: 10px 12px; border-bottom: 2px solid #111827; color: #111827; font-weight: 700;">Monto Pagado (USDT)</td>
+            <td style="padding: 10px 12px; border-bottom: 2px solid #111827; text-align: right; font-family: monospace; font-size: 16px; font-weight: 800; color: #111827;">$${monto.toFixed(2)} USDT</td>
+        </tr>
+    ` : '');
 
-            const captureImgHTML = currentCaptureDataUrl ? `
-                <div style="margin-top: 20px;">
-                    <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #4b5563; margin-bottom: 8px; border-bottom: 1px solid #d1d5db; padding-bottom: 4px;">Anexo: Capture de Operación</div>
-                    <div style="border: 1px solid #d1d5db; border-radius: 6px; padding: 10px; text-align: center; background-color: #f9fafb;">
-                        <img src="${currentCaptureDataUrl}" style="max-height: 280px; max-width: 100%; object-fit: contain; margin: 0 auto; display: block;" />
-                    </div>
+    const captureImgHTML = currentCaptureDataUrl ? `
+        <div style="margin-top: 20px;">
+            <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #4b5563; margin-bottom: 8px; border-bottom: 1px solid #d1d5db; padding-bottom: 4px;">Anexo: Capture de Operación</div>
+            <div style="border: 1px solid #d1d5db; border-radius: 6px; padding: 10px; text-align: center; background-color: #f9fafb;">
+                <img src="${currentCaptureDataUrl}" style="max-height: 280px; max-width: 100%; object-fit: contain; margin: 0 auto; display: block;" />
+            </div>
+        </div>
+    ` : '';
+
+    const pdfNotaMolde = `
+        <div id="pdf-payment-content" style="background-color: #ffffff; color: #111827; font-family: 'Inter', 'Segoe UI', Arial, sans-serif; width: 800px; padding: 40px; box-sizing: border-box; position: relative;">
+            <!-- CABECERA ACTUALIZADA (Caja de Logo corregida a 150px con object-fit) -->
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #111827; padding-bottom: 15px; margin-bottom: 20px;">
+                <div style="width: 40%; overflow: visible;">
+                    <img src="logo-b.svg" class="pdf-brand-logo" style="width: 150px; height: auto; max-width: 100%; object-fit: contain; display: block;" />
+                    <div style="font-size: 10px; color: #4b5563; margin-top: 6px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700;">Comprobante de Pago</div>
                 </div>
-            ` : '';
-
-            // Se fija en 800px para que encaje en el jsPDF
-            const pdfNotaMolde = `
-                <div id="pdf-payment-content" style="background-color: #ffffff; color: #111827; font-family: 'Inter', 'Segoe UI', Arial, sans-serif; width: 800px; padding: 40px; box-sizing: border-box; position: relative;">
-                    <!-- CABECERA ACTUALIZADA (Sin texto Bloom Studio, Logo restringido, word-break para Binance) -->
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #111827; padding-bottom: 15px; margin-bottom: 20px;">
-                        <div style="width: 40%;">
-                            <img src="logo-b.svg" class="pdf-brand-logo" style="width: 130px; height: auto; max-height: 40px; display: block;" />
-                            <div style="font-size: 10px; color: #4b5563; margin-top: 6px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700;">Comprobante de Pago</div>
-                        </div>
-                        
-                        <div style="width: 55%; text-align: right; font-size: 12px; color: #374151;">
-                            <div style="margin-bottom: 4px;"><strong>Fecha:</strong> ${fecha}</div>
-                            <div style="word-break: break-all; overflow-wrap: break-word;"><strong>Ref:</strong> <span style="font-family: monospace;">#${ref}</span></div>
-                        </div>
-                    </div>
-
-                    <table style="width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 16px;">
-                        <tbody>
-                            <tr><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; color: #4b5563; font-weight: 600; width: 38%;">Beneficiario (Staff)</td><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; font-weight: 700; color: #111827;">${staff}</td></tr>
-                            <tr><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; color: #4b5563; font-weight: 600;">Cédula de Identidad</td><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; font-family: monospace; color: #111827;">${staffId}</td></tr>
-                            <tr><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; color: #4b5563; font-weight: 600;">Cargo</td><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; color: #111827;">${staffRole}</td></tr>
-                            <tr><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; color: #4b5563; font-weight: 600;">Dirección</td><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; color: #111827;">${staffAddress}</td></tr>
-                            <tr><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; color: #4b5563; font-weight: 600;">Proyecto / Cliente</td><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; color: #111827;">${proyecto}</td></tr>
-                            <tr><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; color: #4b5563; font-weight: 600;">Concepto</td><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; color: #111827;">${concepto}</td></tr>
-                            <tr><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; color: #4b5563; font-weight: 600;">Método de Pago</td><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; color: #111827;">${metodo}</td></tr>
-                            <tr><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; color: #4b5563; font-weight: 600;">ID Transacción / Ref.</td><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; font-family: monospace; color: #111827; word-break: break-all;">${ref}</td></tr>
-                            ${filasMontosHTML}
-                        </tbody>
-                    </table>
-
-                    ${captureImgHTML}
-
-                    <div style="margin-top: 24px; padding-top: 10px; border-top: 1px solid #e5e7eb; display: flex; justify-content: space-between; font-size: 10px; color: #9ca3af;">
-                        <span>Documento administrativo interno - Bloom Studio</span>
-                        <span>Generado por Price Studio</span>
-                    </div>
+                
+                <div style="width: 55%; text-align: right; font-size: 12px; color: #374151;">
+                    <div style="margin-bottom: 4px;"><strong>Fecha:</strong> ${fecha}</div>
+                    <div style="word-break: break-all; overflow-wrap: break-word;"><strong>Ref:</strong> <span style="font-family: monospace;">#${ref}</span></div>
                 </div>
-            `;
+            </div>
 
-            const container = document.getElementById('pdf-export-container');
-            container.innerHTML = pdfNotaMolde;
-            await verificarImagenesAntesDePDF(container);
-            window.scrollTo(0, 0);
-            const contentElement = document.getElementById('pdf-payment-content');
+            <table style="width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 16px;">
+                <tbody>
+                    <tr><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; color: #4b5563; font-weight: 600; width: 38%;">Beneficiario (Staff)</td><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; font-weight: 700; color: #111827;">${staff}</td></tr>
+                    <tr><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; color: #4b5563; font-weight: 600;">Cédula de Identidad</td><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; font-family: monospace; color: #111827;">${staffId}</td></tr>
+                    <tr><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; color: #4b5563; font-weight: 600;">Cargo</td><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; color: #111827;">${staffRole}</td></tr>
+                    <tr><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; color: #4b5563; font-weight: 600;">Dirección</td><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; color: #111827;">${staffAddress}</td></tr>
+                    <tr><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; color: #4b5563; font-weight: 600;">Proyecto / Cliente</td><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; color: #111827;">${proyecto}</td></tr>
+                    <tr><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; color: #4b5563; font-weight: 600;">Concepto</td><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; color: #111827;">${concepto}</td></tr>
+                    <tr><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; color: #4b5563; font-weight: 600;">Método de Pago</td><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; color: #111827;">${metodo}</td></tr>
+                    <tr><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; color: #4b5563; font-weight: 600;">ID Transacción / Ref.</td><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; font-family: monospace; color: #111827; word-break: break-all;">${ref}</td></tr>
+                    ${filasMontosHTML}
+                </tbody>
+            </table>
 
-            // Fix estandarizado para móvil: Tamaño fijo de captura (800) escalado al margen (0.5 in) en formato 'letter'
-            const opt = {
-                margin: 0.5,
-                filename: nombreArchivo,
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { 
-                    scale: 2, 
-                    useCORS: true, 
-                    backgroundColor: '#ffffff', 
-                    windowWidth: 800, 
-                    width: 800, 
-                    x: 0, 
-                    y: 0, 
-                    scrollX: 0, 
-                    scrollY: 0 
-                },
-                jsPDF: { 
-                    unit: 'in', 
-                    format: 'letter', 
-                    orientation: 'portrait' 
-                }
-            };
+            ${captureImgHTML}
 
-            html2pdf().set(opt).from(contentElement).save().then(() => { container.innerHTML = ''; });
+            <div style="margin-top: 24px; padding-top: 10px; border-top: 1px solid #e5e7eb; display: flex; justify-content: space-between; font-size: 10px; color: #9ca3af;">
+                <span>Documento administrativo interno - Bloom Studio</span>
+                <span>Generado por Price Studio</span>
+            </div>
+        </div>
+    `;
+
+    const container = document.getElementById('pdf-export-container');
+    container.innerHTML = pdfNotaMolde;
+    await verificarImagenesAntesDePDF(container);
+    window.scrollTo(0, 0);
+    const contentElement = document.getElementById('pdf-payment-content');
+
+    const opt = {
+        margin: 0.5,
+        filename: nombreArchivo,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { 
+            scale: 2, 
+            useCORS: true, 
+            backgroundColor: '#ffffff', 
+            windowWidth: 800, 
+            width: 800, 
+            x: 0, 
+            y: 0, 
+            scrollX: 0, 
+            scrollY: 0 
+        },
+        jsPDF: { 
+            unit: 'in', 
+            format: 'letter', 
+            orientation: 'portrait' 
         }
+    };
+
+    html2pdf().set(opt).from(contentElement).save().then(() => { container.innerHTML = ''; });
+}
 
         // --- 9. GESTIÓN DE TEMA (DARK / LIGHT CREMA-ROJO) ---
         function applyTheme(theme) {
