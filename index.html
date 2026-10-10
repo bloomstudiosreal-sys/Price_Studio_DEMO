@@ -2044,11 +2044,14 @@ async function exportarPagoPDF() {
 
     const pdfNotaMolde = `
         <div id="pdf-payment-content" style="background-color: #ffffff; color: #111827; font-family: 'Inter', 'Segoe UI', Arial, sans-serif; width: 800px; padding: 40px; box-sizing: border-box; position: relative;">
-            <!-- CABECERA ACTUALIZADA (Caja de Logo corregida a 150px con object-fit) -->
+            <!-- CABECERA ACTUALIZADA CON CAJA FUERTE PARA EL SVG -->
             <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #111827; padding-bottom: 15px; margin-bottom: 20px;">
-                <div style="width: 40%; overflow: visible;">
-                    <img src="logo-b.svg" class="pdf-brand-logo" style="width: 150px; height: auto; max-width: 100%; object-fit: contain; display: block;" />
-                    <div style="font-size: 10px; color: #4b5563; margin-top: 6px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700;">Comprobante de Pago</div>
+                
+                <!-- Contenedor estricto con overflow: hidden -->
+                <div style="width: 150px; height: 50px; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-start;">
+                    <!-- Atributo width directo en HTML, sin height: auto para evitar el bug de html2canvas -->
+                    <img src="logo-b.svg" class="pdf-brand-logo" width="140" style="width: 140px; display: block;" />
+                    <div style="font-size: 10px; color: #4b5563; margin-top: 6px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; width: 200px;">Comprobante de Pago</div>
                 </div>
                 
                 <div style="width: 55%; text-align: right; font-size: 12px; color: #374151;">
