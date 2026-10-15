@@ -117,6 +117,9 @@
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(69, 74, 222, 0.5); border-radius: 9999px; }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
         input[type="number"]::-webkit-inner-spin-button,
         input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
@@ -849,9 +852,9 @@
         </div>
     </div>
 
-    <!-- 4. PANTALLA: REGISTRAR PAGO AL STAFF (SOLO CEO) -->
-    <div id="payment-view" class="max-w-6xl mx-auto hidden">
-        <header class="mb-6 border-b border-white/10 pb-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+<!-- 4. PANTALLA: REGISTRAR PAGO AL STAFF (SOLO CEO) - WORKSPACE DE 3 COLUMNAS -->
+    <div id="payment-view" class="max-w-[1400px] mx-auto hidden">
+        <header class="mb-6 border-b border-white/10 pb-4 flex flex-col md:flex-row md:items-center justify-between gap-4 px-2">
             <div class="flex items-center gap-4 flex-wrap">
                 <button onclick="showMainMenu(true)" class="flex items-center gap-2 bg-transparent hover:bg-white/10 border border-white/20 text-white px-3 py-2 rounded-lg transition-all text-sm font-semibold">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
@@ -866,7 +869,7 @@
             <div class="flex items-center gap-3 self-start md:self-end">
                 <button onclick="toggleAddStaffPanel()" class="bg-neonBlue/20 hover:bg-neonBlue border border-neonBlue text-white text-xs font-bold px-3.5 py-2 rounded-lg transition-all flex items-center gap-1.5 shadow-[0_0_10px_rgba(69,74,222,0.3)]">
                     <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
-                    Agregar Miembro de Staff
+                    Agregar Miembro
                 </button>
                 <button onclick="handleLogout()" title="Cerrar sesión" class="bg-red-500/20 hover:bg-red-500/40 border border-red-400/30 text-red-300 text-xs font-semibold px-4 py-2 rounded-lg transition-all">
                     Log Out
@@ -874,230 +877,238 @@
             </div>
         </header>
 
+        <!-- Directorio desplegable -->
         <section id="add-staff-panel" class="neon-panel p-6 mb-8 hidden animate-zoom-in">
             <div class="flex justify-between items-center mb-4 border-b border-white/10 pb-2">
                 <div>
                     <h2 class="text-lg font-bold text-white flex items-center gap-2">
                         <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                        Directorio en la Nube: Agregar Miembro
+                        Directorio: Agregar Miembro
                     </h2>
-                    <p class="text-xs text-white/50">Sincronizado en tiempo real con Firebase Firestore</p>
                 </div>
                 <button onclick="toggleAddStaffPanel()" class="text-white/50 hover:text-white text-xs px-2 py-1 rounded border border-white/10">Cerrar ✕</button>
             </div>
-
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-                <div>
-                    <label class="block text-xs text-white/70 mb-1">Nombre Completo</label>
-                    <input type="text" id="new-staff-name" class="w-full input-dark rounded-lg px-3 py-2 text-sm" placeholder="Ej. Carlos Pérez">
-                </div>
-                <div>
-                    <label class="block text-xs text-white/70 mb-1">Cédula</label>
-                    <input type="text" id="new-staff-id" class="w-full input-dark rounded-lg px-3 py-2 text-sm" placeholder="Ej. V-25.123.456">
-                </div>
-                <div>
-                    <label class="block text-xs text-white/70 mb-1">Cargo</label>
-                    <input type="text" id="new-staff-role" class="w-full input-dark rounded-lg px-3 py-2 text-sm" placeholder="Ej. Diseñador / Editor">
-                </div>
-                <div>
-                    <label class="block text-xs text-white/70 mb-1">Dirección</label>
-                    <input type="text" id="new-staff-address" class="w-full input-dark rounded-lg px-3 py-2 text-sm" placeholder="Ej. Barquisimeto, Lara">
-                </div>
+                <div><label class="block text-xs text-white/70 mb-1">Nombre Completo</label><input type="text" id="new-staff-name" class="w-full input-dark rounded-lg px-3 py-2 text-sm"></div>
+                <div><label class="block text-xs text-white/70 mb-1">Cédula</label><input type="text" id="new-staff-id" class="w-full input-dark rounded-lg px-3 py-2 text-sm"></div>
+                <div><label class="block text-xs text-white/70 mb-1">Cargo</label><input type="text" id="new-staff-role" class="w-full input-dark rounded-lg px-3 py-2 text-sm"></div>
+                <div><label class="block text-xs text-white/70 mb-1">Dirección</label><input type="text" id="new-staff-address" class="w-full input-dark rounded-lg px-3 py-2 text-sm"></div>
             </div>
-
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-2 border-t border-white/10">
-                <div id="staff-saved-msg" class="text-xs text-accent font-medium hidden">✓ Guardado en la nube con éxito</div>
-                <div class="flex gap-2 ml-auto">
-                    <button type="button" onclick="saveNewStaffMember()" class="bg-neonBlue hover:bg-indigo-500 text-white font-bold px-5 py-2 rounded-xl text-xs transition-all shadow-[0_0_12px_rgba(69,74,222,0.5)] border border-white/20">
-                        Guardar Miembro
-                    </button>
-                </div>
+            <div class="flex justify-between gap-4 pt-2 border-t border-white/10">
+                <div id="staff-saved-msg" class="text-xs text-accent font-medium hidden">✓ Guardado</div>
+                <button type="button" onclick="saveNewStaffMember()" class="bg-neonBlue hover:bg-indigo-500 text-white font-bold px-5 py-2 rounded-xl text-xs transition-all border border-white/20 ml-auto">Guardar</button>
             </div>
-
             <div class="mt-4 pt-3 border-t border-white/10">
-                <span class="block text-[11px] text-white/50 uppercase tracking-wider mb-2 font-semibold">Miembros guardados en Firestore:</span>
+                <span class="block text-[11px] text-white/50 uppercase mb-2 font-semibold">Guardados en Firebase:</span>
                 <div id="directory-saved-list" class="flex flex-wrap gap-2"></div>
             </div>
         </section>
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            <div class="lg:col-span-5 space-y-4">
-                <div class="neon-panel p-6 flex flex-col items-center text-center">
-                    <h2 class="text-lg font-semibold text-white mb-1 self-start">1. Comprobante / Capture</h2>
-                    <p class="text-xs text-white/50 mb-4 self-start">Arrastra la imagen desde tu PC, haz clic o pega con Ctrl+V</p>
+        <!-- LAYOUT 3 COLUMNAS -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 h-auto lg:h-[72vh]">
+            
+            <!-- COLUMNA 1: CAPTURE E INFO BÁSICA (Col-span 3) -->
+            <div class="neon-panel lg:col-span-3 p-5 flex flex-col h-full overflow-y-auto">
+                <h3 class="text-xs font-mono text-white/50 uppercase mb-3 tracking-wider">1. Soporte del Pago</h3>
+                
+                <label id="capture-dropzone" for="capture-upload" class="w-full inner-box border-2 border-dashed border-neonBlue/60 rounded-xl p-4 cursor-pointer hover:bg-neonBlue/10 transition-all flex flex-col items-center justify-center min-h-[200px] relative overflow-hidden group">
+                    <input type="file" id="capture-upload" accept="image/*" class="hidden" onchange="handleCaptureUpload(event)">
+                    <div id="upload-placeholder" class="flex flex-col items-center pointer-events-none text-center">
+                        <svg class="w-10 h-10 text-neonBlue mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        <span class="text-xs font-semibold text-white">Arrastra el capture aquí</span>
+                        <span class="text-[10px] text-white/50 mt-1">o haz clic / Ctrl + V</span>
+                    </div>
+                    <img id="capture-preview" src="" class="absolute inset-0 w-full h-full object-contain bg-black/60 backdrop-blur-sm hidden pointer-events-none">
+                    <div id="change-btn" class="absolute bottom-2 right-2 bg-black/80 px-2 py-1 rounded text-[10px] hidden group-hover:block backdrop-blur-md border border-white/20">Cambiar</div>
+                </label>
 
-                    <label id="capture-dropzone" for="capture-upload" class="w-full inner-box border-2 border-dashed border-neonBlue/60 rounded-xl p-6 cursor-pointer hover:bg-neonBlue/10 transition-all flex flex-col items-center justify-center min-h-[240px] relative overflow-hidden">
-                        <input type="file" id="capture-upload" accept="image/*" class="hidden" onchange="handleCaptureUpload(event)">
-                        
-                        <div id="upload-placeholder" class="flex flex-col items-center pointer-events-none">
-                            <svg class="w-12 h-12 text-neonBlue mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                            </svg>
-                            <span class="text-sm font-semibold text-white">Arrastra y suelta tu capture aquí</span>
-                            <span class="text-xs text-white/50 mt-1">o haz clic para explorar / Ctrl + V</span>
+                <div id="ocr-status" class="w-full mt-3 hidden">
+                    <div class="inner-box rounded-lg p-2.5 flex items-center justify-between text-[11px]">
+                        <span id="ocr-status-text" class="text-accent font-medium flex items-center gap-1.5">
+                            <svg class="w-3.5 h-3.5 animate-spin text-neonBlue" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
+                            Analizando...
+                        </span>
+                        <span id="ocr-badge" class="bg-neonBlue/30 text-white px-1.5 py-0.5 rounded font-mono text-[9px]">OCR</span>
+                    </div>
+                </div>
+
+                <div class="space-y-4 mt-6">
+                    <div>
+                        <label class="block text-[10px] text-white/70 mb-1 uppercase font-mono">Ref. Transacción</label>
+                        <input type="text" id="pay-ref" class="w-full input-dark rounded-lg px-3 py-2 text-sm font-mono" placeholder="# 000000" oninput="updatePaymentLiveDoc()">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] text-white/70 mb-1 uppercase font-mono">Método Detectado</label>
+                        <select id="pay-method" class="w-full input-dark rounded-lg px-3 py-2 text-sm" onchange="handleMethodChange(); updatePaymentLiveDoc()">
+                            <option value="Binance Pay (USDT)">Binance Pay (USDT)</option>
+                            <option value="Pago Móvil">Pago Móvil (Bs)</option>
+                            <option value="Transferencia Bancaria">Transferencia Bancaria (Bs)</option>
+                            <option value="Otro">Otro</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- COLUMNA 2: DOCUMENTO EN VIVO (Col-span 5) -->
+            <div class="lg:col-span-5 flex flex-col h-full bg-black/20 rounded-2xl border border-white/5 overflow-hidden">
+                <div class="p-3 border-b border-white/5 flex items-center justify-between shrink-0">
+                    <h3 class="text-xs font-mono text-white/50 uppercase tracking-wider ml-1">2. Documento de Entrega</h3>
+                </div>
+                
+                <div class="flex-1 overflow-y-auto no-scrollbar flex justify-center items-start p-4">
+                    <div id="receipt-doc" class="bg-[#F7F4EF] text-[#18181B] w-full max-w-[480px] aspect-[1/1.35] rounded-sm shadow-2xl p-7 flex flex-col relative shrink-0">
+                        <div class="flex justify-between items-start border-b border-black/10 pb-5 mb-5">
+                            <div class="flex items-center gap-3">
+                                <img src="Ver 2 w.svg" alt="Bloom" class="h-6 w-auto" style="filter: invert(1);" onerror="this.onerror=null; this.outerHTML='<div class=\'h-6 px-1 bg-black text-white text-[10px] font-bold flex items-center\'>B</div>'">
+                                <div>
+                                    <h1 class="font-sans font-bold text-base leading-tight">Bloom Studio</h1>
+                                    <p class="text-[9px] font-mono text-gray-500 uppercase">Comprobante de Pago</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-[9px] font-mono text-gray-500 uppercase mb-0.5">Recibo Nº</p>
+                                <h2 class="font-sans font-bold text-lg">#<span id="doc-id">0000</span></h2>
+                                <p class="text-[10px] mt-1 text-gray-600 font-mono" id="doc-date">--/--/----</p>
+                            </div>
                         </div>
 
-                        <img id="capture-preview" src="" alt="Vista previa" class="hidden max-h-[320px] w-auto object-contain rounded-lg shadow-lg pointer-events-none">
-                    </label>
+                        <div class="grid grid-cols-2 gap-4 mb-6 text-sm">
+                            <div>
+                                <p class="text-[9px] font-mono text-gray-500 uppercase mb-1">Emitido A</p>
+                                <p class="font-sans font-bold text-sm leading-tight" id="doc-staff-name">Nombre del Staff</p>
+                                <p class="text-[10px] text-gray-600 mt-1" id="doc-staff-role">Cargo / Rol</p>
+                            </div>
+                            <div>
+                                <p class="text-[9px] font-mono text-gray-500 uppercase mb-1">Detalles Transacción</p>
+                                <p class="text-[10px] mb-0.5"><strong>Ref:</strong> <span id="doc-ref">N/A</span></p>
+                                <p class="text-[10px]"><strong>Vía:</strong> <span id="doc-method">N/A</span></p>
+                            </div>
+                        </div>
 
-                    <div id="ocr-status" class="w-full mt-4 hidden">
-                        <div class="inner-box rounded-lg p-3 flex items-center justify-between text-xs">
-                            <span id="ocr-status-text" class="text-accent font-medium flex items-center gap-2">
-                                <svg class="w-4 h-4 animate-spin text-neonBlue" fill="none" viewBox="0 0 24 24">
-                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
-                                </svg>
-                                Analizando datos del capture...
-                            </span>
-                            <span id="ocr-badge" class="bg-neonBlue/30 text-white px-2 py-0.5 rounded font-mono text-[11px]">OCR</span>
+                        <div class="flex-1">
+                            <div class="flex border-b border-black/20 pb-1.5 mb-2 text-[9px] font-mono font-bold text-gray-500 uppercase">
+                                <div class="flex-1">Descripción / Tarea</div>
+                                <div class="w-24 text-right">Importe</div>
+                            </div>
+                            <div id="doc-items-list" class="space-y-2 text-sm font-sans">
+                                <div class="flex justify-between">
+                                    <div class="text-gray-800 text-xs">Sin descripción</div>
+                                    <div class="font-medium text-xs">$0.00</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="border-t border-black/20 pt-4 mt-6">
+                            <div class="flex justify-between items-end mb-8">
+                                <div class="text-[9px] text-gray-500 max-w-[55%] leading-relaxed">
+                                    <p>Este documento certifica el pago por los servicios prestados descritos arriba.</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-[9px] font-mono text-gray-500 uppercase mb-0.5">Total Pagado</p>
+                                    <p class="text-2xl font-sans font-bold text-green-700" id="doc-total">$0.00</p>
+                                </div>
+                            </div>
+
+                            <div class="flex justify-between items-end border-t border-black/10 pt-4 mt-auto">
+                                <div class="w-32 border-b border-black text-center pb-1">
+                                    <p class="text-[9px] font-mono text-gray-500 uppercase">Recibido Conforme</p>
+                                </div>
+                                <div>
+                                    <p class="font-serif italic text-2xl text-black/80 pr-2">Bloom Studio</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="lg:col-span-7">
-                <div class="neon-panel p-6">
-                    <div class="flex justify-between items-center mb-4 border-b border-white/10 pb-3">
+            <!-- COLUMNA 3: OPCIONES Y ACCIONES (Col-span 4) -->
+            <div class="neon-panel lg:col-span-4 p-5 flex flex-col h-full overflow-y-auto">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xs font-mono text-white/50 uppercase tracking-wider">3. Opciones & Acciones</h3>
+                    <div class="flex items-center gap-1.5">
+                        <span id="bcv-live-badge" class="w-1.5 h-1.5 rounded-full bg-accent animate-pulse"></span>
+                        <span id="bcv-header-rate" class="font-mono text-[10px] font-bold text-accent">...</span>
+                        <button type="button" onclick="fetchBCVRate()" class="text-white/50 hover:text-white"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg></button>
+                    </div>
+                </div>
+
+                <div class="mb-5 border-b border-white/10 pb-5">
+                    <label class="block text-xs font-semibold text-white/80 mb-2 uppercase">Seleccionar Staff</label>
+                    <select id="staff-select-dropdown" onchange="handleStaffDropdownChange(this.value)" class="w-full input-dark rounded-xl px-3 py-2 text-sm cursor-pointer mb-2">
+                        <option value="">-- Selecciona --</option>
+                    </select>
+                    
+                    <div id="payment-form-body" class="hidden">
+                        <div class="inner-box rounded-lg p-3 grid grid-cols-2 gap-2 mb-2">
+                            <input type="text" id="pay-staff" class="w-full bg-transparent text-[11px] text-white outline-none font-semibold" readonly placeholder="Nombre">
+                            <input type="text" id="pay-staff-id" class="w-full bg-transparent text-[11px] text-white/60 outline-none" readonly placeholder="Cédula">
+                            <input type="text" id="pay-staff-role" class="w-full bg-transparent text-[11px] text-white/60 outline-none" readonly placeholder="Cargo">
+                            <input type="text" id="pay-staff-address" class="w-full bg-transparent text-[11px] text-white/60 outline-none" readonly placeholder="Dirección">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-4 mb-4 flex-1">
+                    <div class="grid grid-cols-2 gap-3">
                         <div>
-                            <h2 class="text-lg font-semibold text-white">2. Datos de la Nota de Pago</h2>
-                            <p class="text-xs text-white/50">Selecciona al miembro del Staff en el desplegable</p>
+                            <label class="block text-[10px] text-white/60 mb-1">Fecha de Emisión</label>
+                            <input type="date" id="pay-date" class="w-full input-dark rounded-lg px-3 py-1.5 text-xs block" oninput="updatePaymentLiveDoc()">
                         </div>
-                        <div class="text-right">
-                            <span class="text-[11px] text-white/50 block">Tasa Oficial BCV</span>
-                            <div class="flex items-center gap-1.5 mt-0.5">
-                                <span id="bcv-live-badge" class="w-2 h-2 rounded-full bg-accent animate-pulse"></span>
-                                <span id="bcv-header-rate" class="font-mono text-sm font-bold text-accent">Cargando...</span>
-                                <button type="button" onclick="fetchBCVRate()" title="Actualizar tasa BCV" class="text-white/50 hover:text-white ml-1">
-                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                                </button>
+                        <div>
+                            <label class="block text-[10px] text-white/60 mb-1">Tasa Aplicada</label>
+                            <div class="flex inner-box rounded-lg overflow-hidden h-[30px] border-none">
+                                <label class="flex-1 text-center cursor-pointer relative border border-white/10 rounded-l-lg">
+                                    <input type="radio" name="pay-tasa" value="USDT" class="peer sr-only" checked onchange="updatePaymentConversion()">
+                                    <div class="w-full h-full flex items-center justify-center text-[10px] text-white/60 peer-checked:bg-neonBlue peer-checked:text-white font-mono">USDT</div>
+                                </label>
+                                <label class="flex-1 text-center cursor-pointer relative border-t border-b border-r border-white/10 rounded-r-lg">
+                                    <input type="radio" name="pay-tasa" value="Bs" class="peer sr-only" onchange="updatePaymentConversion()">
+                                    <div class="w-full h-full flex items-center justify-center text-[10px] text-white/60 peer-checked:bg-neonBlue peer-checked:text-white font-mono">BCV</div>
+                                </label>
                             </div>
-                        </div>
-                    </div>
-
-                    <div class="mb-5">
-                        <label class="block text-xs text-white/70 mb-2 font-semibold uppercase tracking-wider">Miembro del Staff:</label>
-                        <div class="flex gap-2">
-                            <select id="staff-select-dropdown" onchange="handleStaffDropdownChange(this.value)" class="w-full input-dark rounded-xl px-3.5 py-2.5 h-[44px] text-sm font-semibold text-white cursor-pointer">
-                                <option value="">-- Selecciona un miembro del Staff --</option>
-                            </select>
-                            <button type="button" id="btn-unselect-staff" onclick="unselectStaffMember()" class="hidden inner-box px-3.5 rounded-xl text-xs font-semibold text-white/70 hover:text-white shrink-0" title="Cerrar formulario">
-                                Quitar selección
-                            </button>
                         </div>
                     </div>
-
-                    <div id="staff-empty-prompt" class="inner-box rounded-xl p-6 text-center text-white/50 text-sm">
-                        Elige un miembro del Staff arriba para desplegar el formulario autocompletado.
+                    
+                    <div>
+                        <label class="block text-[10px] text-white/60 mb-1">Proyecto / Cliente Asociado</label>
+                        <input type="text" id="pay-project" class="w-full input-dark rounded-lg px-3 py-1.5 text-xs" placeholder="Ej. Bloom Studio" oninput="updatePaymentLiveDoc()">
                     </div>
 
-                    <div id="payment-form-body" class="hidden animate-zoom-in">
-                        <div class="inner-box rounded-xl p-4 mb-4 border-l-2 border-l-neonBlue">
-                            <div class="flex justify-between items-center mb-2">
-                                <span class="text-[11px] font-bold uppercase tracking-wider text-accent">Datos del Beneficiario</span>
-                                <span class="text-[10px] text-white/40">Firebase Sync</span>
-                            </div>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                <div>
-                                    <label class="block text-[11px] text-white/60 mb-0.5">Nombre Completo</label>
-                                    <input type="text" id="pay-staff" class="w-full input-dark rounded-lg px-3 py-1.5 text-sm font-semibold">
-                                </div>
-                                <div>
-                                    <label class="block text-[11px] text-white/60 mb-0.5">Cédula</label>
-                                    <input type="text" id="pay-staff-id" class="w-full input-dark rounded-lg px-3 py-1.5 text-sm font-mono">
-                                </div>
-                                <div>
-                                    <label class="block text-[11px] text-white/60 mb-0.5">Cargo</label>
-                                    <input type="text" id="pay-staff-role" class="w-full input-dark rounded-lg px-3 py-1.5 text-sm">
-                                </div>
-                                <div>
-                                    <label class="block text-[11px] text-white/60 mb-0.5">Dirección</label>
-                                    <input type="text" id="pay-staff-address" class="w-full input-dark rounded-lg px-3 py-1.5 text-sm">
-                                </div>
-                            </div>
-                        </div>
+                    <div>
+                        <label class="block text-[10px] text-white/60 mb-1">Conceptos a Pagar</label>
+                        <input type="text" id="pay-concept" class="w-full input-dark rounded-lg px-3 py-1.5 text-xs" placeholder="Ej. Edición de Reels" oninput="updatePaymentLiveDoc()">
+                    </div>
+                    
+                    <div>
+                        <label id="pay-amount-label" class="block text-[10px] text-white/60 mb-1">Monto de la Transacción</label>
+                        <input type="number" id="pay-amount" step="0.01" min="0" class="w-full input-dark rounded-lg px-3 py-2 font-mono text-base font-bold text-center text-accent" placeholder="0.00" oninput="updatePaymentConversion()">
+                    </div>
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div id="bs-conversion-box" class="inner-box rounded-xl p-3 border-l-2 border-l-accent bg-accent/5 hidden">
+                        <div class="flex justify-between items-center">
                             <div>
-                                <label class="block text-xs text-white/70 mb-1">Fecha del Pago</label>
-                                <input type="date" id="pay-date" class="w-full input-dark rounded-lg px-3 py-2 h-[42px] block">
+                                <span class="text-[10px] text-accent font-bold uppercase block">Eq. USD</span>
+                                <input type="number" id="pay-bcv-rate" step="0.01" class="bg-transparent w-16 text-white/50 text-[10px] font-mono outline-none" oninput="updatePaymentConversion()">
                             </div>
-                            <div>
-                                <label class="block text-xs text-white/70 mb-1">Proyecto / Cliente Asociado</label>
-                                <input type="text" id="pay-project" class="w-full input-dark rounded-lg px-3 py-2 h-[42px]" placeholder="Ej. Campaña Mensual / Caja Chica">
-                            </div>
-
-                            <div class="md:col-span-2">
-                                <label class="block text-xs text-white/70 mb-1">Concepto / Descripción</label>
-                                <input type="text" id="pay-concept" class="w-full input-dark rounded-lg px-3 py-2 h-[42px]" placeholder="Ej. Edición de Reels / Diseño">
-                            </div>
-
-                            <div>
-                                <label class="block text-xs text-white/70 mb-1">Plataforma / Método Detectado</label>
-                                <select id="pay-method" class="w-full input-dark rounded-lg px-3 py-2 h-[42px]" onchange="handleMethodChange()">
-                                    <option value="Binance Pay (USDT)">Binance Pay (USDT)</option>
-                                    <option value="Pago Móvil">Pago Móvil (Bs)</option>
-                                    <option value="Transferencia Bancaria">Transferencia Bancaria (Bs)</option>
-                                    <option value="Otro">Otro</option>
-                                </select>
-                            </div>
-
-                            <div>
-                                <label class="block text-xs text-white/70 mb-1">ID de Transacción / Referencia</label>
-                                <input type="text" id="pay-ref" class="w-full input-dark rounded-lg px-3 py-2 h-[42px] font-mono" placeholder="Auto-detectado del capture">
-                            </div>
-
-                            <div>
-                                <label class="block text-xs text-white/70 mb-1">Moneda del Capture (Tasa)</label>
-                                <div class="flex inner-box rounded-lg overflow-hidden h-[42px] border-none">
-                                    <label class="flex-1 text-center cursor-pointer relative border border-white/10 rounded-l-lg">
-                                        <input type="radio" name="pay-tasa" value="USDT" class="peer sr-only" checked onchange="updatePaymentConversion()">
-                                        <div class="w-full h-full flex items-center justify-center text-sm text-white/60 peer-checked:bg-neonBlue peer-checked:text-white transition-colors font-semibold font-mono">USDT</div>
-                                    </label>
-                                    <label class="flex-1 text-center cursor-pointer relative border-t border-b border-r border-white/10 rounded-r-lg">
-                                        <input type="radio" name="pay-tasa" value="Bs" class="peer sr-only" onchange="updatePaymentConversion()">
-                                        <div class="w-full h-full flex items-center justify-center text-sm text-white/60 peer-checked:bg-neonBlue peer-checked:text-white transition-colors font-semibold font-mono">BCV (Bs)</div>
-                                    </label>
-                                </div>
-                            </div>
-
-                            <!-- Wrapper del monto (AQUÍ APLIQUÉ EL CAMBIO DE VISIBILIDAD Y CENTRADO) -->
-                            <div id="pay-amount-wrapper">
-                                <label id="pay-amount-label" class="block text-xs text-white/70 mb-1">Monto Extraído (Bs)</label>
-                                <input type="number" id="pay-amount" step="0.01" min="0" class="w-full input-dark rounded-lg px-3 py-2 h-[42px] font-mono text-lg font-bold text-center" placeholder="0.00" oninput="updatePaymentConversion()">
-                            </div>
-                        </div>
-
-                        <div id="bs-conversion-box" class="inner-box rounded-xl p-4 mt-4 border-l-2 border-l-accent bg-[#a7f3d0]/5 hidden">
-                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                                <div>
-                                    <span class="text-xs text-accent font-bold uppercase tracking-wider block">Conversión Automática (Al Cambio BCV)</span>
-                                    <span class="text-xs text-white/60">Calculado según tasa oficial del día</span>
-                                </div>
-                                <div class="flex items-center gap-3">
-                                    <div>
-                                        <label class="block text-[10px] text-white/60 mb-0.5">Tasa BCV (Bs/$)</label>
-                                        <input type="number" id="pay-bcv-rate" step="0.01" class="input-dark rounded px-2 py-1 w-24 text-right font-mono text-sm" oninput="updatePaymentConversion()">
-                                    </div>
-                                    <div class="text-right">
-                                        <span class="block text-[10px] text-white/60 mb-0.5">Equivalente USD (BCV)</span>
-                                        <span class="font-mono text-xl font-bold text-accent">$<span id="pay-usd-equiv">0.00</span></span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="flex flex-col sm:flex-row gap-3 mt-6">
-                            <button type="button" onclick="exportarPagoPDF()" class="flex-1 bg-neonBlue text-white hover:bg-indigo-500 font-bold py-3 px-4 rounded-xl transition-all shadow-[0_10px_20px_-5px_rgba(69,74,222,0.5)] active:scale-95 border border-white/20 flex items-center justify-center gap-2">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                                Descargar Nota de Entrega (PDF)
-                            </button>
-                            <button type="button" onclick="resetPaymentForm()" class="bg-transparent text-white/60 hover:text-white hover:bg-white/10 font-bold py-3 px-4 rounded-xl transition-all border border-white/15 text-sm">
-                                Limpiar Datos del Pago
-                            </button>
+                            <span class="font-mono text-lg font-bold text-accent">$<span id="pay-usd-equiv">0.00</span></span>
                         </div>
                     </div>
                 </div>
+
+                <div class="mt-auto pt-4 border-t border-white/10">
+                    <button type="button" onclick="exportarPagoPDF()" class="w-full bg-neonBlue text-white hover:bg-indigo-500 font-bold py-3 rounded-xl transition-all shadow-[0_5px_15px_-5px_rgba(69,74,222,0.5)] border border-white/20 flex items-center justify-center gap-2 text-sm">
+                        ↓ Descargar y Guardar PDF
+                    </button>
+                    <p class="text-[9px] font-mono text-white/40 text-center mt-2 px-2 leading-relaxed">
+                        Al descargar, se abrirá tu Google Drive para resguardarlo automáticamente.
+                    </p>
+                    <button type="button" onclick="resetPaymentForm()" class="w-full mt-3 bg-transparent text-white/40 hover:text-white hover:bg-white/10 font-bold py-2 rounded-xl transition-all text-xs border border-white/10">
+                        Limpiar datos de pago
+                    </button>
+                </div>
             </div>
+
         </div>
     </div>
 
@@ -1540,35 +1551,24 @@
             }
         }
 
-        function handleStaffDropdownChange(val) {
-            const unselectBtn = document.getElementById('btn-unselect-staff');
-            if (val === '' || val === null || val === undefined) {
-                document.getElementById('payment-form-body').classList.add('hidden');
-                document.getElementById('staff-empty-prompt').classList.remove('hidden');
-                unselectBtn.classList.add('hidden');
+function handleStaffDropdownChange(val) {
+            const form = document.getElementById('payment-form-body');
+            if (val === '') {
+                form.classList.add('hidden');
+                updatePaymentLiveDoc();
                 return;
             }
-
-            const member = staffListCloud[Number(val)];
-            if (!member) return;
-
-            document.getElementById('pay-staff').value = member.name || '';
-            document.getElementById('pay-staff-id').value = member.cedula || '';
-            document.getElementById('pay-staff-role').value = member.role || '';
-            document.getElementById('pay-staff-address').value = member.address || '';
-
-            document.getElementById('staff-empty-prompt').classList.add('hidden');
-            document.getElementById('payment-form-body').classList.remove('hidden');
-            unselectBtn.classList.remove('hidden');
+            const m = staffListCloud[val];
+            if (!m) return;
+            document.getElementById('pay-staff').value = m.name || '';
+            document.getElementById('pay-staff-id').value = m.cedula || '';
+            document.getElementById('pay-staff-role').value = m.role || '';
+            document.getElementById('pay-staff-address').value = m.address || '';
+            form.classList.remove('hidden');
+            updatePaymentLiveDoc();
         }
 
-        function unselectStaffMember() {
-            const dropdown = document.getElementById('staff-select-dropdown');
-            if (dropdown) dropdown.value = '';
-            handleStaffDropdownChange('');
-        }
-
-        // --- 5. TASA OFICIAL BCV ---
+        // TASA OFICIAL BCV
         async function fetchBCVRate() {
             const rateDisplay = document.getElementById('bcv-header-rate');
             const rateInput = document.getElementById('pay-bcv-rate');
@@ -1579,7 +1579,7 @@
                 if (data && data.promedio) {
                     currentBCVRate = parseFloat(data.promedio);
                     rateDisplay.innerText = `${currentBCVRate.toFixed(2)} Bs/$`;
-                    rateInput.value = currentBCVRate.toFixed(2);
+                    if(rateInput) rateInput.value = currentBCVRate.toFixed(2);
                     updatePaymentConversion();
                     return;
                 }
@@ -1588,531 +1588,215 @@
         }
         fetchBCVRate();
 
-        // --- 6. DRAG & DROP Y OCR ---
+        // DRAG & DROP Y OCR (MÓDULO PAGOS)
         const dropzone = document.getElementById('capture-dropzone');
-        ['dragenter', 'dragover'].forEach(name => {
-            dropzone.addEventListener(name, (e) => { e.preventDefault(); dropzone.classList.add('drag-over-active'); });
-        });
-        ['dragleave', 'drop'].forEach(name => {
-            dropzone.addEventListener(name, (e) => { e.preventDefault(); dropzone.classList.remove('drag-over-active'); });
-        });
-        dropzone.addEventListener('drop', (e) => {
-            const files = e.dataTransfer.files;
-            if (files && files.length > 0 && files[0].type.startsWith('image/')) {
-                processCaptureFile(files[0]);
-            }
-        });
-        window.addEventListener('paste', (e) => {
-            const payView = document.getElementById('payment-view');
-            if (payView.style.display !== 'block') return;
-            const items = (e.clipboardData || e.originalEvent.clipboardData).items;
-            for (let item of items) {
-                if (item.type.indexOf('image') !== -1) {
-                    processCaptureFile(item.getAsFile());
-                }
-            }
-        });
-
-        function handleCaptureUpload(event) {
-            const file = event.target.files[0];
-            if (file) processCaptureFile(file);
+        if(dropzone) {
+            ['dragenter', 'dragover'].forEach(n => dropzone.addEventListener(n, e => { e.preventDefault(); dropzone.classList.add('drag-over-active'); }));
+            ['dragleave', 'drop'].forEach(n => dropzone.addEventListener(n, e => { e.preventDefault(); dropzone.classList.remove('drag-over-active'); }));
+            dropzone.addEventListener('drop', e => { const f = e.dataTransfer.files; if(f && f.length > 0 && f[0].type.startsWith('image/')) processCaptureFile(f[0]); });
         }
+        window.addEventListener('paste', e => {
+            if (document.getElementById('payment-view').style.display !== 'block') return;
+            const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+            for (let i of items) { if (i.type.indexOf('image') !== -1) processCaptureFile(i.getAsFile()); }
+        });
 
+        function handleCaptureUpload(e) { if(e.target.files[0]) processCaptureFile(e.target.files[0]); }
         function processCaptureFile(file) {
-            const reader = new FileReader();
-            reader.onload = function(evt) {
+            const r = new FileReader();
+            r.onload = function(evt) {
                 currentCaptureDataUrl = evt.target.result;
                 document.getElementById('capture-preview').src = currentCaptureDataUrl;
                 document.getElementById('capture-preview').classList.remove('hidden');
                 document.getElementById('upload-placeholder').classList.add('hidden');
+                document.getElementById('change-btn').classList.remove('hidden');
                 analyzeCaptureOCR(currentCaptureDataUrl);
             };
-            reader.readAsDataURL(file);
+            r.readAsDataURL(file);
         }
 
-        async function analyzeCaptureOCR(imageSrc) {
-            const statusBox = document.getElementById('ocr-status');
-            const statusText = document.getElementById('ocr-status-text');
-            statusBox.classList.remove('hidden');
-            statusText.innerHTML = `Escaneando texto del capture...`;
+        async function analyzeCaptureOCR(src) {
+            const box = document.getElementById('ocr-status'); const txt = document.getElementById('ocr-status-text');
+            box.classList.remove('hidden'); txt.innerHTML = `<svg class="w-3.5 h-3.5 animate-spin text-neonBlue" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg> Analizando...`;
             try {
-                const result = await Tesseract.recognize(imageSrc, 'spa+eng');
-                parseExtractedReceiptText(result.data.text || '');
-                statusText.innerHTML = `<span class="text-accent">✓ Datos detectados automáticamente</span>`;
-            } catch (e) {
-                statusText.innerHTML = `<span class="text-yellow-300">Verifica los datos manualmente</span>`;
-            }
+                const res = await Tesseract.recognize(src, 'spa+eng');
+                parseExtractedReceiptText(res.data.text || '');
+                txt.innerHTML = `<span class="text-accent">✓ Datos detectados</span>`;
+            } catch (e) { txt.innerHTML = `<span class="text-yellow-300">Verifica manual</span>`; }
         }
 
-        function getSelectedPayCurrency() {
-            const checked = document.querySelector('input[name="pay-tasa"]:checked');
-            return checked ? checked.value : 'USDT';
-        }
-
-        function setSelectedPayCurrency(val) {
-            const radio = document.querySelector(`input[name="pay-tasa"][value="${val}"]`);
-            if (radio) radio.checked = true;
-        }
+        function getSelectedPayCurrency() { const c = document.querySelector('input[name="pay-tasa"]:checked'); return c ? c.value : 'USDT'; }
+        function setSelectedPayCurrency(val) { const r = document.querySelector(`input[name="pay-tasa"][value="${val}"]`); if (r) r.checked = true; }
 
         function parseExtractedReceiptText(text) {
-            const cleanText = text.replace(/\r/g, ' ');
-            const lower = cleanText.toLowerCase();
+            const c = text.replace(/\r/g, ' '); const l = c.toLowerCase();
+            const isB = /binance|usdt|order id/.test(l); const isBs = /bs|bolivares|pago movil|transferencia|banesco|provincial|mercantil/.test(l);
+            const mSel = document.getElementById('pay-method');
+            
+            if (isB && !isBs) { setSelectedPayCurrency('USDT'); mSel.value = 'Binance Pay (USDT)'; }
+            else if (isBs) { setSelectedPayCurrency('Bs'); mSel.value = /transferencia/.test(l) ? 'Transferencia Bancaria' : 'Pago Móvil'; }
+            
+            const rM = c.match(/(?:ref|nro|operaci[oó]n|orden)[:\s#.-]*([0-9]{6,22})/i) || c.match(/\b([0-9]{8,20})\b/);
+            if (rM && rM[1]) document.getElementById('pay-ref').value = rM[1];
 
-            const isBinance = /binance|usdt|order id|id de orden|cripto/.test(lower);
-            const isBolivares = /bs|bolivares|bolívares|pago movil|pago móvil|banesco|mercantil|provincial|venezuela|bdv|bnc/.test(lower);
-
-            const methodSelect = document.getElementById('pay-method');
-            if (isBinance && !isBolivares) {
-                setSelectedPayCurrency('USDT');
-                methodSelect.value = 'Binance Pay (USDT)';
-            } else if (isBolivares) {
-                setSelectedPayCurrency('Bs');
-                methodSelect.value = /transferencia/.test(lower) ? 'Transferencia Bancaria' : 'Pago Móvil';
+            const aM = c.match(/(?:monto|total|bs\.?|usdt)[:\s-]*([0-9]{1,3}(?:[.,][0-9]{3})*[.,][0-9]{2})/i) || c.match(/\b([0-9]{1,6}[.,][0-9]{2})\b/);
+            if (aM && aM[1]) {
+                let n = aM[1].trim();
+                n = n.includes('.') && n.includes(',') ? (n.lastIndexOf(',') > n.lastIndexOf('.') ? n.replace(/\./g, '').replace(',', '.') : n.replace(/,/g, '')) : n.replace(',', '.');
+                const p = parseFloat(n); if (!isNaN(p) && p > 0) document.getElementById('pay-amount').value = p.toFixed(2);
             }
-
-            const refMatch = cleanText.match(/(?:referencia|ref|nro|operaci[oó]n|orden|order id)[:\s#.-]*([0-9]{6,22})/i) || cleanText.match(/\b([0-9]{8,20})\b/);
-            if (refMatch && refMatch[1]) document.getElementById('pay-ref').value = refMatch[1];
-
-            const amtMatch = cleanText.match(/(?:monto|total|cantidad|importe|bs\.?|usdt)[:\s-]*([0-9]{1,3}(?:[.,][0-9]{3})*[.,][0-9]{2})/i) || cleanText.match(/\b([0-9]{1,6}[.,][0-9]{2})\b/);
-            if (amtMatch && amtMatch[1]) {
-                let numStr = amtMatch[1].trim();
-                if (numStr.includes('.') && numStr.includes(',')) {
-                    numStr = numStr.lastIndexOf(',') > numStr.lastIndexOf('.') ? numStr.replace(/\./g, '').replace(',', '.') : numStr.replace(/,/g, '');
-                } else if (numStr.includes(',')) {
-                    numStr = numStr.replace(',', '.');
-                }
-                const parsed = parseFloat(numStr);
-                if (!isNaN(parsed) && parsed > 0) document.getElementById('pay-amount').value = parsed.toFixed(2);
-            }
-
             updatePaymentConversion();
         }
 
         function handleMethodChange() {
-            const method = document.getElementById('pay-method').value;
-            if (method.includes('USDT')) setSelectedPayCurrency('USDT');
-            else if (method.includes('Pago Móvil') || method.includes('Transferencia')) setSelectedPayCurrency('Bs');
+            const m = document.getElementById('pay-method').value;
+            if (m.includes('USDT')) setSelectedPayCurrency('USDT'); else if (m.includes('Bs')) setSelectedPayCurrency('Bs');
             updatePaymentConversion();
         }
 
         function updatePaymentConversion() {
-            const currency = getSelectedPayCurrency();
-            const amount = parseFloat(document.getElementById('pay-amount').value) || 0;
-            const amountWrapper = document.getElementById('pay-amount-wrapper');
-            const amountLabel = document.getElementById('pay-amount-label');
-            const bcvBox = document.getElementById('bs-conversion-box');
-            const rateInput = parseFloat(document.getElementById('pay-bcv-rate').value) || currentBCVRate || 1;
+            const cur = getSelectedPayCurrency();
+            const amt = parseFloat(document.getElementById('pay-amount').value) || 0;
+            const lbl = document.getElementById('pay-amount-label');
+            const box = document.getElementById('bs-conversion-box');
+            const rate = parseFloat(document.getElementById('pay-bcv-rate').value) || currentBCVRate || 1;
 
-            // Ahora el monto extraído SIEMPRE estará visible
-            amountWrapper.classList.remove('hidden');
-
-            if (currency === 'Bs') {
-                if (amountLabel) amountLabel.innerText = "Monto Extraído (Bs)";
-                bcvBox.classList.remove('hidden');
-                document.getElementById('pay-usd-equiv').innerText = (rateInput > 0 ? (amount / rateInput) : 0).toFixed(2);
+            if (cur === 'Bs') {
+                if (lbl) lbl.innerText = "Monto (Bs)";
+                if (box) box.classList.remove('hidden');
+                document.getElementById('pay-usd-equiv').innerText = (rate > 0 ? (amt / rate) : 0).toFixed(2);
             } else {
-                if (amountLabel) amountLabel.innerText = "Monto Extraído (USDT)";
-                bcvBox.classList.add('hidden');
+                if (lbl) lbl.innerText = "Monto (USDT)";
+                if (box) box.classList.add('hidden');
             }
+            updatePaymentLiveDoc();
+        }
+
+        function updatePaymentLiveDoc() {
+            document.getElementById('doc-staff-name').textContent = document.getElementById('pay-staff').value || "Nombre del Staff";
+            document.getElementById('doc-staff-role').textContent = document.getElementById('pay-staff-role').value || "Cargo / Rol";
+            document.getElementById('doc-ref').textContent = document.getElementById('pay-ref').value || "N/A";
+            document.getElementById('doc-method').textContent = document.getElementById('pay-method').value || "N/A";
+            
+            const d = document.getElementById('pay-date').value;
+            if(d) { const [y,m,day] = d.split('-'); document.getElementById('doc-date').textContent = `${day}/${m}/${y}`; }
+            
+            const p = document.getElementById('pay-project').value || "Proyecto General";
+            const c = document.getElementById('pay-concept').value || "Sin descripción";
+            const cur = getSelectedPayCurrency();
+            const a = parseFloat(document.getElementById('pay-amount').value) || 0;
+            const sym = cur === 'Bs' ? 'Bs. ' : '$';
+
+            document.getElementById('doc-items-list').innerHTML = `<div class="flex justify-between items-center"><div class="text-gray-800 text-xs"><b>${p}</b> - ${c}</div><div class="font-medium text-xs font-mono">${sym}${a.toFixed(2)}</div></div>`;
+            document.getElementById('doc-total').textContent = `${sym}${a.toFixed(2)}`;
         }
 
         function resetPaymentForm() {
             currentCaptureDataUrl = null;
             document.getElementById('capture-upload').value = '';
-            document.getElementById('capture-preview').src = '';
-            document.getElementById('capture-preview').classList.add('hidden');
-            document.getElementById('upload-placeholder').classList.remove('hidden');
+            document.getElementById('capture-preview').src = ''; document.getElementById('capture-preview').classList.add('hidden');
+            document.getElementById('upload-placeholder').classList.remove('hidden'); document.getElementById('change-btn').classList.add('hidden');
             document.getElementById('ocr-status').classList.add('hidden');
             document.getElementById('pay-date').valueAsDate = new Date();
-            document.getElementById('pay-project').value = '';
-            document.getElementById('pay-concept').value = '';
-            document.getElementById('pay-ref').value = '';
-            document.getElementById('pay-amount').value = '';
+            ['pay-project','pay-concept','pay-ref','pay-amount'].forEach(id => document.getElementById(id).value = '');
             updatePaymentConversion();
         }
 
-        // --- 7. CÁLCULOS DEL TABULADOR ---
-        let currentItems = [];
-        let currentData = {};
+        async function exportarPagoPDF() {
+            const staff = document.getElementById('pay-staff').value.trim() || 'Staff';
+            const staffId = document.getElementById('pay-staff-id').value.trim() || 'N/A';
+            const staffRole = document.getElementById('pay-staff-role').value.trim() || 'N/A';
+            const staffAddress = document.getElementById('pay-staff-address').value.trim() || 'N/A';
+            const fecha = document.getElementById('doc-date').textContent || 'Sin_Fecha';
+            const proyecto = document.getElementById('pay-project').value.trim() || 'General';
+            const concepto = document.getElementById('pay-concept').value.trim() || 'Servicios';
+            const metodo = document.getElementById('pay-method').value;
+            const moneda = getSelectedPayCurrency();
+            const ref = document.getElementById('pay-ref').value.trim() || 'S/R';
+            const monto = parseFloat(document.getElementById('pay-amount').value) || 0;
+            const tasaBCV = parseFloat(document.getElementById('pay-bcv-rate').value) || currentBCVRate || 0;
+            const equivUSD = (moneda === 'Bs' && tasaBCV > 0) ? (monto / tasaBCV).toFixed(2) : monto.toFixed(2);
 
-        function stepQty(inputId, delta) {
-            const el = document.getElementById(inputId);
-            if (!el) return;
-            const current = parseInt(el.value) || 0;
-            const next = Math.max(0, current + delta);
-            el.value = next === 0 ? '' : next;
-            calculateTotal();
-        }
+            const nombreArchivo = `PAGO_${staff}_${concepto}_${fecha.replaceAll('/','-')}`.replace(/[\/\\?%*:|"<>]/g, '-').replace(/\s+/g, '_') + '.pdf';
 
-        function syncActiveServiceCards() {
-            const pairs = [
-                ['card-rrss', 'rrss-qty'],
-                ['card-carrusel', 'carrusel-qty'],
-                ['card-reel', 'reel-qty'],
-                ['card-storie', 'storie-qty'],
-                ['card-photo', 'photo-qty'],
-                ['card-pauta', 'pauta-qty']
-            ];
-            pairs.forEach(([cardId, inputId]) => {
-                const card = document.getElementById(cardId);
-                const val = parseInt(document.getElementById(inputId)?.value) || 0;
-                if (card) card.classList.toggle('service-card-active', val > 0);
-            });
-        }
+            let filasMontosHTML = moneda === 'Bs' ? `
+                <tr style="background-color: #f3f4f6;">
+                    <td style="padding: 10px 12px; border-bottom: 1px solid #d1d5db; color: #111827; font-weight: 700;">Monto Pagado (Bs)</td>
+                    <td style="padding: 10px 12px; border-bottom: 1px solid #d1d5db; text-align: right; font-family: monospace; font-size: 16px; font-weight: 800; color: #111827;">Bs. ${monto.toFixed(2)}</td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px 12px; border-bottom: 1px solid #e5e7eb; color: #4b5563; font-weight: 600;">Tasa BCV Aplicada</td>
+                    <td style="padding: 8px 12px; border-bottom: 1px solid #e5e7eb; text-align: right; font-family: monospace;">${tasaBCV.toFixed(2)} Bs/$</td>
+                </tr>
+                <tr style="background-color: #f9fafb;">
+                    <td style="padding: 10px 12px; border-bottom: 2px solid #111827; color: #111827; font-weight: 700;">Equivalente en Divisas ($ BCV)</td>
+                    <td style="padding: 10px 12px; border-bottom: 2px solid #111827; text-align: right; font-family: monospace; font-size: 15px; font-weight: 700; color: #111827;">$${equivUSD} USD</td>
+                </tr>
+            ` : (monto > 0 ? `
+                <tr style="background-color: #f3f4f6;">
+                    <td style="padding: 10px 12px; border-bottom: 2px solid #111827; color: #111827; font-weight: 700;">Monto Pagado (USDT)</td>
+                    <td style="padding: 10px 12px; border-bottom: 2px solid #111827; text-align: right; font-family: monospace; font-size: 16px; font-weight: 800; color: #111827;">$${monto.toFixed(2)} USDT</td>
+                </tr>
+            ` : '');
 
-        function calculateTotal() {
-            currentItems = [];
-            let subtotalNeto = 0;           
-            let subtotalPassThrough = 0;    
-
-            const addLine = (name, qty, price, isPassThrough = false) => {
-                const totalLine = qty * price;
-                if (isPassThrough) subtotalPassThrough += totalLine;
-                else subtotalNeto += totalLine;
-                currentItems.push({ name, qty, price, total: totalLine, isPassThrough });
-            };
-
-            const getVal = (id) => {
-                const el = document.getElementById(id);
-                if (!el) return 0;
-                let val = parseInt(el.value) || 0;
-                return val < 0 ? 0 : val;
-            };
-
-            if (getVal('rrss-qty') > 0) {
-                const sel = document.getElementById('rrss-type').value;
-                const p = sel === 'custom' ? (parseFloat(document.getElementById('rrss-type-custom').value) || 0) : parseFloat(sel);
-                addLine(`Diseño RRSS (${sel === 'custom' ? 'Personalizado' : (p === 3 ? 'Standard' : 'VIP')})`, getVal('rrss-qty'), p);
-            }
-            if (getVal('carrusel-qty') > 0) addLine('Carrusel', getVal('carrusel-qty'), 7);
-            if (getVal('reel-qty') > 0) {
-                const sel = document.getElementById('reel-type').value;
-                const p = sel === 'custom' ? (parseFloat(document.getElementById('reel-type-custom').value) || 0) : parseFloat(sel);
-                addLine(`Reel (${sel === 'custom' ? 'Personalizado' : (p === 5 ? 'Standard' : 'VIP')})`, getVal('reel-qty'), p);
-            }
-            if (getVal('storie-qty') > 0) addLine('Storie', getVal('storie-qty'), 1);
-            if (getVal('photo-qty') > 0) {
-                const sel = document.getElementById('photo-type').value;
-                const p = sel === 'custom' ? (parseFloat(document.getElementById('photo-type-custom').value) || 0) : parseFloat(sel);
-                addLine(`Edición Fotos (${sel === 'custom' ? 'Personalizado' : (p === 10 ? 'Standard' : 'VIP')})`, getVal('photo-qty'), p);
-            }
-            if (getVal('pauta-qty') > 0) {
-                const sel = document.getElementById('pauta-type').value;
-                const p = sel === 'custom' ? (parseFloat(document.getElementById('pauta-type-custom').value) || 0) : parseFloat(sel);
-                addLine(`Pauta (${sel === 'custom' ? 'Personalizado' : (p === 10 ? 'Standard' : 'VIP')})`, getVal('pauta-qty'), p);
-            }
-
-            ['est-gestion', 'est-informe', 'est-plan', 'est-segmentacion', 'est-meta'].forEach(id => {
-                const cb = document.getElementById(id);
-                if (cb && cb.checked) addLine(cb.parentElement.querySelector('span').innerText, 1, parseFloat(cb.value));
-            });
-
-            const processOp = (id, name, isPassThrough) => {
-                const selectEl = document.getElementById(id);
-                if (!selectEl) return;
-                const sel = selectEl.value;
-                const p = sel === 'custom' ? (parseFloat(document.getElementById(id + '-custom').value) || 0) : (parseFloat(sel) || 0);
-                if (p > 0) addLine(`${name}${sel === 'custom' ? ' (Personalizado)' : ''}`, 1, p, isPassThrough);
-            };
-
-            processOp('op-modelo', 'Modelo', false);               
-            processOp('op-locucion', 'Locución / Voz', false);     
-            processOp('op-produccion', 'Producción / POP', false); 
-            processOp('op-traslados', 'Traslados', true); 
-            processOp('op-utileria', 'Utilería / Locación', true);   
-
-            syncActiveServiceCards();
-
-            document.getElementById('summary-items').innerHTML = currentItems.map(item => `
-                <div class="flex justify-between items-center py-1.5 border-b border-white/5 last:border-0 ${item.isPassThrough ? 'text-accent' : ''}">
-                    <div class="flex items-center gap-2 pr-2">
-                        <span class="font-mono text-[10px] font-bold px-1.5 py-0.5 rounded bg-white/10 text-white/90">${item.qty}x</span>
-                        <span class="truncate">${item.name}</span>
-                    </div>
-                    <span class="font-mono font-medium shrink-0">$${item.total.toFixed(2)}</span>
-                </div>
-            `).join('') || '<p class="text-white/30 italic text-center py-10">Selecciona servicios a la izquierda para armar la cotización</p>';
-            
-            let totalBaseGeneral = subtotalNeto + subtotalPassThrough;
-            document.getElementById('subtotal-neto').innerText = totalBaseGeneral.toFixed(2);
-
-            let marginInput = currentUserRole === 'user' ? 50 : (parseFloat(document.getElementById('global-margin').value) || 0);
-            document.getElementById('margin-display').innerText = marginInput;
-            
-            let totalVenta = 0, gananciaTotal = 0;
-            if (subtotalNeto > 0) gananciaTotal = subtotalNeto * (marginInput / 100);
-            if (totalBaseGeneral > 0) totalVenta = totalBaseGeneral + gananciaTotal;
-
-            document.getElementById('total-venta').innerText = totalVenta.toFixed(2);
-            document.getElementById('total-ganancia').innerText = gananciaTotal.toFixed(2);
-
-            const distCEO = gananciaTotal * 0.40;
-            const distAhorro = gananciaTotal * 0.20;
-            const distReinv = gananciaTotal * 0.20;
-            const distCapital = gananciaTotal * 0.20;
-
-            document.getElementById('dist-ceo').innerText = distCEO.toFixed(2);
-            document.getElementById('dist-ahorro').innerText = distAhorro.toFixed(2);
-            document.getElementById('dist-reinv').innerText = distReinv.toFixed(2);
-            document.getElementById('dist-capital').innerText = distCapital.toFixed(2);
-
-            currentData = {
-                subtotal: totalBaseGeneral.toFixed(2),
-                venta: totalVenta.toFixed(2),
-                ganancia: gananciaTotal.toFixed(2),
-                ceo: distCEO.toFixed(2),
-                ahorro: distAhorro.toFixed(2),
-                reinv: distReinv.toFixed(2),
-                capital: distCapital.toFixed(2),
-                margen: marginInput
-            };
-        }
-
-        function toggleCustom(idStr) {
-            const select = document.getElementById(idStr);
-            const customInput = document.getElementById(idStr + '-custom');
-            if (select.value === 'custom') customInput.classList.remove('hidden');
-            else { customInput.classList.add('hidden'); customInput.value = ''; }
-        }
-
-        function showResetModal() { document.getElementById('reset-modal').style.display = 'flex'; }
-        function hideResetModal() { document.getElementById('reset-modal').style.display = 'none'; }
-        function executeReset() {
-            hideResetModal();
-            ['rrss-qty', 'carrusel-qty', 'reel-qty', 'storie-qty', 'photo-qty', 'pauta-qty'].forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.value = '';
-            });
-            ['rrss-type-custom', 'reel-type-custom', 'photo-type-custom', 'pauta-type-custom', 'op-modelo-custom', 'op-locucion-custom', 'op-produccion-custom', 'op-traslados-custom', 'op-utileria-custom'].forEach(id => {
-                const el = document.getElementById(id);
-                if (el) { el.value = ''; el.classList.add('hidden'); }
-            });
-            ['rrss-type', 'reel-type', 'photo-type', 'pauta-type'].forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.selectedIndex = 0;
-            });
-            ['op-modelo', 'op-locucion', 'op-produccion', 'op-traslados', 'op-utileria'].forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.value = '0';
-            });
-            ['est-gestion', 'est-informe', 'est-plan', 'est-segmentacion', 'est-meta'].forEach(id => {
-                const cb = document.getElementById(id);
-                if (cb) cb.checked = false;
-            });
-            calculateTotal();
-        }
-
-        // --- 8. EXPORTACIONES A PDF CON FIX PARA MÓVILES ---
-        function verificarImagenesAntesDePDF(container) {
-            const imgs = Array.from(container.querySelectorAll('img.pdf-brand-logo'));
-            return Promise.all(imgs.map(img => {
-                return new Promise(resolve => {
-                    if (img.complete && img.naturalWidth > 0) resolve();
-                    else {
-                        img.onload = () => resolve();
-                        img.onerror = () => {
-                            const fallback = document.createElement('div');
-                            fallback.style.cssText = 'display:inline-flex; align-items:center; justify-content:center; background:#dc2626; color:#ffffff; font-weight:800; font-size:11px; padding:6px 12px; border-radius:6px; border:1px solid #f87171; letter-spacing:0.05em;';
-                            fallback.innerText = 'FALTA LOGO';
-                            img.replaceWith(fallback);
-                            resolve();
-                        };
-                    }
-                });
-            }));
-        }
-
-        async function exportarPDF() {
-            const empresa = document.getElementById('form-empresa').value.trim() || 'Sin_Nombre';
-            const fecha = document.getElementById('form-fecha').value || 'Sin_Fecha';
-            const plan = document.getElementById('form-plan').value;
-            const tasa = document.querySelector('input[name="form-tasa"]:checked').value;
-            const nombreArchivo = `PRESUPUESTO_${plan}_${empresa}_${fecha}`.replace(/\s+/g, '_') + '.pdf';
-
-            let itemsPDFHTML = currentItems.map(item => `
-                <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid rgba(69, 74, 222, 0.3); ${item.isPassThrough ? 'color: #a7f3d0;' : ''}">
-                    <span>${item.qty}x ${item.name}</span>
-                    <span style="font-family: monospace;">$${item.total.toFixed(2)}</span>
-                </div>
-            `).join('');
-
-            const seccionSubtotalPDF = currentUserRole === 'admin' ? `
-                <div style="display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 14px;">
-                    <span>Costo Neto (Subtotal):</span><span style="font-family: monospace; font-weight: bold;">$${currentData.subtotal}</span>
-                </div>
-            ` : '';
-
-            const seccionGananciasPDF = currentUserRole === 'admin' ? `
-                <div style="background-color: rgba(0,0,0,0.3); border-radius: 8px; padding: 15px; border: 1px solid rgba(69, 74, 222, 0.4); margin-top: 15px;">
-                    <h3 style="font-size: 11px; text-transform: uppercase; margin-bottom: 10px; color: rgba(255,255,255,0.6); font-weight: bold;">Distribución de Ganancia (${currentData.margen}%)</h3>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px; font-weight: bold; font-size: 14px; color: #454ADE;"><span>Ganancia Neta Calculada:</span><span>$${currentData.ganancia}</span></div>
-                    <div style="border-top: 1px solid rgba(69, 74, 222, 0.3); padding-top: 10px; font-size: 13px;">
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 6px;"><span>CEO (40%)</span><span style="font-family: monospace;">$${currentData.ceo}</span></div>
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 6px;"><span>Ahorro (20%)</span><span style="font-family: monospace; color: #a7f3d0;">$${currentData.ahorro}</span></div>
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 6px;"><span>Reinversión (20%)</span><span style="font-family: monospace; color: #fde047;">$${currentData.reinv}</span></div>
-                        <div style="display: flex; justify-content: space-between; font-weight: bold; color: #d8b4fe;"><span>Capital (20%)</span><span style="font-family: monospace;">$${currentData.capital}</span></div>
+            const captureImgHTML = currentCaptureDataUrl ? `
+                <div style="margin-top: 20px;">
+                    <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #4b5563; margin-bottom: 8px; border-bottom: 1px solid #d1d5db; padding-bottom: 4px;">Anexo: Capture de Operación</div>
+                    <div style="border: 1px solid #d1d5db; border-radius: 6px; padding: 10px; text-align: center; background-color: #f9fafb;">
+                        <img src="${currentCaptureDataUrl}" style="max-height: 280px; max-width: 100%; object-fit: contain; margin: 0 auto; display: block;" />
                     </div>
                 </div>
             ` : '';
 
-            // Se fija en 800px para que encaje en el jsPDF
-            const pdfMolde = `
-                <div id="pdf-content" style="background-color: #232A5B; color: #ffffff; font-family: 'Inter', sans-serif; width: 800px; padding: 40px; box-sizing: border-box; overflow: hidden; position: relative;">
-                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; border-bottom: 1px solid rgba(69, 74, 222, 0.5); padding-bottom: 10px;">
-                        <img src="Ver 2 w.svg" class="pdf-brand-logo" style="height: 32px; width: auto; object-fit: contain;" />
-                        <h2 style="font-size: 18px; font-weight: bold; margin: 0;">Presupuesto de Servicios</h2>
+            const pdfNotaMolde = `
+                <div id="pdf-payment-content" style="background-color: #ffffff; color: #111827; font-family: 'Inter', 'Segoe UI', Arial, sans-serif; width: 800px; padding: 40px; box-sizing: border-box; position: relative;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #111827; padding-bottom: 15px; margin-bottom: 20px;">
+                        <div style="width: 40%;">
+                            <img src="Ver 2 w.svg" class="pdf-brand-logo" style="width: 150px; height: auto; max-width: 100%; display: block; filter: invert(1);" onerror="this.style.display='none'" />
+                        </div>
+                        <div style="width: 55%; text-align: right; font-size: 13px; color: #374151; display: flex; flex-direction: column; justify-content: center;">
+                            <div style="margin-bottom: 4px;"><strong>Fecha:</strong> ${fecha}</div>
+                            <div style="word-break: break-all; overflow-wrap: break-word;"><strong>Ref:</strong> <span style="font-family: monospace;">#${ref}</span></div>
+                        </div>
                     </div>
-                    <div style="background-color: rgba(0,0,0,0.3); padding: 12px; border-radius: 8px; margin-bottom: 18px; font-size: 13px; border: 1px solid rgba(69, 74, 222, 0.4);">
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 6px;"><span>Cliente: <strong>${empresa}</strong></span><span>Fecha: <strong>${fecha}</strong></span></div>
-                        <div style="display: flex; justify-content: space-between;"><span>Plan: <strong>${plan}</strong></span><span>Tasa: <strong>${tasa}</strong></span></div>
+                    <table style="width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 16px;">
+                        <tbody>
+                            <tr><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; color: #4b5563; font-weight: 600; width: 38%;">Beneficiario (Staff)</td><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; font-weight: 700; color: #111827;">${staff}</td></tr>
+                            <tr><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; color: #4b5563; font-weight: 600;">Cédula de Identidad</td><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; font-family: monospace; color: #111827;">${staffId}</td></tr>
+                            <tr><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; color: #4b5563; font-weight: 600;">Cargo</td><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; color: #111827;">${staffRole}</td></tr>
+                            <tr><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; color: #4b5563; font-weight: 600;">Dirección</td><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; color: #111827;">${staffAddress}</td></tr>
+                            <tr><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; color: #4b5563; font-weight: 600;">Proyecto / Cliente</td><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; color: #111827;">${proyecto}</td></tr>
+                            <tr><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; color: #4b5563; font-weight: 600;">Concepto</td><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; color: #111827;">${concepto}</td></tr>
+                            <tr><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; color: #4b5563; font-weight: 600;">Método de Pago</td><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; color: #111827;">${metodo}</td></tr>
+                            <tr><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; color: #4b5563; font-weight: 600;">ID Transacción / Ref.</td><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; font-family: monospace; color: #111827; word-break: break-all;">${ref}</td></tr>${filasMontosHTML}
+                        </tbody>
+                    </table>
+                    ${captureImgHTML}
+                    <div style="margin-top: 24px; padding-top: 10px; border-top: 1px solid #e5e7eb; display: flex; justify-content: space-between; font-size: 10px; color: #9ca3af;">
+                        <span>Documento administrativo interno - Bloom Studio</span>
+                        <span>Generado por Price Studio</span>
                     </div>
-                    <div style="margin-bottom: 18px; font-size: 13px;">
-                        ${itemsPDFHTML || '<p style="text-align:center; color: rgba(255,255,255,0.5);">No se agregaron servicios.</p>'}
-                    </div>
-                    <div style="border-top: 1px solid rgba(69, 74, 222, 0.5); padding-top: 12px;">
-                        ${seccionSubtotalPDF}
-                        <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 18px; color: #a7f3d0;"><span>Monto Venta Sugerido:</span><span style="font-family: monospace;">$${currentData.venta}</span></div>
-                    </div>
-                    ${seccionGananciasPDF}
-                    <div style="margin-top: 24px; text-align: center; font-size: 11px; color: rgba(255,255,255,0.4);">Bloom Studio</div>
                 </div>
             `;
 
             const container = document.getElementById('pdf-export-container');
-            container.innerHTML = pdfMolde;
+            container.innerHTML = pdfNotaMolde;
             await verificarImagenesAntesDePDF(container);
             window.scrollTo(0, 0);
-            const contentElement = document.getElementById('pdf-content');
-            
-            // Fix estandarizado para móvil: Tamaño fijo de captura (800) escalado al margen (0.5 in) en formato 'letter'
+            const contentElement = document.getElementById('pdf-payment-content');
+
             const opt = {
-                margin: 0.5,
-                filename: nombreArchivo,
-                image: { type: 'jpeg', quality: 1 },
-                html2canvas: { scale: 2, useCORS: true, backgroundColor: '#03120e', windowWidth: 800, width: 800, x: 0, y: 0, scrollX: 0, scrollY: 0 },
+                margin: 0.5, filename: nombreArchivo, image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff', width: 800, windowWidth: 800 },
                 jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
             };
 
-            html2pdf().set(opt).from(contentElement).save().then(() => { container.innerHTML = ''; });
+            html2pdf().set(opt).from(contentElement).save().then(() => { 
+                container.innerHTML = '';
+                // AL TERMINAR, ABRE DIRECTO LA CARPETA EN DRIVE
+                window.open("https://drive.google.com/drive/u/0/my-drive", "_blank"); 
+            });
         }
-
-async function exportarPagoPDF() {
-    const staff = document.getElementById('pay-staff').value.trim() || 'Staff';
-    const staffId = document.getElementById('pay-staff-id').value.trim() || 'N/A';
-    const staffRole = document.getElementById('pay-staff-role').value.trim() || 'N/A';
-    const staffAddress = document.getElementById('pay-staff-address').value.trim() || 'N/A';
-    const fecha = document.getElementById('pay-date').value || 'Sin_Fecha';
-    const proyecto = document.getElementById('pay-project').value.trim() || 'General';
-    const concepto = document.getElementById('pay-concept').value.trim() || 'Servicios';
-    const metodo = document.getElementById('pay-method').value;
-    const moneda = getSelectedPayCurrency();
-    const ref = document.getElementById('pay-ref').value.trim() || 'S/R';
-    const monto = parseFloat(document.getElementById('pay-amount').value) || 0;
-    const tasaBCV = parseFloat(document.getElementById('pay-bcv-rate').value) || currentBCVRate || 0;
-    const equivUSD = (moneda === 'Bs' && tasaBCV > 0) ? (monto / tasaBCV).toFixed(2) : monto.toFixed(2);
-
-    const nombreArchivo = `PAGO_${staff}_${concepto}_${fecha}`.replace(/[\/\\?%*:|"<>]/g, '-').replace(/\s+/g, '_') + '.pdf';
-
-    let filasMontosHTML = moneda === 'Bs' ? `
-        <tr style="background-color: #f3f4f6;">
-            <td style="padding: 10px 12px; border-bottom: 1px solid #d1d5db; color: #111827; font-weight: 700;">Monto Pagado (Bs)</td>
-            <td style="padding: 10px 12px; border-bottom: 1px solid #d1d5db; text-align: right; font-family: monospace; font-size: 16px; font-weight: 800; color: #111827;">Bs. ${monto.toFixed(2)}</td>
-        </tr>
-        <tr>
-            <td style="padding: 8px 12px; border-bottom: 1px solid #e5e7eb; color: #4b5563; font-weight: 600;">Tasa BCV Aplicada</td>
-            <td style="padding: 8px 12px; border-bottom: 1px solid #e5e7eb; text-align: right; font-family: monospace;">${tasaBCV.toFixed(2)} Bs/$</td>
-        </tr>
-        <tr style="background-color: #f9fafb;">
-            <td style="padding: 10px 12px; border-bottom: 2px solid #111827; color: #111827; font-weight: 700;">Equivalente en Divisas ($ BCV)</td>
-            <td style="padding: 10px 12px; border-bottom: 2px solid #111827; text-align: right; font-family: monospace; font-size: 15px; font-weight: 700; color: #111827;">$${equivUSD} USD</td>
-        </tr>
-    ` : (monto > 0 ? `
-        <tr style="background-color: #f3f4f6;">
-            <td style="padding: 10px 12px; border-bottom: 2px solid #111827; color: #111827; font-weight: 700;">Monto Pagado (USDT)</td>
-            <td style="padding: 10px 12px; border-bottom: 2px solid #111827; text-align: right; font-family: monospace; font-size: 16px; font-weight: 800; color: #111827;">$${monto.toFixed(2)} USDT</td>
-        </tr>
-    ` : '');
-
-    const captureImgHTML = currentCaptureDataUrl ? `
-        <div style="margin-top: 20px;">
-            <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #4b5563; margin-bottom: 8px; border-bottom: 1px solid #d1d5db; padding-bottom: 4px;">Anexo: Capture de Operación</div>
-            <div style="border: 1px solid #d1d5db; border-radius: 6px; padding: 10px; text-align: center; background-color: #f9fafb;">
-                <img src="${currentCaptureDataUrl}" style="max-height: 280px; max-width: 100%; object-fit: contain; margin: 0 auto; display: block;" />
-            </div>
-        </div>
-    ` : '';
-
-const pdfNotaMolde = `
-        <div id="pdf-payment-content" style="background-color: #ffffff; color: #111827; font-family: 'Inter', 'Segoe UI', Arial, sans-serif; width: 800px; padding: 40px; box-sizing: border-box; position: relative;">
-            
-            <!-- CABECERA ACTUALIZADA (Alineación vertical perfecta) -->
-            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #111827; padding-bottom: 15px; margin-bottom: 20px;">
-                
-                <!-- LADO IZQUIERDO: Logo PNG (Centrado verticalmente con la info derecha) -->
-                <div style="width: 40%;">
-                    <img src="logo-b.png" class="pdf-brand-logo" style="width: 150px; height: auto; max-width: 100%; display: block;" />
-                </div>
-                
-                <!-- LADO DERECHO: Fecha y Referencia -->
-                <div style="width: 55%; text-align: right; font-size: 13px; color: #374151; display: flex; flex-direction: column; justify-content: center;">
-                    <div style="margin-bottom: 4px;"><strong>Fecha:</strong> ${fecha}</div>
-                    <div style="word-break: break-all; overflow-wrap: break-word;"><strong>Ref:</strong> <span style="font-family: monospace;">#${ref}</span></div>
-                </div>
-            </div>
-
-            <!-- TABLA DE DATOS -->
-            <table style="width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 16px;">
-                <tbody>
-                    <tr><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; color: #4b5563; font-weight: 600; width: 38%;">Beneficiario (Staff)</td><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; font-weight: 700; color: #111827;">${staff}</td></tr>
-                    <tr><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; color: #4b5563; font-weight: 600;">Cédula de Identidad</td><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; font-family: monospace; color: #111827;">${staffId}</td></tr>
-                    <tr><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; color: #4b5563; font-weight: 600;">Cargo</td><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; color: #111827;">${staffRole}</td></tr>
-                    <tr><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; color: #4b5563; font-weight: 600;">Dirección</td><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; color: #111827;">${staffAddress}</td></tr>
-                    <tr><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; color: #4b5563; font-weight: 600;">Proyecto / Cliente</td><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; color: #111827;">${proyecto}</td></tr>
-                    <tr><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; color: #4b5563; font-weight: 600;">Concepto</td><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; color: #111827;">${concepto}</td></tr>
-                    <tr><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; color: #4b5563; font-weight: 600;">Método de Pago</td><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; color: #111827;">${metodo}</td></tr>
-                    <tr><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; color: #4b5563; font-weight: 600;">ID Transacción / Ref.</td><td style="padding: 7px 12px; border-bottom: 1px solid #e5e7eb; font-family: monospace; color: #111827; word-break: break-all;">${ref}</td></tr>${filasMontosHTML}
-                </tbody>
-            </table>
-
-            ${captureImgHTML}
-
-            <div style="margin-top: 24px; padding-top: 10px; border-top: 1px solid #e5e7eb; display: flex; justify-content: space-between; font-size: 10px; color: #9ca3af;">
-                <span>Documento administrativo interno - Bloom Studio</span>
-                <span>Generado por Price Studio</span>
-            </div>
-        </div>
-    `;
-
-    const container = document.getElementById('pdf-export-container');
-    container.innerHTML = pdfNotaMolde;
-    await verificarImagenesAntesDePDF(container);
-    window.scrollTo(0, 0);
-    const contentElement = document.getElementById('pdf-payment-content');
-
-    const opt = {
-        margin: 0.5,
-        filename: nombreArchivo,
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { 
-            scale: 2, 
-            useCORS: true, 
-            backgroundColor: '#ffffff', 
-            windowWidth: 800, 
-            width: 800, 
-            x: 0, 
-            y: 0, 
-            scrollX: 0, 
-            scrollY: 0 
-        },
-        jsPDF: { 
-            unit: 'in', 
-            format: 'letter', 
-            orientation: 'portrait' 
-        }
-    };
-
-    html2pdf().set(opt).from(contentElement).save().then(() => { container.innerHTML = ''; });
-}
 
         // --- 9. GESTIÓN DE TEMA (DARK / LIGHT CREMA-ROJO) ---
         function applyTheme(theme) {
