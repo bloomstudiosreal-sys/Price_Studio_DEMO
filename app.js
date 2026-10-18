@@ -965,50 +965,50 @@
             const nombreArchivo = `PRESUPUESTO_${plan}_${empresa}_${fecha}`.replace(/\s+/g, '_') + '.pdf';
 
             let itemsPDFHTML = currentItems.map(item => `
-                <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid rgba(69, 74, 222, 0.3); ${item.isPassThrough ? 'color: #a7f3d0;' : ''}">
+                <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.08); ${item.isPassThrough ? 'color: #E4E2DD;' : ''}">
                     <span>${item.qty}x ${item.name}</span>
                     <span style="font-family: monospace;">$${item.total.toFixed(2)}</span>
                 </div>
             `).join('');
 
             const seccionSubtotalPDF = currentUserRole === 'admin' ? `
-                <div style="display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 14px;">
-                    <span>Costo Neto (Subtotal):</span><span style="font-family: monospace; font-weight: bold;">$${currentData.subtotal}</span>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px; color: rgba(255,255,255,0.65);">
+                    <span>Costo Neto (Subtotal):</span><span style="font-family: monospace; font-weight: bold; color: #ffffff;">$${currentData.subtotal}</span>
                 </div>
             ` : '';
 
             const seccionGananciasPDF = currentUserRole === 'admin' ? `
-                <div style="background-color: rgba(0,0,0,0.3); border-radius: 8px; padding: 15px; border: 1px solid rgba(69, 74, 222, 0.4); margin-top: 15px;">
-                    <h3 style="font-size: 11px; text-transform: uppercase; margin-bottom: 10px; color: rgba(255,255,255,0.6); font-weight: bold;">Distribución de Ganancia (${currentData.margen}%)</h3>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px; font-weight: bold; font-size: 14px; color: #454ADE;"><span>Ganancia Neta Calculada:</span><span>$${currentData.ganancia}</span></div>
-                    <div style="border-top: 1px solid rgba(69, 74, 222, 0.3); padding-top: 10px; font-size: 13px;">
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 6px;"><span>CEO (40%)</span><span style="font-family: monospace;">$${currentData.ceo}</span></div>
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 6px;"><span>Ahorro (20%)</span><span style="font-family: monospace; color: #a7f3d0;">$${currentData.ahorro}</span></div>
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 6px;"><span>Reinversión (20%)</span><span style="font-family: monospace; color: #fde047;">$${currentData.reinv}</span></div>
-                        <div style="display: flex; justify-content: space-between; font-weight: bold; color: #d8b4fe;"><span>Capital (20%)</span><span style="font-family: monospace;">$${currentData.capital}</span></div>
+                <div style="background-color: #171A21; border-radius: 8px; padding: 16px; border: 1px solid rgba(255, 255, 255, 0.08); margin-top: 18px;">
+                    <h3 style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px; color: rgba(255,255,255,0.5); font-weight: bold;">Distribución de Ganancia (${currentData.margen}%)</h3>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px; font-weight: bold; font-size: 14px; color: #ffffff;"><span>Ganancia Neta Calculada:</span><span style="font-family: monospace;">$${currentData.ganancia}</span></div>
+                    <div style="border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 10px; font-size: 13px; color: rgba(255,255,255,0.85);">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 6px;"><span>CEO (40%)</span><span style="font-family: monospace; font-weight: 600;">$${currentData.ceo}</span></div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 6px;"><span>Ahorro (20%)</span><span style="font-family: monospace; font-weight: 600;">$${currentData.ahorro}</span></div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 6px;"><span>Reinversión (20%)</span><span style="font-family: monospace; font-weight: 600;">$${currentData.reinv}</span></div>
+                        <div style="display: flex; justify-content: space-between;"><span>Capital (20%)</span><span style="font-family: monospace; font-weight: 600;">$${currentData.capital}</span></div>
                     </div>
                 </div>
             ` : '';
 
             const pdfMolde = `
-                <div id="pdf-content" style="background-color: #232A5B; color: #ffffff; font-family: 'Inter', 'Segoe UI', Arial, sans-serif; width: 100%; min-height: 1054px; padding: 44px 48px; box-sizing: border-box; overflow: hidden; position: relative; margin: 0;">
-                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; border-bottom: 1px solid rgba(69, 74, 222, 0.5); padding-bottom: 10px;">
+                <div id="pdf-content" style="background-color: #12141A; color: #F4F3EF; font-family: 'Inter', 'Segoe UI', Arial, sans-serif; width: 100%; min-height: 1054px; padding: 44px 48px; box-sizing: border-box; overflow: hidden; position: relative; margin: 0;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; border-bottom: 1px solid rgba(255, 255, 255, 0.12); padding-bottom: 14px;">
                         <img src="${PDF_LOGO_LIGHT}" class="pdf-brand-logo" style="height: 32px; width: auto; object-fit: contain;" />
-                        <h2 style="font-size: 18px; font-weight: bold; margin: 0;">Presupuesto de Servicios</h2>
+                        <h2 style="font-size: 17px; font-weight: 700; margin: 0; letter-spacing: -0.01em;">Presupuesto de Servicios</h2>
                     </div>
-                    <div style="background-color: rgba(0,0,0,0.3); padding: 12px; border-radius: 8px; margin-bottom: 18px; font-size: 13px; border: 1px solid rgba(69, 74, 222, 0.4);">
+                    <div style="background-color: #171A21; padding: 14px 16px; border-radius: 8px; margin-bottom: 20px; font-size: 13px; border: 1px solid rgba(255, 255, 255, 0.08);">
                         <div style="display: flex; justify-content: space-between; margin-bottom: 6px;"><span>Cliente: <strong>${empresa}</strong></span><span>Fecha: <strong>${fecha}</strong></span></div>
                         <div style="display: flex; justify-content: space-between;"><span>Plan: <strong>${plan}</strong></span><span>Tasa: <strong>${tasa}</strong></span></div>
                     </div>
-                    <div style="margin-bottom: 18px; font-size: 13px;">
-                        ${itemsPDFHTML || '<p style="text-align:center; color: rgba(255,255,255,0.5);">No se agregaron servicios.</p>'}
+                    <div style="margin-bottom: 20px; font-size: 13px;">
+                        ${itemsPDFHTML || '<p style="text-align:center; color: rgba(255,255,255,0.45);">No se agregaron servicios.</p>'}
                     </div>
-                    <div style="border-top: 1px solid rgba(69, 74, 222, 0.5); padding-top: 12px;">
+                    <div style="border-top: 1px solid rgba(255, 255, 255, 0.12); padding-top: 14px;">
                         ${seccionSubtotalPDF}
-                        <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 18px; color: #a7f3d0;"><span>Monto Venta Sugerido:</span><span style="font-family: monospace;">$${currentData.venta}</span></div>
+                        <div style="display: flex; justify-content: space-between; font-weight: 800; font-size: 18px; color: #ffffff;"><span>Monto Venta Sugerido:</span><span style="font-family: monospace;">$${currentData.venta}</span></div>
                     </div>
                     ${seccionGananciasPDF}
-                    <div style="margin-top: 24px; text-align: center; font-size: 11px; color: rgba(255,255,255,0.4);">Bloom Studio</div>
+                    <div style="margin-top: 28px; text-align: center; font-size: 11px; color: rgba(255,255,255,0.35); font-family: monospace; text-transform: uppercase; letter-spacing: 0.08em;">Bloom Studio</div>
                 </div>
             `;
 
@@ -1022,7 +1022,7 @@
                 margin: 0,
                 filename: nombreArchivo,
                 image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true, backgroundColor: '#232A5B', scrollX: 0, scrollY: 0 },
+                html2canvas: { scale: 2, useCORS: true, backgroundColor: '#12141A', scrollX: 0, scrollY: 0 },
                 jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
             };
 
@@ -1041,7 +1041,7 @@
             const dot = document.getElementById('theme-toggle-dot');
             const label = document.getElementById('theme-toggle-label');
             if (dot && label) {
-                dot.style.backgroundColor = isLight ? '#03120e' : '#DC2626';
+                dot.style.backgroundColor = isLight ? '#0B0C0E' : '#DC2626';
                 label.innerText = isLight ? 'DARK MODE' : 'CREAM / RED';
             }
 
